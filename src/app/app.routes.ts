@@ -3,12 +3,12 @@ import { ChatComponent } from './components/pages/chat/chat.component';
 
 export const routes: Routes = [
     {
-        path: '', redirectTo: 'chat', pathMatch: 'full'
+        path: '', redirectTo: 'auth', pathMatch: 'full'
+    },
+    {
+        path: 'auth', loadChildren: () => import('./components/pages/auth/auth.routes').then(c => c.AUTH_ROUTES)
     },
     {
         path: 'chat', component: ChatComponent
     },
-    {
-        path: 'auth', loadChildren: () => import('./components/pages/auth/auth.component').then(c => c.AuthComponent)
-    }
 ];
