@@ -1,32 +1,31 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="d-flex flex-column full-center mb-1">
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="w-75 m-auto mb-1">
 
+  <div class="mb-1">
     @if (submitted && lf['phoneNumber'].errors) {
-
-        <div class="invalid-feedback">
-            @if (lf['phoneNumber'].errors['required']) {
-            <small>Phone Number is required</small>
-            }
-            @if (lf['phoneNumber'].errors['minlength']) {
-            <small>Phone Number must be at least 5 characters</small>
-            }
-            @if (lf['phoneNumber'].errors['maxlength']) {
-            <small>Phone Number must not exceed 17 characters</small>
-            }
-          </div>
-
+    <div class="text-left mb-05">
+      @if (lf['phoneNumber'].errors['required']) {
+      <small class="p-error">Phone Number is required</small>
+      }
+      @if (lf['phoneNumber'].errors['pattern']) {
+      <small class="p-error">Invalid Phone Number</small>
+      }
+    </div>
     }
-    <input type="text" pInputText formControlName="phoneNumber" placeholder="Phone Number" class="mb-1">
+    <input type="text" pInputText formControlName="phoneNumber" placeholder="Phone Number" class="w-100">
+  </div>
 
+  <div class="mb-1">
+    @if (submitted && lf['password'].errors) {
+    <div class="text-left mb-05">
+      @if (lf['password'].errors['required']) {
+      <small class="p-error">Password is required</small>
+      }
+    </div>
+    }
+    <input type="password" pInputText formControlName="password" placeholder="Password" class="w-100">
+  </div>
 
-    <div *ngIf="loginForm.get('phoneNumber').invalid && (loginForm.get('phoneNumber').dirty || loginForm.get('phoneNumber').touched)">
-      <div *ngIf="loginForm.get('phoneNumber').errors.required" class="text-danger">Phone number is required.</div>
-    </div>
-    
-    <input type="password" pInputText formControlName="password" placeholder="Password" class="mb-1">
-    <div *ngIf="loginForm.get('password').invalid && (loginForm.get('password').dirty || loginForm.get('password').touched)">
-      <div *ngIf="loginForm.get('password').errors.required" class="text-danger">Password is required.</div>
-    </div>
-  
-    <button pButton type="submit" label="Submit"></button>
-  </form>
-  
+  <div>
+    <button pButton type="submit" label="Submit" class="w-100"></button>
+  </div>
+</form>

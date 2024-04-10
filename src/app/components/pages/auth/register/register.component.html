@@ -1,15 +1,23 @@
-<div class="register-container d-none">
+<div class="register-container">
     <div class="title-container">
         <h2>Register</h2>
     </div>
-    <div class="error-message-container">
-        <p class="error-message register d-none"></p>
-    </div>
-    <form class="form register-form">
-        <input type="text" name="firstname" placeholder="Firstname" required>
-        <input type="text" name="surname" placeholder="Surname" required>
-        <input type="text" name="phoneNumber" placeholder="Phone Number" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <input type="submit" name="register" value="Submit">
+
+    <form class="register-form w-75 m-auto">
+        <div class="input-group mb-1">
+            <input pInputText type="text" name="firstname" placeholder="Firstname" class="w-100">
+        </div>
+        <div class="input-group mb-1">
+            <input pInputText type="text" name="surname" placeholder="Surname" class="w-100">
+        </div>
+        <div class="input-group mb-1">
+            <input pInputText type="text" name="phoneNumber" placeholder="Phone Number" class="w-100">
+        </div>
+        <div class="input-group mb-1">
+            <input pInputText type="password" name="password" placeholder="Password" class="w-100">
+        </div>
+        <div class="input-group mb-1">
+            <button pButton type="submit" value="Submit" class="w-100">Submit</button>
+        </div>
     </form>
 </div>

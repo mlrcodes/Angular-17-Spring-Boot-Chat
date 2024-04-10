@@ -9,12 +9,14 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
 
+  url: string = 'http://localhost/practicas/FETCH+PHP%20Chat/ASSETS/PHP/CONTROLLERS/front-controller.php?authenticate-user';
+
   get<T>(url:string): Observable<T> {
     return this.httpClient.get<T>(url);
   }
 
-  post<T>(url: string, body: any) {
-    return this.httpClient.post<T>(url, body);
+  post<T>(body: any): Observable<T>{
+    return this.httpClient.post<T>(this.url, body);
   }
 
   put<T>(url: string, body: any) {

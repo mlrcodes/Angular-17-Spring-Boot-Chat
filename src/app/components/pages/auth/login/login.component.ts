@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Message, MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { LoginFormComponent } from './login-form/login-form.component';
+import { LoginRequest } from '../../../../core/models/login-request';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,9 +15,22 @@ import { LoginFormComponent } from './login-form/login-form.component';
 })
 export class LoginComponent {
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private authService: AuthService
+  ) {}
 
-  notifyLoginResult(message: Message) {
+  sendLoginRequest(loginRequest: LoginRequest) {
+    this.authService
+    .post(loginRequest)
+    .subscribe({
+        next: (data: any) => {
+          console.log(data)
+        }
+    })
+  }
+
+  notifyLoginResult() {
     this.messageService.add({
       severity: 'success',
       summary: 'Login Result',

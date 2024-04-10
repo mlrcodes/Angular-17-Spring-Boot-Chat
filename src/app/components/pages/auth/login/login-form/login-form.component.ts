@@ -3,28 +3,25 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { ValidationService } from '../../../../../core/services/validation/validation.service';
+import { MessagesModule } from 'primeng/messages';
+import { InputGroupModule } from 'primeng/inputgroup';
 import { LoginRequest } from '../../../../../core/models/login-request';
 
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextModule, PasswordModule, ButtonModule],
+  imports: [ReactiveFormsModule, InputTextModule, PasswordModule, ButtonModule, MessagesModule, InputGroupModule],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss'
 })
 export class LoginFormComponent {
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private validationService: ValidationService
-  ) {}
+  constructor(private formBuilder: FormBuilder) {}
 
   userLoginData: LoginRequest = {
     phoneNumber: '',
     password: ''
   }
-
   @Output() loginRequest = new EventEmitter<LoginRequest>();
 
   // PARA EL REGISTRO
@@ -48,17 +45,10 @@ export class LoginFormComponent {
   loginForm = this.formBuilder.group({
     phoneNumber: ['', [
       Validators.required,
-      Validators.minLength(8), 
-      Validators.maxLength(16), 
+      Validators.pattern(/^\+\d{1,3}\d{4,14}$/), 
     ]],
     password: ['', [
-      Validators.required, 
-      Validators.minLength(8), 
-      Validators.maxLength(16), 
-      Validators.pattern(/[A-Z]/), 
-      Validators.pattern(/[a-z]/), 
-      Validators.pattern(/[0-9]/), 
-      Validators.pattern( /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/)
+      Validators.required
     ]]
   })
 
@@ -68,19 +58,22 @@ export class LoginFormComponent {
     return this.loginForm.controls;
   }
 
-  onSubmit() {
+  onSubmit(event: Event) {
+    
+
+    event.preventDefault()
+
     const {phoneNumber, password} = this.loginForm.value;
     this.submitted = true;
 
-    if (this.loginForm.invalid) return
+    if (this.loginForm.invalid) 
 
-    // this.loginRequest.emit({
-    //   phoneNumber: phoneNumber || '',
-    //   password: password || ''
-    // });
+    this.loginRequest.emit({
+      phoneNumber: phoneNumber || '',
+      password: password || ''
+    });
 
     console.log(JSON.stringify(this.loginForm.value, null, 2));
-
   }
 
   ngOnChanges() {
