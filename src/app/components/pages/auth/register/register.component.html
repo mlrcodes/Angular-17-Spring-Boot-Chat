@@ -3,21 +3,12 @@
         <h2>Register</h2>
     </div>
 
-    <form class="register-form w-75 m-auto">
-        <div class="input-group mb-1">
-            <input pInputText type="text" name="firstname" placeholder="Firstname" class="w-100">
-        </div>
-        <div class="input-group mb-1">
-            <input pInputText type="text" name="surname" placeholder="Surname" class="w-100">
-        </div>
-        <div class="input-group mb-1">
-            <input pInputText type="text" name="phoneNumber" placeholder="Phone Number" class="w-100">
-        </div>
-        <div class="input-group mb-1">
-            <input pInputText type="password" name="password" placeholder="Password" class="w-100">
-        </div>
-        <div class="input-group mb-1">
-            <button pButton type="submit" value="Submit" class="w-100">Submit</button>
-        </div>
-    </form>
+    
+    <div class="register-form-container">
+        <app-register-form (registerRequest)="sendRegisterRequest($event)"></app-register-form>
+    </div>
+
+    <div class="back-login-container">
+        <p><a href="http://localhost:4200/auth/login">Back to login</a></p>
+    </div>
 </div>

@@ -1,0 +1,105 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit($event)" class="w-75 m-auto mb-1">
+
+    <div class="input-group mb-1">
+        @if (submitted && rf['firstname'].errors) {
+            <div class="text-left mb-05">
+              @if (rf['firstname'].errors['required']) {
+              <small class="p-error">Firstname required</small>
+              }
+              @if (rf['firstname'].errors['pattern']) {
+              <small class="p-error">Invalid Firstname</small>
+              }
+            </div>
+        }
+        <input pInputText type="text" formControlName="firstname" placeholder="Firstname" class="w-100">
+    </div>
+
+    <div class="input-group mb-1">
+        @if (submitted && rf['surname'].errors) {
+            <div class="text-left mb-05">
+              @if (rf['surname'].errors['required']) {
+              <small class="p-error">Surname is required</small>
+              }
+              @if (rf['surname'].errors['pattern']) {
+              <small class="p-error">Invalid Surname</small>
+              }
+            </div>
+        }
+
+        <input pInputText type="text" formControlName="surname" placeholder="Surname" class="w-100">
+    </div>
+
+    <div class="input-group mb-1">
+        @if (submitted && rf['phoneNumber'].errors) {
+            <div class="text-left mb-05">
+              @if (rf['phoneNumber'].errors['required']) {
+              <small class="p-error">Phone Number is required</small>
+              }
+              @if (rf['phoneNumber'].errors['pattern']) {
+              <small class="p-error">Invalid Phone Number</small>
+              }
+            </div>
+        }
+        <input pInputText type="text" formControlName="phoneNumber" placeholder="Phone Number" class="w-100">
+    </div>
+
+    <div class="input-group mb-1">
+        @if (submitted && rf['password'].errors) {
+            <div class="text-left mb-05">
+                @if (rf['password'].errors['required']) {
+                <small class="p-error">Phone Number is required</small>
+                }
+                @if (rf['password'].errors['minlength']) {
+                <small class="p-error">Password must be at least 8 characters long</small>
+                }
+                @if (rf['password'].errors['maxlength']) {
+                <small class="p-error">Password cannot exceed 16 characters</small>
+                }
+                @if (rf['password'].errors['pattern'] && rf['password'].errors['pattern'].requiredUppercase) {
+                <small class="p-error">Password must contain at least one uppercase letter</small>
+                }
+                @if (rf['password'].errors['pattern'] && rf['password'].errors['pattern'].requiredLowercase) {
+                <small class="p-error">Password must contain at least one lowercase letter</small>
+                }                                                            
+                @if (rf['password'].errors['pattern'] && rf['password'].errors['pattern'].requiredNumber) {
+                <small class="p-error">Password must contain at least one number</small>
+                }
+                @if (rf['password'].errors['pattern'] && rf['password'].errors['pattern'].requiredSpecial) {
+                <small class="p-error">Password must contain at least one special character</small>
+                }
+            </div>
+        }
+        <input pInputText type="password" formControlName="password" placeholder="Password" class="w-100">
+    </div>
+
+    <div class="input-group mb-1">
+        @if (submitted && rf['confirmPassword'].errors) {
+            <div class="text-left mb-05">
+              @if (rf['confirmPassword'].errors['required']) {
+              <small class="p-error">Confirm Password is required</small>
+              }
+              @if (rf['confirmPassword'].errors['doNotMatch']) {
+                <small class="p-error">Confirm Password Does Not Match</small>
+                }
+            </div>
+        }
+        <input pInputText type="password" formControlName="confirmPassword" placeholder="Confirm Password" class="w-100">
+    </div>
+
+    <div class="input group mb-1 text-left">
+        @if (submitted && rf['acceptTerms'].errors) {
+            <div class="text-left mb-05">
+              @if (rf['acceptTerms'].errors['required']) {
+              <small class="p-error">Accept Terms is required</small>
+              }
+              @if (rf['acceptTerms'].errors['requiredTrue']) {
+                <small class="p-error">Terms have to be acceptedd</small>
+                }
+            </div>
+        }
+        <p-checkbox value="acceptedTerms" [binary]="true" label="I have read and accept the Terms" formControlName="acceptedTerms"></p-checkbox>
+    </div>
+    <div class="mb-1">
+        <button pButton type="submit" label="Submit" class="w-100"></button>
+    </div>
+</form>

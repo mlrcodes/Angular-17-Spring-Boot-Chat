@@ -1,0 +1,99 @@
+import { Component, EventEmitter, Output } from '@angular/core';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { CheckboxModule } from 'primeng/checkbox';
+import { RegisterRequest } from '../../../../../core/models/register-request';
+
+@Component({
+  selector: 'app-register-form',
+  standalone: true,
+  imports: [ReactiveFormsModule, InputTextModule, ButtonModule, CheckboxModule],
+  templateUrl: './register-form.component.html',
+  styleUrl: './register-form.component.scss'
+})
+export class RegisterFormComponent {
+  constructor(private formBuilder: FormBuilder) {}
+
+  userRegisterData: RegisterRequest = {
+    firstname: '',
+    surname: '',
+    phoneNumber: '',
+    password: '',
+    confirmPassword: '',
+    acceptedTerms: false
+  }
+
+  @Output() registerRequest = new EventEmitter<RegisterRequest>();
+
+  registerForm = this.formBuilder.group(
+    {
+      firstname: ['', [
+        Validators.required,
+        Validators.pattern(/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?: [A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)?$/)
+      ]],
+      surname: ['', [
+        Validators.required,
+        Validators.pattern(/^[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?: [A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)?$/)
+      ]],
+      phoneNumber: ['', [
+        Validators.required,
+        Validators.pattern(/^\+\d{1,3}\d{4,14}$/), 
+      ]],
+      password: ['', [
+        Validators.required, 
+        Validators.minLength(8), 
+        Validators.maxLength(16), 
+        Validators.pattern(/[A-Z]/), 
+        Validators.pattern(/[a-z]/), 
+        Validators.pattern(/[0-9]/), 
+        Validators.pattern( /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/)
+      ]],
+      confirmPassword: ['', [
+        Validators.required,
+        this.passwordsMatchValidator()
+      ]],
+      acceptedTerms: [false, [
+        Validators.required,
+        Validators.requiredTrue
+      ]]
+    }
+  )
+  submitted: boolean = false;
+
+
+  passwordsMatchValidator(): ValidatorFn {
+    return (control) => {
+      const doNotMatch = control.value !== this.userRegisterData.password
+      return doNotMatch ? { isValid: true } : null;
+    };
+  }
+
+  get rf(): { [key: string]: AbstractControl } {
+    return this.registerForm.controls;
+  }
+
+  onSubmit(event: Event) {
+    
+
+    event.preventDefault()
+
+    const {firstname, surname, phoneNumber, password, confirmPassword, acceptedTerms} = this.registerForm.value;
+    this.submitted = true;
+
+    if (this.registerForm.invalid) return
+
+    this.registerRequest.emit({
+      firstname: firstname || '',
+      surname: surname || '',
+      phoneNumber: phoneNumber || '',
+      password: password || '',
+      confirmPassword: confirmPassword || '',
+      acceptedTerms: acceptedTerms || false
+    });
+  }
+
+  ngOnChanges() {
+    this.registerForm.patchValue(this.userRegisterData)
+  }
+}

@@ -3,14 +3,12 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { MessagesModule } from 'primeng/messages';
-import { InputGroupModule } from 'primeng/inputgroup';
 import { LoginRequest } from '../../../../../core/models/login-request';
 
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [ReactiveFormsModule, InputTextModule, PasswordModule, ButtonModule, MessagesModule, InputGroupModule],
+  imports: [ReactiveFormsModule, InputTextModule, PasswordModule, ButtonModule],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.scss'
 })
@@ -23,24 +21,6 @@ export class LoginFormComponent {
     password: ''
   }
   @Output() loginRequest = new EventEmitter<LoginRequest>();
-
-  // PARA EL REGISTRO
-
-  // loginForm = this.formBuilder.group({
-  //   phoneNumber: ['', [
-  //     Validators.required,
-  //     Validators.pattern(/^\+\d{1,3}\d{4,14}$/), 
-  //   ]],
-  //   password: ['', [
-  //     Validators.required, 
-  //     Validators.minLength(8), 
-  //     Validators.maxLength(16), 
-  //     Validators.pattern(/[A-Z]/), 
-  //     Validators.pattern(/[a-z]/), 
-  //     Validators.pattern(/[0-9]/), 
-  //     Validators.pattern( /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/)
-  //   ]]
-  // })
 
   loginForm = this.formBuilder.group({
     phoneNumber: ['', [
