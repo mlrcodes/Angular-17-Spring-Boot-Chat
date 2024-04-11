@@ -14,20 +14,23 @@ import lombok.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "Persons")
 public class Person {
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Integer personId;
 
-  @NotBlank
   @Column(nullable = false)
   private String firstname;
 
-  @NotBlank
   @Column(nullable = false)
   private String surname;
 
-  @NotBlank
   @Column(nullable = false, unique = true)
   private String phoneNumber;
 
+  public Person(String firstname, String surname, String phoneNumber) {
+    this.firstname = firstname;
+    this.surname = surname;
+    this.phoneNumber = phoneNumber;
+  }
 }

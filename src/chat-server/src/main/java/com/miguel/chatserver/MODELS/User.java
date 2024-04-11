@@ -1,8 +1,12 @@
 package com.miguel.chatserver.MODELS;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -12,14 +16,17 @@ import lombok.*;
 @Entity
 @Table(name = "Users")
 public class User extends Person {
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Integer personId;
 
-  @NotBlank
   @Column(nullable = false)
   private String password;
 
-  private Contact[] contacts;
-
+  private ArrayList<Contact> contacts;
+  public User(String firstname, String surname, String phoneNumber) {
+    super(firstname, surname, phoneNumber);
+    this.contacts = new ArrayList<Contact>();
+  }
 }

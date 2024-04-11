@@ -1,6 +1,7 @@
 package com.miguel.chatserver.SERVICES;
 
 import com.miguel.chatserver.DTO.AuthRegisterRequest;
+import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,16 @@ public class ImpUserService implements IUserService {
   }
 
   @Override
+  public Boolean existsPhoneNumber(String phoneNumber) {
+    return this.userRepository.existsPhoneNumber(phoneNumber);
+  }
+
+  @Override
   public User createUserFromRegisterRequest(AuthRegisterRequest request) {
-    return User.builder()
-      .password(request.getPassword())
-      .build();
+    return new User(
+      request.getFirstname(),
+      request.getSurname(),
+      request.getPhoneNumber()
+    );
   }
 }

@@ -9,5 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 public class AuthLoginRequest {
 
+  private String phoneNumber;
+
+  private String password;
 
 }

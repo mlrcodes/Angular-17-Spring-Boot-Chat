@@ -1,5 +1,7 @@
 package com.miguel.chatserver.CONTROLLERS;
 
+import com.miguel.chatserver.DTO.AuthLoginRequest;
+import com.miguel.chatserver.DTO.AuthLoginResponse;
 import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.AuthRegisterResponse;
 import com.miguel.chatserver.SERVICES.IAuthenticationService;
@@ -20,10 +22,17 @@ public class AuthenticationController {
   private IAuthenticationService authenticationService;
 
   @PostMapping("/register")
-  public ResponseEntity<AuthRegisterResponse> register(
+  public ResponseEntity<AuthRegisterResponse> register (
     @Valid @RequestBody AuthRegisterRequest request
   ) {
     return ResponseEntity.ok(authenticationService.register(request));
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<AuthLoginResponse> login (
+    @Valid @RequestBody AuthLoginRequest request
+  ) {
+    return ResponseEntity.ok(authenticationService.login(request));
   }
 
 }

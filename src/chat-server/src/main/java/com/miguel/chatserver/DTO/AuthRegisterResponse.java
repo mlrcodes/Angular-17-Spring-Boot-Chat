@@ -8,6 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthRegisterResponse {
-
-
+  private String successMessage;
 }

@@ -7,5 +7,8 @@ public interface IUserService {
   public User registerUser(User user);
 
   public User findByPhoneNumber(String phoneNumber);
+
+  public Boolean existsPhoneNumber(String phoneNumber);
+
   public User createUserFromRegisterRequest(AuthRegisterRequest request);
 }

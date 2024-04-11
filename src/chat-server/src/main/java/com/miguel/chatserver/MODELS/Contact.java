@@ -13,6 +13,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "Contacts")
 public class Contact extends Person{
+
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private Integer contactId;
