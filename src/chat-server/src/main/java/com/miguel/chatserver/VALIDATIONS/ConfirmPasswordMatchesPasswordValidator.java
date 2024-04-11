@@ -10,8 +10,8 @@ public class ConfirmPasswordMatchesPasswordValidator implements ConstraintValida
   private String confirmPassword;
 
   public void initialize(ConfirmPasswordMatchesPassword constraintAnnotation) {
-    this.password = constraintAnnotation.field();
-    this.confirmPassword = constraintAnnotation.fieldMatch();
+    this.password = constraintAnnotation.password();
+    this.confirmPassword = constraintAnnotation.confirmPassword();
   }
   @Override
   public boolean isValid(

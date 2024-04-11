@@ -14,8 +14,8 @@ import lombok.*;
 @NoArgsConstructor
 @ConfirmPasswordMatchesPassword.List({
   @ConfirmPasswordMatchesPassword(
-    field = "password",
-    fieldMatch = "confirmPassword",
+    password = "password",
+    confirmPassword = "confirmPassword",
     message = "Confirm password do not match"
   )
 })public class AuthRegisterRequest {

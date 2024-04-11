@@ -12,10 +12,19 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "Contacts")
-public class Contact extends Person{
+public class Contact {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @Column(name = "contact_id")
   private Integer contactId;
+
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User owner;
+
+  @OneToOne
+  @JoinColumn(name = "contact_id", insertable = false, updatable = false)
+  private User contactUser;
 
 }
