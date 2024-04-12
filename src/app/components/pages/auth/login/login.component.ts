@@ -22,7 +22,7 @@ export class LoginComponent {
 
   sendLoginRequest(loginRequest: LoginRequest) {
     this.authService
-    .post(loginRequest)
+    .login(loginRequest)
     .subscribe({
         next: (data: any) => {
           console.log(data)

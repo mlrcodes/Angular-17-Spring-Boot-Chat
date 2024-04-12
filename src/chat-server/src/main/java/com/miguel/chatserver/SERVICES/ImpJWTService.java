@@ -1,5 +1,10 @@
 package com.miguel.chatserver.SERVICES;
 
+import com.miguel.chatserver.MODELS.Token;
+import com.miguel.chatserver.REPOSITORIES.ITokenRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,38 +24,63 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class ImpJWTService implements IJWTService {
 
-  private static final String SECRET_KEY="586E3272357538782F413F4428472B4B6250655368566B597033733676397924";
+  @Value("${application.security.jwt.secret-key}")
+  private String secretKey;
+
+  @Value("${application.security.jwt.expiration}")
+  private Long jwtExpiration;
+
+  @Autowired
+  private ITokenRepository tokenRepository;
+
 
   @Override
-  public String getToken(UserDetails user) {
-    return getToken(new HashMap<>(), user);
+  public Token saveToken(Token token) {
+    return this.tokenRepository.save(token);
   }
 
-  private String getToken(Map<String,Object> extraClaims, UserDetails user) {
+  @Override
+  public String generateToken(UserDetails userDetails) {
+    return generateToken(new HashMap<>(), userDetails);
+  }
+
+  private String generateToken(
+    Map<String,Object> claims,
+    UserDetails userDetails
+  ) {
+    return buildToken(claims, userDetails, jwtExpiration);
+  }
+
+  private String buildToken(
+    Map<String,Object> extraClaims,
+    UserDetails userDetails,
+    Long jwtExpiration
+  ) {
+    var authorities = userDetails.getAuthorities()
+      .stream()
+      .map(GrantedAuthority::getAuthority)
+      .toList();
     return Jwts
       .builder()
       .setClaims(extraClaims)
-      .setSubject(user.getUsername())
+      .setSubject(userDetails.getUsername())
       .setIssuedAt(new Date(System.currentTimeMillis()))
-      .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))
-      .signWith(getKey(), SignatureAlgorithm.HS256)
+      .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+      .claim("authorities", authorities)
+      .signWith(getSignInKey())
       .compact();
   }
 
-  private Key getKey() {
-    byte[] keyBytes=Decoders.BASE64.decode(SECRET_KEY);
-    return Keys.hmacShaKeyFor(keyBytes);
+
+  @Override
+  public boolean isTokenValid(String token, UserDetails userDetails) {
+    final String username = getPhoneNumberFromToken(token);
+    return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
   }
 
   @Override
   public String getPhoneNumberFromToken(String token) {
     return getClaim(token, Claims::getSubject);
-  }
-
-  @Override
-  public boolean isTokenValid(String token, UserDetails userDetails) {
-    final String username=getPhoneNumberFromToken(token);
-    return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
   }
 
   @Override
@@ -68,13 +98,22 @@ public class ImpJWTService implements IJWTService {
       .getBody();
   }
 
-  private Date getExpiration(String token) {
-    return getClaim(token, Claims::getExpiration);
+  private Key getSignInKey() {
+    byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+    return Keys.hmacShaKeyFor(keyBytes);
   }
 
   private boolean isTokenExpired(String token) {
     return getExpiration(token).before(new Date());
   }
 
+  private Date getExpiration(String token) {
+    return getClaim(token, Claims::getExpiration);
+  }
+
+  private Key getKey() {
+    byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+    return Keys.hmacShaKeyFor(keyBytes);
+  }
 
 }

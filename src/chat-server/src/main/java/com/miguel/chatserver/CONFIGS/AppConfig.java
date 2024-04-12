@@ -14,25 +14,19 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppConfig {
+
   @Autowired
   private IUserRepository userRepository;
 
-  @Bean
-  public UserDetailsService userDetailService() {
-    return phoneNumber -> userRepository.findByPhoneNumber(phoneNumber).orElseThrow(
-        () -> new ExceptionObjectNotFound("User not Found")
-    );
-  }
-
-  @Bean
-  public PasswordEncoder encoder() {
-    return new BCryptPasswordEncoder();
-  }
+  @Autowired
+  private UserDetailsServiceImp userDetailsService;
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -43,9 +37,13 @@ public class AppConfig {
   public AuthenticationProvider authenticationProvider()
   {
     DaoAuthenticationProvider authenticationProvider= new DaoAuthenticationProvider();
-    authenticationProvider.setUserDetailsService(userDetailService());
+    authenticationProvider.setUserDetailsService(userDetailsService);
     authenticationProvider.setPasswordEncoder(encoder());
     return authenticationProvider;
   }
 
+  @Bean
+  public PasswordEncoder encoder() {
+    return new BCryptPasswordEncoder();
+  }
 }

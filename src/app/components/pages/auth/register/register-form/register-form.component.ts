@@ -20,6 +20,7 @@ export class RegisterFormComponent {
     surname: '',
     phoneNumber: '',
     password: '',
+    email: '',
     confirmPassword: '',
     acceptedTerms: false
   }
@@ -39,6 +40,10 @@ export class RegisterFormComponent {
       phoneNumber: ['', [
         Validators.required,
         Validators.pattern(/^\+\d{1,3}\d{4,14}$/), 
+      ]],
+      email: ['', [
+        Validators.required,
+        Validators.pattern(/^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/)
       ]],
       password: ['', [
         Validators.required, 
@@ -64,8 +69,8 @@ export class RegisterFormComponent {
 
   passwordsMatchValidator(): ValidatorFn {
     return (control) => {
-      const doNotMatch = control.value !== this.userRegisterData.password
-      return doNotMatch ? { isValid: true } : null;
+      const doMatch = control.value === this.userRegisterData.password
+      return doMatch ? { doMatch: true } : null;
     };
   }
 
@@ -74,11 +79,9 @@ export class RegisterFormComponent {
   }
 
   onSubmit(event: Event) {
-    
-
     event.preventDefault()
 
-    const {firstname, surname, phoneNumber, password, confirmPassword, acceptedTerms} = this.registerForm.value;
+    const {firstname, surname, phoneNumber, email, password, confirmPassword, acceptedTerms} = this.registerForm.value;
     this.submitted = true;
 
     if (this.registerForm.invalid) return
@@ -87,6 +90,7 @@ export class RegisterFormComponent {
       firstname: firstname || '',
       surname: surname || '',
       phoneNumber: phoneNumber || '',
+      email: email ||'',
       password: password || '',
       confirmPassword: confirmPassword || '',
       acceptedTerms: acceptedTerms || false

@@ -6,22 +6,23 @@ import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.AuthRegisterResponse;
 import com.miguel.chatserver.SERVICES.IAuthenticationService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
 
   @Autowired
   private IAuthenticationService authenticationService;
 
   @PostMapping("/register")
+  @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<AuthRegisterResponse> register (
     @Valid @RequestBody AuthRegisterRequest request
   ) {

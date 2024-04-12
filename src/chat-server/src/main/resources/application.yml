@@ -3,7 +3,7 @@ spring:
     url: jdbc:mysql://localhost:3306/chat-server?
     username: root
     password: ""
-  jpa: 
+  jpa:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
@@ -12,3 +12,16 @@ spring:
         format_sql: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
+
+server:
+  servlet:
+    context-path: "/api/"
+
+application:
+  security:
+    jwt:
+      secret-key: 586E3272357538782F413F4428472B4B6250655368566B597033733676397924
+      expiration: 864000000
+  mailing:
+    frontend:
+      activation-url: http://localhost:4200/activate-account

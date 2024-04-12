@@ -16,7 +16,7 @@ export class RegisterComponent {
 
   sendRegisterRequest(registerRequest: RegisterRequest) {
     this.authService
-    .post(registerRequest)
+    .register(registerRequest)
     .subscribe({
         next: (data: any) => {
           console.log(data)

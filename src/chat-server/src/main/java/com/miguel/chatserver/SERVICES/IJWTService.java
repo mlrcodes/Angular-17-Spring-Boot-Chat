@@ -1,5 +1,6 @@
 package com.miguel.chatserver.SERVICES;
 
+import com.miguel.chatserver.MODELS.Token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,7 +16,8 @@ import java.util.function.Function;
 
 public interface IJWTService {
 
-  public String getToken(UserDetails user);
+  public Token saveToken(Token token);
+  public String generateToken(UserDetails user);
 
   public String getPhoneNumberFromToken(String token);
 

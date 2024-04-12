@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Activación de Cuenta</title>
+  <style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Activation</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  .container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+  }
+  h1 {
+    color: #333;
+    text-align: center;
+  }
+  .greeting {
+    color: #666;
+    font-size: 16px;
+    text-align: center;
+  }
+  p {
+    color: #666;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .activation-code {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .activation-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .activation-link a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+  }
+  .activation-link a:hover {
+    background-color: #0056b3;
+  }
+</style>
+    </style>
+</head>
+<body>
+<div class="container">
+  <h1>Account Activation</h1>
+  <p class="greeting"> th:text="Hello " + ${username} + ","</p>
+  <p>Thank for singing up! Please, use the following activation code to activate your account</p>
+  <div class="activation-code"><span th:text="${activation_code}"></span></div>
+  <div class="activation-link">
+    <a th:href="${confirmationUrl}" target="_blank">Activate your account</a>
+  </div>
+</div>
+</body>
+</html>
