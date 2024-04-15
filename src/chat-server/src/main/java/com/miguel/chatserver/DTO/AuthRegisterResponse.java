@@ -1,6 +1,7 @@
 package com.miguel.chatserver.DTO;
 
 import lombok.*;
+import org.springframework.http.HttpStatusCode;
 
 @Getter
 @Setter
@@ -8,5 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthRegisterResponse {
-  private String successMessage;
+
+  private String phoneNumber;
+  private Boolean success;
+  private String message;
+
 }

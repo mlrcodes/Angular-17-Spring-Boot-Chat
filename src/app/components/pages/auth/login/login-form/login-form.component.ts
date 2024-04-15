@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
@@ -16,18 +16,18 @@ export class LoginFormComponent {
 
   constructor(private formBuilder: FormBuilder) {}
 
-  userLoginData: LoginRequest = {
+  @Input() userLoginData: LoginRequest = {
     phoneNumber: '',
     password: ''
   }
   @Output() loginRequest = new EventEmitter<LoginRequest>();
 
   loginForm = this.formBuilder.group({
-    phoneNumber: ['', [
+    phoneNumber: [this.userLoginData.phoneNumber, [
       Validators.required,
       Validators.pattern(/^\+\d{1,3}\d{4,14}$/), 
     ]],
-    password: ['', [
+    password: [this.userLoginData.password, [
       Validators.required
     ]]
   })
@@ -39,14 +39,10 @@ export class LoginFormComponent {
   }
 
   onSubmit(event: Event) {
-    
-
     event.preventDefault()
 
     const {phoneNumber, password} = this.loginForm.value;
     this.submitted = true;
-
-    if (this.loginForm.invalid) 
 
     this.loginRequest.emit({
       phoneNumber: phoneNumber || '',

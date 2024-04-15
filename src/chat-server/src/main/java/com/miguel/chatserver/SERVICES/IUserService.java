@@ -8,7 +8,9 @@ public interface IUserService {
 
   public User findByPhoneNumber(String phoneNumber);
 
-  public Boolean existsPhoneNumber(String phoneNumber);
+
+  public User findByEmail(String phoneNumber);
 
   public User createUserFromRegisterRequest(AuthRegisterRequest request);
+
 }

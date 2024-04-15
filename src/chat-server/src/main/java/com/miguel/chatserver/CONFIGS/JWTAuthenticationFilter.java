@@ -26,7 +26,7 @@ import java.util.Objects;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
@@ -34,7 +34,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
   private IJWTService jwtService;
 
   @Autowired
-  private UserDetailsService userDetailsService;
+  private UserDetailsServiceImp userDetailsService;
 
   @Override
   protected void doFilterInternal(
@@ -43,7 +43,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
 
-    if (request.getServletPath().contains("/auth")) {
+    if (request.getServletPath().contains("/auth") ||
+      request.getServletPath().contains("api/auth") ||
+      request.getServletPath().contains("/api/auth")
+    ) {
       filterChain.doFilter(request, response);
       return;
     }

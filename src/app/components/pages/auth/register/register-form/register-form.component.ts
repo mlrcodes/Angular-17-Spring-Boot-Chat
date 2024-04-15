@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnChanges, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RegisterRequest } from '../../../../../core/models/register-request';
+import { passwordMatchValidator } from '../../../../../core/validators/passwordMatch.validator';
 
 @Component({
   selector: 'app-register-form',
@@ -12,7 +13,7 @@ import { RegisterRequest } from '../../../../../core/models/register-request';
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.scss'
 })
-export class RegisterFormComponent {
+export class RegisterFormComponent implements OnChanges {
   constructor(private formBuilder: FormBuilder) {}
 
   userRegisterData: RegisterRequest = {
@@ -52,27 +53,17 @@ export class RegisterFormComponent {
         Validators.pattern(/[A-Z]/), 
         Validators.pattern(/[a-z]/), 
         Validators.pattern(/[0-9]/), 
-        Validators.pattern( /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/)
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_+=])[A-Za-z\d!@#$%^&*()-_+=]{8,}$/)
       ]],
-      confirmPassword: ['', [
-        Validators.required,
-        this.passwordsMatchValidator()
+      confirmPassword: ['', [Validators.required
       ]],
       acceptedTerms: [false, [
         Validators.required,
         Validators.requiredTrue
       ]]
-    }
+    }, { validator: passwordMatchValidator }
   )
   submitted: boolean = false;
-
-
-  passwordsMatchValidator(): ValidatorFn {
-    return (control) => {
-      const doMatch = control.value === this.userRegisterData.password
-      return doMatch ? { doMatch: true } : null;
-    };
-  }
 
   get rf(): { [key: string]: AbstractControl } {
     return this.registerForm.controls;

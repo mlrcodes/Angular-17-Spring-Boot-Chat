@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RegisterRequest } from '../../models/register-request';
 import { LoginRequest } from '../../models/login-request';
+import { RegisterResponse } from '../../models/register-response';
 
 
 @Injectable({
@@ -13,12 +14,12 @@ export class AuthService {
   constructor(private httpClient: HttpClient) { }
 
 
-  register<T>(body: RegisterRequest): Observable<T> {
-    return this.httpClient.post<T>('http://localhost:8080/api/auth/register', body);
+  register<T>(body: RegisterRequest): Observable<RegisterResponse> {
+    return this.httpClient.post<T>('http://localhost:8080/api/auth/register', body) as Observable<RegisterResponse>;
   }
 
-  login<T>(body: LoginRequest): Observable<T>{
-    return this.httpClient.post<T>('http://localhost:8080/api/auth/login', body);
+  login<T>(body: LoginRequest): Observable<String>{
+    return this.httpClient.post<T>('http://localhost:8080/api/auth/login', body) as Observable<String>;
   }
 }
 

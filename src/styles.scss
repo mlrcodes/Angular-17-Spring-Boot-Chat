@@ -91,6 +91,10 @@ a {
     gap: 2rem;
 }
 
+.p-1 {
+    padding: 1rem;
+}
+
 .mb-05 {
     margin-bottom: 0.5rem;
 }
@@ -120,6 +124,17 @@ a {
 
 .invalid-feedback {
     color: #e24c4c;
+}
+
+.window {
+    background-color: #fff;
+    border: 1px solid #87ceeb;
+    border-radius: .5rem;
+    padding: 1rem;
+    min-height: 12rem;
+    max-height: 16rem;
+    overflow-y: scroll;
+    margin-bottom: 1;
 }
 
 // .submit-btn {

@@ -1,6 +1,6 @@
 package com.miguel.chatserver.DTO;
 
-import com.miguel.chatserver.VALIDATIONS.ConfirmPasswordMatchesPassword;
+import com.miguel.chatserver.VALIDATIONS.PasswordMatches;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -9,22 +9,19 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ConfirmPasswordMatchesPassword.List({
-  @ConfirmPasswordMatchesPassword(
-    password = "password",
-    confirmPassword = "confirmPassword",
-    message = "Confirm password do not match"
-  )
-})public class AuthRegisterRequest {
+@PasswordMatches
+public class AuthRegisterRequest {
 
   @NotEmpty(message = "Firstname is required")
   @NotBlank(message = "Firstname is required")
-  @Pattern(regexp = "^[a-zA-ZÁÉÍÓÚáéíóúÑñ]+(\\s[A-Za-zÁÉÍÓÚáéíóúÑñ]+)*$", message = "Must introduce a valid first name")
+  @Size(min = 2, max = 50, message = "Invalid firstname size")
+  @Pattern(regexp = "^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]+(?: [A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]+)*$", message = "Must introduce a valid firstname")
   private String firstname;
 
   @NotEmpty(message = "Surname is required")
   @NotBlank(message = "Surname is required")
-  @Pattern(regexp = "^[a-zA-ZÁÉÍÓÚáéíóúÑñ]+(\\s[A-Za-zÁÉÍÓÚáéíóúÑñ]+)*$", message = "Must introduce a valid last name")
+  @Size(min = 2, max = 50, message = "Invalid surname size")
+  @Pattern(regexp = "^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]+(?: [A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]+)*$", message = "Must introduce a valid surname")
   private String surname;
 
   @NotEmpty(message = "Phone Number is required")
@@ -34,33 +31,24 @@ import lombok.*;
 
   @NotEmpty(message = "Email is required")
   @NotBlank(message = "Email is required")
-  @Pattern(
-    regexp = "^[\\w\\.-]+@[a-zA-Z\\d\\.-]+\\.[a-zA-Z]{2,}$\n",
-    message = "Invalid email format"
-  )
+  @Email(message = "Invalid email format")
   private String email;
 
   @NotEmpty(message = "Password is required")
   @NotBlank(message = "Password is required")
   @Size(min = 8, message = "Password must be at least 8 characters long")
-  @Size(max = 16, message = "Confirm password cannot exceed 16 character")
+  @Size(max = 16, message = "Password cannot exceed 16 character")
   @Pattern(
-    regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@_#-$.%^&+=!])(?=\\S+$).*$",
-    message = "Password must contain at least one digit, one uppercase letter, one lowercase letter and one special character"
+    regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%._\\-^&+=]).{8,16}$",
+    message = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
   )
   private String password;
 
   @NotEmpty(message = "Confirm password is required")
   @NotBlank(message = "Confirm password is required")
-  @Size(min = 8, message = "Confirm password must be at least 8 characters long")
-  @Size(max = 16, message = "Confirm password cannot exceed 16 character")
-  @Pattern(
-    regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@_#-$.%^&+=!])(?=\\S+$).*$",
-    message = "Confirm password must contain at least one digit, one uppercase letter, one lowercase letter and one special character"
-  )
   private String confirmPassword;
 
-  @NotEmpty(message = "Terms have to be accepted")
+  @NotNull(message= "Terms have to be accepted")
   @AssertTrue(message = "Terms have to be accepted")
   private Boolean acceptedTerms;
 }

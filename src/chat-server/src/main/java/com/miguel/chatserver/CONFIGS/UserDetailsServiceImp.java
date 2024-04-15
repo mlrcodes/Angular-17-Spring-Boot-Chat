@@ -20,12 +20,11 @@ public class UserDetailsServiceImp implements UserDetailsService {
   private IUserService userService;
 
   @Override
-  @Transactional
   public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
     UserDetails userDetails = userService.findByPhoneNumber(phoneNumber);
     if (Objects.isNull(userDetails)) {
       throw new UsernameNotFoundException("User not found");
     }
-    else return userDetails;
+    return userDetails;
   }
 }

@@ -8,6 +8,10 @@ spring:
       ddl-auto: create-drop
     show-sql: true
     properties:
+      javax:
+        persistence:
+          validation:
+            mode: none
       hibernate:
         format_sql: true
     database: mysql

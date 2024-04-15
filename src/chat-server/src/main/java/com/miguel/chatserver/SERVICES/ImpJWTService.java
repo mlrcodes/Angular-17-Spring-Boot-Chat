@@ -44,7 +44,7 @@ public class ImpJWTService implements IJWTService {
     return generateToken(new HashMap<>(), userDetails);
   }
 
-  private String generateToken(
+  public String generateToken(
     Map<String,Object> claims,
     UserDetails userDetails
   ) {

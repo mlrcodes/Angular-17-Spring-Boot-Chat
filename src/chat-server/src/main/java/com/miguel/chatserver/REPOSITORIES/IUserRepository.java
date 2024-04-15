@@ -13,6 +13,6 @@ public interface IUserRepository extends JpaRepository<User, Integer> {
 
   public Optional<User> findByPhoneNumber(String phoneNumber);
 
-  @Query(value = "SELECT COUNT(*) > 0 FROM Users WHERE phoneNumber = :phoneNumber", nativeQuery = true)
-  public Boolean existsPhoneNumber(@Param("phoneNumber") String phoneNumber);
+  public Optional<User> findByEmail(String email);
+
 }

@@ -1,15 +1,13 @@
 package com.miguel.chatserver.MODELS;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "Contacts")
 public class Contact {
@@ -18,6 +16,10 @@ public class Contact {
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @Column(name = "contact_id")
   private Integer contactId;
+
+
+  @Column(nullable = false)
+  private String contactName;
 
   @ManyToOne
   @JoinColumn(name = "user_id")

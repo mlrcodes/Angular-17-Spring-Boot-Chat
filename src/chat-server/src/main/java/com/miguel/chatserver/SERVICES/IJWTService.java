@@ -19,6 +19,9 @@ public interface IJWTService {
   public Token saveToken(Token token);
   public String generateToken(UserDetails user);
 
+  public String generateToken(Map<String, Object> claims, UserDetails user);
+
+
   public String getPhoneNumberFromToken(String token);
 
   public boolean isTokenValid(String token, UserDetails userDetails);

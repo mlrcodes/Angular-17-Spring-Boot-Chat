@@ -1,0 +1,10 @@
+<div class="home-container">
+
+    <div class="page-title-container">
+        <h2>{{pageTitle}}</h2>
+    </div>
+
+    <app-tab-menu></app-tab-menu>
+
+    <router-outlet (titleEmmiter)="setPageTitle($event)"></router-outlet>
+</div>

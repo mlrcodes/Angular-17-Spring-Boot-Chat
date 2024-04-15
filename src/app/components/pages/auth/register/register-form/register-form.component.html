@@ -1,4 +1,4 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit($event)" class="w-75 m-auto mb-1">
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit($event)" class="mb-1">
 
     <div class="input-group mb-1">
         @if (submitted && rf['firstname'].errors) {
@@ -93,7 +93,7 @@
             @if (rf['confirmPassword'].errors['required']) {
             <small class="p-error">Confirm Password is required</small>
             }
-            @if (rf['confirmPassword'].errors['doMatch']) {
+            @if (rf['confirmPassword'].errors['passwordMismatch']) {
             <small class="p-error">Confirm Password Does Not Match</small>
             }
         </div>
