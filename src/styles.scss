@@ -1,5 +1,6 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
 
 :root {
     --lighter-blue: #add8e6;  
@@ -128,8 +129,8 @@ a {
 
 .window {
     background-color: #fff;
-    border: 1px solid #87ceeb;
-    border-radius: .5rem;
+    border: 1px solid #fff;
+    border-radius: 0 0 .5rem .5rem;
     padding: 1rem;
     min-height: 12rem;
     max-height: 16rem;

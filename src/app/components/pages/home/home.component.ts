@@ -11,9 +11,4 @@ import { TabMenuComponent } from './../../resources/tab-menu/tab-menu.component'
 })
 export class HomeComponent {
 
-  pageTitle!: string;
-
-  setPageTitle(pageTitle: any) {
-    this.pageTitle = pageTitle;
-  }
 }

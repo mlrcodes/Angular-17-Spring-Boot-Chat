@@ -1,8 +1,8 @@
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./home.component";
 import { ContactsComponent } from "./contacts/contacts.component";
-import { ChatComponent } from "./chat/chat.component";
-import { HomeLayerComponent } from "./home-layer/home-layer.component";
+import { ChatsComponent } from "./chats/chats.component";
+import { HallsComponent } from "./halls/halls.component";
 
 
 
@@ -10,13 +10,16 @@ export const HOME_ROUTES: Routes = [
     {
         path: '', component: HomeComponent, children: [
             {
-                path: '', component: HomeLayerComponent
+                path: '', component: ChatsComponent
             },
+            {
+                path: 'chats', component: ChatsComponent
+            },            
             {
                 path: 'contacts', component: ContactsComponent
             },
             {
-                path: 'chat', component: ChatComponent
+                path: 'halls', component: HallsComponent
             }
         ]
     }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { MenuItem, PrimeIcons } from 'primeng/api';
 import { TabMenuModule } from 'primeng/tabmenu';
 
 @Component({
@@ -13,29 +13,26 @@ export class TabMenuComponent {
 
   items: MenuItem[] = [
     {
-      label: 'Home',
-      icon: 'pi-icon',
-      url: '/home'
+      label: 'Chats',
+      icon: PrimeIcons.HOME,
+      routerLink: '/home'
+    },
+    {
+      label: 'Halls',
+      icon: PrimeIcons.USER,
+      routerLink: '/halls'
     },
     {
       label: 'Contacts',
-      icon: 'pi-user',
-      url: 'contacts'
+      icon: PrimeIcons.USERS,
+      routerLink: '/contacts'
     },
-    {
-      label: 'New Hall',
-      icon: 'pi-users',
-      command: () => this.displayNewHallPopup()
-    },
+
   ]
 
   activeItem: MenuItem = this.items[0]
 
   onActiveItemChange(menuItem: MenuItem) {
     this.activeItem = menuItem;
-  }
-
-  displayNewHallPopup() {
-     console.log("BIEN")
   }
 }
