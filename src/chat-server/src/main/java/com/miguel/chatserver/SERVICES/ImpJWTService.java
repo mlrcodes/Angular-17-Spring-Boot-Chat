@@ -74,13 +74,18 @@ public class ImpJWTService implements IJWTService {
 
   @Override
   public boolean isTokenValid(String token, UserDetails userDetails) {
-    final String username = getPhoneNumberFromToken(token);
-    return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
+    final String phoneNumber = getPhoneNumberFromToken(token);
+    return (phoneNumber.equals(userDetails.getUsername())&& !isTokenExpired(token));
   }
 
   @Override
   public String getPhoneNumberFromToken(String token) {
     return getClaim(token, Claims::getSubject);
+  }
+
+  @Override
+  public Date getTokenExpiration(String token) {
+    return getClaim(token, Claims::getExpiration);
   }
 
   @Override
