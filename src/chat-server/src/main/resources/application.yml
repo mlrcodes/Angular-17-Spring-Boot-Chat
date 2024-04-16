@@ -17,10 +17,6 @@ spring:
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
 
-server:
-  servlet:
-    context-path: "/api/"
-
 application:
   security:
     jwt:
