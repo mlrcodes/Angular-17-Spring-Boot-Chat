@@ -3,7 +3,6 @@ package com.miguel.chatserver.CONFIGS;
 import com.miguel.chatserver.REPOSITORIES.IUserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,7 +59,7 @@ public class AppConfig {
     final CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
     config.setAllowedOrigins(
-      Collections.singletonList("http://localhost:4200/**")
+      Collections.singletonList("http://localhost:4200")
     );
     config.setAllowedHeaders(
       Arrays.asList(

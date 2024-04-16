@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
-import { ChatsService } from '../../../../core/services/chats/chats.service';
 
 @Component({
   selector: 'app-chats',
@@ -14,15 +13,5 @@ export class ChatsComponent {
 
   constructor(
     private messageService: MessageService,
-    private chatsService: ChatsService
   ) {}
-
-  ngOnInit() {
-    this.getChats();
-  }
-
-  getChats() {
-    this.chatsService.getUserChats()
-  }
-
 }

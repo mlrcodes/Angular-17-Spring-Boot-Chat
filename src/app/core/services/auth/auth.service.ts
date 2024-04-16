@@ -21,6 +21,10 @@ export class AuthService {
   login<T>(body: LoginRequest): Observable<String>{
     return this.httpClient.post<T>('http://localhost:8080/api/auth/login', body) as Observable<String>;
   }
+
+  test<T>(): Observable<String>{
+    return this.httpClient.get<T>('http://localhost:8080/api/messages/getMessage') as Observable<String>;
+  }
 }
 
 

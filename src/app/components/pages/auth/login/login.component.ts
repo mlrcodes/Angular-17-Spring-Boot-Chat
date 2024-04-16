@@ -32,6 +32,13 @@ export class LoginComponent implements AfterViewInit {
     .subscribe({
         next: (token: String) => {
           console.log(token)
+          this.authService
+          .test()
+          .subscribe({
+            next: (mensaje: String) => {
+              console.log("CONSEGUIDO, COÑO")
+            }
+          })
         }
     })
   }

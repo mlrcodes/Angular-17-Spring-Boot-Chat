@@ -12,8 +12,8 @@ export class WebSocketsService {
 
   constructor() { }
 
-  private stompClient: any;
-  private messageSource: Subject<Message> = new Subject<Message>();
+  stompClient: any;
+  messageSource: Subject<Message> = new Subject<Message>();
   currentMessage: Observable<Message> = this.messageSource.asObservable();
 
   connect() {

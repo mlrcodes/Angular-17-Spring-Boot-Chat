@@ -11,19 +11,19 @@ import { Message } from '../../../core/models/message';
 })
 export class ChatComponent {
 
-  constructor(private webSocketService: WebSocketsService) {}
+  constructor() {}
 
   private messages: Message[] = [];
 
-  ngOnInit(): void {
-    this.webSocketService.currentMessage.subscribe(msg => {
-      if (msg) this.messages.push(msg);
-    });
-    this.webSocketService.connect();
-  }
+  // ngOnInit(): void {
+  //   this.webSocketService.currentMessage.subscribe(msg => {
+  //     if (msg) this.messages.push(msg);
+  //   });
+  //   this.webSocketService.connect();
+  // }
 
-  sendMessage(message: string): void {
-    this.webSocketService.sendMessage(message);
-  }
+  // sendMessage(message: string): void {
+  //   this.webSocketService.sendMessage(message);
+  // }
 
 }

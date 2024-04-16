@@ -8,8 +8,7 @@ import com.miguel.chatserver.MODELS.Token;
 import com.miguel.chatserver.SERVICES.IAuthenticationService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
-
   @Autowired
   private IAuthenticationService authenticationService;
 
@@ -43,15 +41,20 @@ public class AuthenticationController {
 
       ResponseCookie cookie = ResponseCookie.from("token", token.getToken())
         .httpOnly(true)
-        .sameSite("Strict")
-        .secure(true)
+        .secure(false)
         .path("/")
         .maxAge(token.getExpiresAt().getTime())
         .build();
 
       httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-      return ResponseEntity.ok().build();
+      return ResponseEntity.ok(AuthLoginResponse.builder().token(token.getToken()).build());
   }
+
+
+
+
+
+
 
 }

@@ -50,18 +50,13 @@ public class SecurityConfig {
           "/api/auth/login",
           "/api/auth/register"
           ).permitAll()
-            .anyRequest().permitAll()
+            .anyRequest().authenticated()
       )
       .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
       .authenticationProvider(authProvider)
       .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
     ;
     return http.build();
-  }
-
-  @Bean
-  public void configure(WebSecurity web) {
-    web.ignoring().requestMatchers(HttpMethod.OPTIONS, "/api/auth/login");
   }
 
 }

@@ -37,15 +37,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
 
-    if (request.getServletPath().contains("/auth")) {
+    if (request.getServletPath().contains("/api/auth")) {
       filterChain.doFilter(request, response);
       return;
     }
 
     String token = null;
-    String phoneNumber = null;
+    String phoneNumber;
 
-    if(request.getCookies() != null){
+    if(Objects.nonNull(request.getCookies())){
       for(Cookie cookie: request.getCookies()){
         if(cookie.getName().equals("token")){
           token = cookie.getValue();

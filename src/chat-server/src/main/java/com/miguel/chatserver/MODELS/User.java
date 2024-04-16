@@ -10,11 +10,11 @@ import javax.security.auth.Subject;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
@@ -48,21 +48,34 @@ public class User implements UserDetails, Principal {
   @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
   private List<Contact> contacts;
 
-  private Boolean enabled;
+
+  public User() {
+    this.contacts = new ArrayList<>();
+    this.acceptedTerms = false;
+  }
 
   public User(String firstname, String surname, String phoneNumber, String email, Boolean acceptedTerms) {
     this.firstname = firstname;
     this.surname = surname;
     this.phoneNumber = phoneNumber;
     this.email = email;
-    this.contacts = new ArrayList<Contact>();
-    this.enabled = true;
+    this.contacts = new ArrayList<>();
     this.acceptedTerms = acceptedTerms;
+  }
+
+  public User(String firstname, String surname, String phoneNumber, String email, String password, Boolean acceptedTerms, List<Contact> contacts) {
+    this.firstname = firstname;
+    this.surname = surname;
+    this.phoneNumber = phoneNumber;
+    this.email = email;
+    this.password = password;
+    this.acceptedTerms = acceptedTerms;
+    this.contacts = contacts;
   }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return null;
+    return Collections.emptyList();
   }
 
   @Override
@@ -81,7 +94,7 @@ public class User implements UserDetails, Principal {
 
   @Override
   public boolean isAccountNonLocked() {
-    return false;
+    return true;
   }
 
   @Override
@@ -91,13 +104,9 @@ public class User implements UserDetails, Principal {
 
   @Override
   public boolean isEnabled() {
-    return enabled;
+    return true;
   }
 
-
-  private String getFullName() {
-    return firstname + " " + surname;
-  }
 
   @Override
   public String getName() {
