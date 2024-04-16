@@ -4,12 +4,16 @@ import com.miguel.chatserver.DTO.AuthLoginRequest;
 import com.miguel.chatserver.DTO.AuthLoginResponse;
 import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.AuthRegisterResponse;
+import com.miguel.chatserver.MODELS.Token;
 import com.miguel.chatserver.SERVICES.IAuthenticationService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +25,9 @@ public class AuthenticationController {
   @Autowired
   private IAuthenticationService authenticationService;
 
+  @Autowired
+  private HttpServletResponse httpServletResponse;
+
   @PostMapping("/register")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<AuthRegisterResponse> register (
@@ -30,10 +37,22 @@ public class AuthenticationController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<AuthLoginResponse> login (
+  public ResponseEntity<?> login (
     @Valid @RequestBody AuthLoginRequest request
   ) {
-    return ResponseEntity.ok(authenticationService.login(request));
+    Token token = authenticationService.login(request);
+
+      ResponseCookie cookie = ResponseCookie.from("token", token.getToken())
+        .httpOnly(true)
+        .sameSite("Strict")
+        .secure(true)
+        .path("/")
+        .maxAge(token.getExpiresAt().getTime())
+        .build();
+
+      httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+      return ResponseEntity.ok().build();
   }
 
 }

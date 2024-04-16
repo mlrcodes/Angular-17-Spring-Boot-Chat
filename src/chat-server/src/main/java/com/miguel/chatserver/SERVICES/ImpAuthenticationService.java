@@ -1,23 +1,24 @@
 package com.miguel.chatserver.SERVICES;
 
 import com.miguel.chatserver.DTO.AuthLoginRequest;
-import com.miguel.chatserver.DTO.AuthLoginResponse;
 import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.AuthRegisterResponse;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectAlreadyExists;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MODELS.User;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import com.miguel.chatserver.MODELS.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -68,7 +69,7 @@ public class ImpAuthenticationService implements IAuthenticationService{
   }
 
   @Override
-  public AuthLoginResponse login(AuthLoginRequest request) {
+  public Token login(AuthLoginRequest request) {
 
     Authentication auth = authenticationManager.authenticate(
       new UsernamePasswordAuthenticationToken(
@@ -76,13 +77,20 @@ public class ImpAuthenticationService implements IAuthenticationService{
         request.getPassword()
       )
     );
-    var claims = new HashMap<String, Object>();
-    var user = ((User) auth.getPrincipal());
-    var jwt = jwtService.generateToken(claims, user);
+    if (Objects.isNull(auth)) {
+      throw new ExceptionObjectNotFound("Authentication failed. Bad credentials.");
+    }
 
-    return AuthLoginResponse
+    Map<String, Object> claims = new HashMap<String, Object>();
+    User user = ((User) auth.getPrincipal());
+    String jwt = jwtService.generateToken(claims, user);
+
+    return Token
       .builder()
-        .token(jwt)
+      .token(jwt)
+      .createdAt(jwtService.getTokenIssuedAt(jwt))
+      .expiresAt(jwtService.getTokenExpiration(jwt))
+      .user(user)
       .build();
   }
 }

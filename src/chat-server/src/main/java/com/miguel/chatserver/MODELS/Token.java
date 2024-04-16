@@ -7,9 +7,11 @@ import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -21,17 +23,15 @@ public class Token {
 
   private String token;
 
-  private LocalDateTime createdAt;
+  private Date createdAt;
 
-  private LocalDateTime expiresAt;
-
-  private LocalDateTime validatedAt;
+  private Date expiresAt;
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  public Token(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
+  public Token(String token, Date createdAt, Date expiresAt, User user) {
     this.token = token;
     this.createdAt = createdAt;
     this.expiresAt = expiresAt;

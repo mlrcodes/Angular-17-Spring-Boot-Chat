@@ -28,7 +28,9 @@ public interface IJWTService {
 
   public Date getTokenExpiration(String token);
 
-  public boolean isTokenValid(String token, UserDetails userDetails);
+  public Date getTokenIssuedAt(String token);
+
+    public boolean isTokenValid(String token, UserDetails userDetails);
 
 
   public <T> T getClaim(String token, Function<Claims,T> claimsResolver);

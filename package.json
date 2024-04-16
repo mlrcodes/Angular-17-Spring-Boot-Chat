@@ -18,10 +18,12 @@
     "@angular/platform-browser": "^17.1.0",
     "@angular/platform-browser-dynamic": "^17.1.0",
     "@angular/router": "^17.1.0",
+    "angular-websocket": "^2.0.1",
     "icons": "^1.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^17.13.0",
     "rxjs": "~7.8.0",
+    "socket.io-client": "^4.7.5",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
   },

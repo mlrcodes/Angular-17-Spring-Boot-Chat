@@ -20,8 +20,7 @@ public class Message {
   private Integer messageId;
 
   @ManyToOne
-  @JoinColumn(name = "user_id")
-  @Column(nullable = false)
+  @JoinColumn(name = "user_id", nullable = false)
   private User sender;
 
   @Column(nullable = false)
