@@ -4,11 +4,10 @@ import com.miguel.chatserver.DTO.AuthLoginRequest;
 import com.miguel.chatserver.DTO.AuthLoginResponse;
 import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.AuthRegisterResponse;
-import com.miguel.chatserver.MODELS.Token;
 import com.miguel.chatserver.SERVICES.IAuthenticationService;
+import com.miguel.chatserver.SERVICES.IJWTService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +24,9 @@ public class AuthenticationController {
   @Autowired
   private HttpServletResponse httpServletResponse;
 
+  @Autowired
+  private IJWTService jwtService;
+
   @PostMapping("/register")
   @ResponseStatus(HttpStatus.OK)
   public ResponseEntity<AuthRegisterResponse> register (
@@ -35,20 +37,21 @@ public class AuthenticationController {
 
   @PostMapping("/login")
   public ResponseEntity<?> login (
-    @Valid @RequestBody AuthLoginRequest request
+    @Valid @RequestBody AuthLoginRequest request,
+    HttpServletResponse response
   ) {
-    Token token = authenticationService.login(request);
+    String jwt = authenticationService.login(request);
 
-      ResponseCookie cookie = ResponseCookie.from("token", token.getToken())
-        .httpOnly(true)
+      ResponseCookie cookie = ResponseCookie.from("token", jwt)
+        .httpOnly(false)
         .secure(false)
         .path("/")
-        .maxAge(token.getExpiresAt().getTime())
+        .maxAge(jwtService.getTokenExpiration(jwt).getTime())
         .build();
 
       httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-      return ResponseEntity.ok(AuthLoginResponse.builder().token(token.getToken()).build());
+      return ResponseEntity.ok(AuthLoginResponse.builder().token(jwt).build());
   }
 
 

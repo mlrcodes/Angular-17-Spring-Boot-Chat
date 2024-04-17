@@ -6,9 +6,7 @@ import com.miguel.chatserver.DTO.AuthRegisterResponse;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectAlreadyExists;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MODELS.User;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import com.miguel.chatserver.MODELS.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -69,7 +67,7 @@ public class ImpAuthenticationService implements IAuthenticationService{
   }
 
   @Override
-  public Token login(AuthLoginRequest request) {
+  public String login(AuthLoginRequest request) {
 
     Authentication auth = authenticationManager.authenticate(
       new UsernamePasswordAuthenticationToken(
@@ -85,12 +83,6 @@ public class ImpAuthenticationService implements IAuthenticationService{
     User user = ((User) auth.getPrincipal());
     String jwt = jwtService.generateToken(claims, user);
 
-    return Token
-      .builder()
-      .token(jwt)
-      .createdAt(jwtService.getTokenIssuedAt(jwt))
-      .expiresAt(jwtService.getTokenExpiration(jwt))
-      .user(user)
-      .build();
+    return jwt;
   }
 }

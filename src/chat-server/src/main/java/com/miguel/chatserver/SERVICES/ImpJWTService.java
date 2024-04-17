@@ -1,10 +1,6 @@
 package com.miguel.chatserver.SERVICES;
 
-import com.miguel.chatserver.MODELS.Token;
-import com.miguel.chatserver.REPOSITORIES.ITokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +12,6 @@ import java.util.function.Function;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
@@ -29,15 +24,6 @@ public class ImpJWTService implements IJWTService {
 
   @Value("${application.security.jwt.expiration}")
   private Long jwtExpiration;
-
-  @Autowired
-  private ITokenRepository tokenRepository;
-
-
-  @Override
-  public Token saveToken(Token token) {
-    return this.tokenRepository.save(token);
-  }
 
   @Override
   public String generateToken(UserDetails userDetails) {
@@ -56,17 +42,12 @@ public class ImpJWTService implements IJWTService {
     UserDetails userDetails,
     Long jwtExpiration
   ) {
-    var authorities = userDetails.getAuthorities()
-      .stream()
-      .map(GrantedAuthority::getAuthority)
-      .toList();
     return Jwts
       .builder()
       .setClaims(extraClaims)
       .setSubject(userDetails.getUsername())
       .setIssuedAt(new Date(System.currentTimeMillis()))
       .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-      .claim("authorities", authorities)
       .signWith(getSignInKey())
       .compact();
   }

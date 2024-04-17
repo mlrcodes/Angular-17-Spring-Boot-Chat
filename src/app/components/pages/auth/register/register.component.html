@@ -3,7 +3,8 @@
         <h2>Register</h2>
     </div>
 
-    
+    <p-messages [enableService]="true" [closable]="false"></p-messages>
+
     <div class="register-form-container">
         <app-register-form (registerRequest)="sendRegisterRequest($event)"></app-register-form>
     </div>

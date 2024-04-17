@@ -49,7 +49,6 @@ export class LoginFormComponent {
       password: password || ''
     });
 
-    console.log(JSON.stringify(this.loginForm.value, null, 2));
   }
 
   ngOnChanges() {

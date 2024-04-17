@@ -45,6 +45,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     String token = null;
     String phoneNumber;
 
+
+
     if(Objects.nonNull(request.getCookies())){
       for(Cookie cookie: request.getCookies()){
         if(cookie.getName().equals("token")){
