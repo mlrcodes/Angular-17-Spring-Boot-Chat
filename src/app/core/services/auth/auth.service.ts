@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { RegisterRequest } from '../../models/register-request';
 import { LoginRequest } from '../../models/login-request';
 import { RegisterResponse } from '../../models/register-response';
+import { LoginResponse } from '../../models/login-response';
 
 
 @Injectable({
@@ -18,13 +19,15 @@ export class AuthService {
     return this.httpClient.post<T>('http://localhost:8080/api/auth/register', body) as Observable<RegisterResponse>;
   }
 
-  login<T>(body: LoginRequest): Observable<any>{
-    return this.httpClient.post<T>('http://localhost:8080/api/auth/login', body, { observe: 'response' });
+  login<T>(body: LoginRequest): Observable<LoginResponse>{
+    return this.httpClient.post<T>('http://localhost:8080/api/auth/login', body) as Observable<LoginResponse>;
   }
 
   test<T>(): Observable<any>{
-    return this.httpClient.get<T>('http://localhost:8080/api/messages/getMessage',  { withCredentials: true });
+    return this.httpClient.get<T>('http://localhost:8080/api/messages/getMessage');
   }
+
+  
 }
 
 

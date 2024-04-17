@@ -1,5 +1,7 @@
 package com.miguel.chatserver.CONFIGS;
 
+import com.miguel.chatserver.MODELS.User;
+import com.miguel.chatserver.MODELS.UserPrincipal;
 import com.miguel.chatserver.SERVICES.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.LoggerFactory;
@@ -25,10 +27,18 @@ public class UserDetailsServiceImp implements UserDetailsService {
   public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
     logger.debug("Entering in loadUserByUsername Method...");
 
-    UserDetails userDetails = userService.findByPhoneNumber(phoneNumber);
-    if (Objects.isNull(userDetails)) {
-      logger.error("Username not found: " + phoneNumber);
+    User user = userService.findByPhoneNumber(phoneNumber);
 
+    if (Objects.isNull(user)) {
+      throw new UsernameNotFoundException("User not found");
+    }
+
+    UserDetails userDetails = UserPrincipal
+      .builder()
+      .user(user)
+      .build();
+
+    if (Objects.isNull(userDetails)) {
       throw new UsernameNotFoundException("User not found");
     }
 

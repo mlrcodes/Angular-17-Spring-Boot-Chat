@@ -1,7 +1,6 @@
 package com.miguel.chatserver.DTO;
 
 import lombok.*;
-
 @Getter
 @Setter
 @Builder

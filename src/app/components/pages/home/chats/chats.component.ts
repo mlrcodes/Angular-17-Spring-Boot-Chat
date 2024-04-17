@@ -8,6 +8,7 @@ import { ChatsService } from '../../../../core/services/chats/chats.service';
   selector: 'app-chats',
   standalone: true,
   imports: [MessagesModule],
+  providers: [MessageService],
   templateUrl: './chats.component.html',
   styleUrl: './chats.component.scss'
 })
@@ -26,8 +27,10 @@ export class ChatsComponent {
     .subscribe({
       next: (chats: Chat[]) => {
         this.userChats = chats;
+        console.log(chats)
       },
       error: (error: Error) => {
+        console.log(error)
         this.notifyChatsError(error);
       }
     })
@@ -35,5 +38,9 @@ export class ChatsComponent {
 
   notifyChatsError(error: Error) {
     this.messageService.add({ severity: 'danger', summary: error.message });
+  }
+
+  ngOnInit() {
+    this.getUserChats()
   }
 }

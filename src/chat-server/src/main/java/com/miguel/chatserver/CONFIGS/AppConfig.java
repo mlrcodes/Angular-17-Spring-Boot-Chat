@@ -19,9 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AppConfig {
 
   @Autowired
-  private IUserRepository userRepository;
-
-  @Autowired
   private UserDetailsServiceImp userDetailsService;
 
 

@@ -3,7 +3,6 @@ package com.miguel.chatserver.CONFIGS;
 import com.miguel.chatserver.SERVICES.IJWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -36,42 +35,35 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @NonNull HttpServletResponse response,
     @NonNull FilterChain filterChain
   ) throws ServletException, IOException {
-
     if (request.getServletPath().contains("/api/auth")) {
       filterChain.doFilter(request, response);
       return;
     }
+    final String authHeader = request.getHeader("Authorization");
+    final String jwt;
+    final String phoneNumber;
 
-    String token = null;
-    String phoneNumber;
-
-
-
-    if(Objects.nonNull(request.getCookies())){
-      for(Cookie cookie: request.getCookies()){
-        if(cookie.getName().equals("token")){
-          token = cookie.getValue();
-        }
-      }
-    }
-
-    if(Objects.isNull(token)){
+    if (Objects.isNull(authHeader) || !authHeader.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
+    jwt = authHeader.substring(7);
+    phoneNumber = jwtService.getPhoneNumberFromToken(jwt);
+    if (Objects.nonNull(phoneNumber)&& Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
+      UserDetails userDetails = this.userDetailsService.loadUserByUsername(phoneNumber);
 
-    phoneNumber = jwtService.getPhoneNumberFromToken(token);
-
-    if(Objects.nonNull(phoneNumber)){
-      UserDetails userDetails = userDetailsService.loadUserByUsername(phoneNumber);
-      if(jwtService.isTokenValid(token, userDetails)){
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+      if (jwtService.isTokenValid(jwt, userDetails)) {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+          userDetails,
+          null,
+          userDetails.getAuthorities()
+        );
+        authToken.setDetails(
+          new WebAuthenticationDetailsSource().buildDetails(request)
+        );
+        SecurityContextHolder.getContext().setAuthentication(authToken);
       }
-
     }
-
     filterChain.doFilter(request, response);
   }
 }

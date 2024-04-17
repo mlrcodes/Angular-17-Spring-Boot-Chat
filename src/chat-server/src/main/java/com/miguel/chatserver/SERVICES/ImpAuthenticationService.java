@@ -1,11 +1,13 @@
 package com.miguel.chatserver.SERVICES;
 
 import com.miguel.chatserver.DTO.AuthLoginRequest;
+import com.miguel.chatserver.DTO.AuthLoginResponse;
 import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.AuthRegisterResponse;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectAlreadyExists;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MODELS.User;
+import com.miguel.chatserver.MODELS.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,7 +69,7 @@ public class ImpAuthenticationService implements IAuthenticationService{
   }
 
   @Override
-  public String login(AuthLoginRequest request) {
+  public AuthLoginResponse login(AuthLoginRequest request) {
 
     Authentication auth = authenticationManager.authenticate(
       new UsernamePasswordAuthenticationToken(
@@ -79,10 +81,9 @@ public class ImpAuthenticationService implements IAuthenticationService{
       throw new ExceptionObjectNotFound("Authentication failed. Bad credentials.");
     }
 
-    Map<String, Object> claims = new HashMap<String, Object>();
-    User user = ((User) auth.getPrincipal());
-    String jwt = jwtService.generateToken(claims, user);
+    UserPrincipal user = ((UserPrincipal) auth.getPrincipal());
+    String jwt = jwtService.generateToken(user);
 
-    return jwt;
+    return new AuthLoginResponse(jwt);
   }
 }

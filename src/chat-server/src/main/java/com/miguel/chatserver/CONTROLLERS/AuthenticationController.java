@@ -9,9 +9,7 @@ import com.miguel.chatserver.SERVICES.IJWTService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,22 +31,11 @@ public class AuthenticationController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<?> login (
+  public ResponseEntity<AuthLoginResponse> login (
     @Valid @RequestBody AuthLoginRequest request,
     HttpServletResponse response
   ) {
-    String jwt = authenticationService.login(request);
-
-      ResponseCookie cookie = ResponseCookie.from("token", jwt)
-        .httpOnly(true)
-        .secure(false)
-        .path("/")
-        .maxAge(jwtService.getTokenExpiration(jwt).getTime())
-        .build();
-
-      response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
-      return ResponseEntity.ok(AuthLoginResponse.builder().token(jwt).build());
+      return ResponseEntity.ok(authenticationService.login(request));
   }
 
 

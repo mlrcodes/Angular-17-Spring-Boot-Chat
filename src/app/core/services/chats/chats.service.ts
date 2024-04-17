@@ -12,7 +12,7 @@ export class ChatsService {
     private httpClient: HttpClient
   ) { }
 
-  private baseURL: string = 'http://localhost:8080/api/chats/'
+  private baseURL: string = 'http://localhost:8080/api/chats'
 
   getUserChats<T>(): Observable<Chat[]> {
     return this.httpClient.get<T>(this.baseURL) as Observable<Chat[]>;

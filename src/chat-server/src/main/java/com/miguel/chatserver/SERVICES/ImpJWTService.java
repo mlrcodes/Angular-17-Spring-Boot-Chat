@@ -1,5 +1,6 @@
 package com.miguel.chatserver.SERVICES;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,11 @@ public class ImpJWTService implements IJWTService {
 
   @Value("${application.security.jwt.expiration}")
   private Long jwtExpiration;
+
+  @Override
+  public String getTokenFromRequestHeaders(HttpServletRequest request) {
+    return request.getHeader("Authorization").substring(7);
+  }
 
   @Override
   public String generateToken(UserDetails userDetails) {
@@ -67,11 +73,6 @@ public class ImpJWTService implements IJWTService {
   @Override
   public Date getTokenExpiration(String token) {
     return getClaim(token, Claims::getExpiration);
-  }
-
-  @Override
-  public Date getTokenIssuedAt(String token) {
-    return getClaim(token, Claims::getIssuedAt);
   }
 
   @Override

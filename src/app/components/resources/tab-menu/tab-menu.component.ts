@@ -15,7 +15,7 @@ export class TabMenuComponent {
     {
       label: 'Chats',
       icon: PrimeIcons.HOME,
-      routerLink: '/home'
+      routerLink: '/chats'
     },
     {
       label: 'Halls',
@@ -26,8 +26,7 @@ export class TabMenuComponent {
       label: 'Contacts',
       icon: PrimeIcons.USERS,
       routerLink: '/contacts'
-    },
-
+    }
   ]
 
   activeItem: MenuItem = this.items[0]
