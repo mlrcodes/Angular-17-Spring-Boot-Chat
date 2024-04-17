@@ -2,7 +2,6 @@ import { Component, AfterViewInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { LoginFormComponent } from './login-form/login-form.component';
-import { CookieService } from 'ngx-cookie-service';
 import { LoginRequest } from '../../../../core/models/login-request';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { DataSharingService } from '../../../../core/services/data-sharing/data-sharing.service';
@@ -22,7 +21,6 @@ export class LoginComponent implements AfterViewInit {
   constructor(
     private messageService: MessageService,
     private authService: AuthService,
-    private cookiesService: CookieService,
     private dataSharingService: DataSharingService
   ) {}
 
@@ -32,16 +30,8 @@ export class LoginComponent implements AfterViewInit {
     this.authService
     .login(loginRequest)
     .subscribe({
-        next: (token: String) => {
-          console.log(token)
-
-          this.authService
-          .test()
-          .subscribe({
-            next: (mensaje: String) => {
-              console.log("CONSEGUIDO, COÑO")
-            }
-          })
+        next: (res: any) => {
+          console.log(res.headers)
         }
     })
   }

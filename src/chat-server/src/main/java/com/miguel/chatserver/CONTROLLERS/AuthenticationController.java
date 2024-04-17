@@ -22,9 +22,6 @@ public class AuthenticationController {
   private IAuthenticationService authenticationService;
 
   @Autowired
-  private HttpServletResponse httpServletResponse;
-
-  @Autowired
   private IJWTService jwtService;
 
   @PostMapping("/register")
@@ -43,13 +40,13 @@ public class AuthenticationController {
     String jwt = authenticationService.login(request);
 
       ResponseCookie cookie = ResponseCookie.from("token", jwt)
-        .httpOnly(false)
+        .httpOnly(true)
         .secure(false)
         .path("/")
         .maxAge(jwtService.getTokenExpiration(jwt).getTime())
         .build();
 
-      httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+      response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
       return ResponseEntity.ok(AuthLoginResponse.builder().token(jwt).build());
   }
