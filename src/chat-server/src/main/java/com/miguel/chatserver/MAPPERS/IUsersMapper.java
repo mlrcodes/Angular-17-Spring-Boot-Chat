@@ -1,5 +1,6 @@
 package com.miguel.chatserver.MAPPERS;
 
+import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.UserDTO;
 import com.miguel.chatserver.MODELS.User;
 
@@ -13,4 +14,6 @@ public interface IUsersMapper {
   public UserDTO createUserDTOFromUser(User user);
 
   public List<UserDTO> createUserDTOListFromUserList(List<User> userList);
+
+  public User createUserFromRegisterRequest(AuthRegisterRequest request);
 }

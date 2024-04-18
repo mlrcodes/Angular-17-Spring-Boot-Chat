@@ -6,6 +6,7 @@ import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.AuthRegisterResponse;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectAlreadyExists;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
+import com.miguel.chatserver.MAPPERS.IUsersMapper;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.MODELS.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,9 @@ public class ImpAuthenticationService implements IAuthenticationService{
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  @Autowired
+  private IUsersMapper usersMapper;
+
   @Override
   public AuthRegisterResponse register(AuthRegisterRequest request) {
     String phoneNumber = request.getPhoneNumber();
@@ -54,7 +58,7 @@ public class ImpAuthenticationService implements IAuthenticationService{
       throw new ExceptionObjectAlreadyExists("Phone Number Already In Use");
     }
 
-    User user = this.userService.createUserFromRegisterRequest(request);
+    User user = usersMapper.createUserFromRegisterRequest(request);
     user.setPassword(passwordEncoder.encode(request.getPassword()));
     try {
       this.userService.registerUser(user);

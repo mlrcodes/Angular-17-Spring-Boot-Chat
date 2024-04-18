@@ -18,4 +18,9 @@ export class ContactsService {
   getUserContacts<T>(): Observable<Contact[]> {
     return this.httpClient.get<T>(this.baseURL) as Observable<Contact[]>;
   }
+
+  addContact<T>(body: Contact): Observable<Contact[]> {
+    return this.httpClient.post<T>(this.baseURL, body) as Observable<Contact[]>;
+  }
+
 }

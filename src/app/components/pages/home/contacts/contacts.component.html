@@ -2,4 +2,13 @@
 
     <p-messages [enableService]="true" [closable]="false"></p-messages>
 
+    <p-menubar>
+        <ng-template pTemplate="end">
+                <p-inputGroup class="input-group">
+                    <input pInputText placeholder="PhoneNumber" [(ngModel)]="phoneNumber" />
+                    <button type="button" pButton icon="pi pi-search" (click)="searchUser()"></button>
+                </p-inputGroup>
+        </ng-template>
+    </p-menubar>
+
 </div>

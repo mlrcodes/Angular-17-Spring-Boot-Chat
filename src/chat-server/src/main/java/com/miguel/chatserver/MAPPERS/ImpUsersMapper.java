@@ -1,5 +1,6 @@
 package com.miguel.chatserver.MAPPERS;
 
+import com.miguel.chatserver.DTO.AuthRegisterRequest;
 import com.miguel.chatserver.DTO.UserDTO;
 import com.miguel.chatserver.MODELS.User;
 import lombok.AllArgsConstructor;
@@ -54,5 +55,16 @@ public class ImpUsersMapper implements IUsersMapper {
       );
     }
     return userDTOList;
+  }
+
+  @Override
+  public User createUserFromRegisterRequest(AuthRegisterRequest request) {
+    return User.builder()
+      .firstname(request.getFirstname())
+      .surname(request.getSurname())
+      .phoneNumber(request.getPhoneNumber())
+      .email(request.getEmail())
+      .acceptedTerms(request.getAcceptedTerms())
+      .build();
   }
 }

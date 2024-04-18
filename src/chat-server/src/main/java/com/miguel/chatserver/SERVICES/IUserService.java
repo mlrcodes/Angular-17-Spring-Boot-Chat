@@ -9,10 +9,11 @@ import java.util.List;
 public interface IUserService {
   public User registerUser(User user);
 
+  public UserDTO getUserByPhoneNumber(String phoneNumber);
+
   public User findByPhoneNumber(String phoneNumber);
 
 
   public User findByEmail(String phoneNumber);
 
-  public User createUserFromRegisterRequest(AuthRegisterRequest request);
 }
