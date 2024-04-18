@@ -22,11 +22,11 @@ public class Contact {
   private String contactName;
 
   @ManyToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "user_id", nullable = false)
   private User owner;
 
-  @OneToOne
-  @JoinColumn(name = "contact_id", insertable = false, updatable = false)
+  @ManyToOne
+  @JoinColumn(name = "contact_user_id", nullable = false)
   private User contactUser;
 
 }

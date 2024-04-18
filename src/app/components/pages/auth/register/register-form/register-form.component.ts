@@ -26,7 +26,7 @@ export class RegisterFormComponent implements OnChanges {
     acceptedTerms: false
   }
 
-  @Output() registerRequest = new EventEmitter<RegisterRequest>();
+  @Output() registerRequest: EventEmitter<RegisterRequest> = new EventEmitter<RegisterRequest>();
 
   registerForm = this.formBuilder.group(
     {

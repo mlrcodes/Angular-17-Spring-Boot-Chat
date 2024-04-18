@@ -18,7 +18,7 @@ export class UsersService {
   searchUser<T>(phoneNumber: string): Observable<User> {
     return this.httpClient.get<T>(this.baseURL, {
       params: {
-        phone: phoneNumber
+        phoneNumber: phoneNumber
       }
     }) as Observable<User>;
   }

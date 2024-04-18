@@ -1,0 +1,60 @@
+<p-dialog header="Add New Contact" [(visible)]="visible" [style]="{width: '50vw'}">
+    <form [formGroup]="addContactForm" (ngSubmit)="onSubmit($event)" class="mb-1">
+
+        <div class="input-group mb-1">
+
+            @if (submitted && cf['contactName'].errors) {
+                <div class="text-left mb-05">
+                    @if (cf['contactName'].errors['required']) {
+                    <small class="p-error">Contact Name is required</small>
+                    }
+                    @if (cf['contactName'].errors['pattern']) {
+                    <small class="p-error">Invalid Contact Name</small>
+                    }
+                </div>
+            }
+            <input pInputText type="text" formControlName="contactName" placeholder="Contact Name" [disabled]="true" class="w-100">
+        </div>
+
+        <div class="input-group mb-1">
+            <input pInputText type="text" formControlName="firstname" [value]="cf['firstname']" [disabled]="true" class="w-100">
+        </div>
+    
+        <div class="input-group mb-1">    
+            <input pInputText type="text" formControlName="surname" [value]="cf['surname']" [disabled]="true" class="w-100">
+        </div>
+    
+        <div class="input-group mb-1">
+            <input pInputText type="text" formControlName="phoneNumber" [value]="cf['phoneNumber']" [disabled]="true" class="w-100">
+        </div>
+    
+    
+        <div class="input-group mb-1">
+            <input pInputText type="text" formControlName="email" [value]="cf['email']" [disabled]="true" class="w-100">
+        </div>
+    
+        <div class="mb-1">
+            <button pButton type="submit" label="Submit" class="w-100"></button>
+        </div>
+    </form>
+</p-dialog>
+
+<p-menubar>
+    <ng-template pTemplate="end">
+            <p-inputGroup class="input-group">
+
+                @if (submitted && cf['contactName'].errors) {
+                    <div class="text-left mb-05">
+                        @if (cf['contactName'].errors['required']) {
+                        <small class="p-error">Contact Name is required</small>
+                        }
+                        @if (cf['contactName'].errors['pattern']) {
+                        <small class="p-error">Invalid Contact Name</small>
+                        }
+                    </div>
+                }
+                <input pInputText placeholder="Phone Number" [(ngModel)]="phoneNumber" />
+                <button type="button" pButton icon="pi pi-search" (click)="searchUser()"></button>
+            </p-inputGroup>
+    </ng-template>
+</p-menubar>

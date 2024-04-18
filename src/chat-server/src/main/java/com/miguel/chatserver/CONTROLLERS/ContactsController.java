@@ -1,15 +1,14 @@
 package com.miguel.chatserver.CONTROLLERS;
 
 import com.miguel.chatserver.DTO.ContactDTO;
+import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.SERVICES.IContactService;
 import com.miguel.chatserver.SERVICES.IJWTService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,6 +29,19 @@ public class ContactsController {
   ) {
     return ResponseEntity.ok(
       contactService.getUserContacts(
+        jwtService.getTokenFromRequestHeaders(request)
+      )
+    );
+  }
+
+  @PostMapping()
+  private ResponseEntity<ContactDTO> addContact(
+    @RequestBody ContactDTO contactDTO,
+    HttpServletRequest request
+  ) {
+    return ResponseEntity.ok(
+      contactService.createContact(
+        contactDTO,
         jwtService.getTokenFromRequestHeaders(request)
       )
     );

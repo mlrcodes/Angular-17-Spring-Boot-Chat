@@ -16,7 +16,6 @@ public class ContactDTO {
   @Pattern(regexp = "^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]+(?: [A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ]+)*$", message = "Must introduce a valid contact name")
   private String contactName;
 
-  @NotNull
   private UserDTO owner;
 
   @NotNull
