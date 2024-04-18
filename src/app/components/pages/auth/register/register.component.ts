@@ -7,6 +7,7 @@ import { RegisterRequest } from '../../../../core/models/register-request';
 import { Router } from '@angular/router';
 import { RegisterResponse } from '../../../../core/models/register-response';
 import { DataSharingService } from '../../../../core/services/data-sharing/data-sharing.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -33,13 +34,18 @@ export class RegisterComponent {
           this.router.navigate(["/auth/login"]);
           this.dataSharingService.notifyRegistrationSuccess(registerResponse);
         },
-        error: (error: Error) => {
+        error: (error: HttpErrorResponse) => {
           this.notifyRegistrationError(error)
         }
     })
   }
 
-  notifyRegistrationError(error: Error) {
-    this.messageService.add({ severity: 'danger', summary: error.message });
+  notifyRegistrationError(error: HttpErrorResponse) {
+    console.log(error.status)
+    if (error.status === 0) {
+      this.messageService.add({ severity: 'error', summary: 'Error: ', detail: "Unable to connect the server" });
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error: ', detail: error.error.message });
+    }
   }
 }

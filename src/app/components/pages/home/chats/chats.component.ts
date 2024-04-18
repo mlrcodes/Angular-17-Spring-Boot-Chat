@@ -3,6 +3,7 @@ import { MessageService } from 'primeng/api';
 import { MessagesModule } from 'primeng/messages';
 import { Chat } from '../../../../core/models/chat';
 import { ChatsService } from '../../../../core/services/chats/chats.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-chats',
@@ -29,15 +30,19 @@ export class ChatsComponent {
         this.userChats = chats;
         console.log(chats)
       },
-      error: (error: Error) => {
+      error: (error: HttpErrorResponse) => {
         console.log(error)
         this.notifyChatsError(error);
       }
     })
   }
 
-  notifyChatsError(error: Error) {
-    this.messageService.add({ severity: 'danger', summary: error.message });
+  notifyChatsError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      this.messageService.add({ severity: 'info', summary: 'Error: ', detail: "Unable to connect the server" });
+    } else {
+      this.messageService.add({ severity: 'info', summary: 'Info: ', detail: error.error.message });
+    }  
   }
 
   ngOnInit() {

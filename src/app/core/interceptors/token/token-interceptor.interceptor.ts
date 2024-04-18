@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { HttpRequest, HttpEvent, HttpInterceptorFn, HttpHandlerFn } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TokenService } from '../services/token/token.service';
+import { TokenService } from '../../services/token/token.service';
 
 export const tokenInterceptor: HttpInterceptorFn = (
   req: HttpRequest<any>,

@@ -15,12 +15,4 @@ public interface IUserService {
   public User findByEmail(String phoneNumber);
 
   public User createUserFromRegisterRequest(AuthRegisterRequest request);
-
-  public User createUserFromDTO(UserDTO userDTO);
-
-  public List<User> createUserListFromDTOList(List<UserDTO> userDTOList);
-
-  public UserDTO createUserDTOFromUser(User user);
-
-  public List<UserDTO> createUserDTOListFromUserList(List<User> userList);
 }

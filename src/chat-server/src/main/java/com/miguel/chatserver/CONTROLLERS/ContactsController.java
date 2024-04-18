@@ -1,7 +1,7 @@
 package com.miguel.chatserver.CONTROLLERS;
 
-import com.miguel.chatserver.DTO.ChatDTO;
-import com.miguel.chatserver.SERVICES.IChatsService;
+import com.miguel.chatserver.DTO.ContactDTO;
+import com.miguel.chatserver.SERVICES.IContactService;
 import com.miguel.chatserver.SERVICES.IJWTService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,22 +14,22 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chats")
+@RequestMapping("/api/contacts")
 @RequiredArgsConstructor
-public class ChatsController {
+public class ContactsController {
 
   @Autowired
-  private IChatsService chatsService;
+  private IContactService contactService;
 
   @Autowired
   private IJWTService jwtService;
 
   @GetMapping()
-  private ResponseEntity<List<ChatDTO>> getUserChats(
+  private ResponseEntity<List<ContactDTO>> getUserChats(
     HttpServletRequest request
   ) {
     return ResponseEntity.ok(
-      chatsService.getUserChats(
+      contactService.getUserContacts(
         jwtService.getTokenFromRequestHeaders(request)
       )
     );

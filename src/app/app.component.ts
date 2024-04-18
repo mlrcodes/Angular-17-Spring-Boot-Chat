@@ -10,5 +10,4 @@ import { AuthComponent } from './components/pages/auth/auth.component';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'chat';
 }

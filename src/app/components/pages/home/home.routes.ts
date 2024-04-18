@@ -10,7 +10,7 @@ export const HOME_ROUTES: Routes = [
     {
         path: '', component: HomeComponent, children: [
             {
-                path: '', component: ChatsComponent
+                path: '', redirectTo: 'chats', pathMatch: 'full'
             },
             {
                 path: 'chats', component: ChatsComponent

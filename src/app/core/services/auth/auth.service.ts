@@ -16,15 +16,12 @@ export class AuthService {
 
 
   register<T>(body: RegisterRequest): Observable<RegisterResponse> { 
-    return this.httpClient.post<T>('http://localhost:8080/api/auth/register', body) as Observable<RegisterResponse>;
+    return this.httpClient
+      .post<T>('http://localhost:8080/api/auth/register', body) as Observable<RegisterResponse>;
   }
 
   login<T>(body: LoginRequest): Observable<LoginResponse>{
     return this.httpClient.post<T>('http://localhost:8080/api/auth/login', body) as Observable<LoginResponse>;
-  }
-
-  test<T>(): Observable<any>{
-    return this.httpClient.get<T>('http://localhost:8080/api/messages/getMessage');
   }
 
   

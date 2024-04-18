@@ -9,6 +9,7 @@ import { RegisterResponse } from '../../../../core/models/register-response';
 import { Router } from '@angular/router';
 import { TokenService } from '../../../../core/services/token/token.service';
 import { LoginResponse } from '../../../../core/models/login-response';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -39,7 +40,7 @@ export class LoginComponent implements AfterViewInit {
           console.log(response)
           this.handleLoginSuccess(response)
         },
-        error: (error: Error) => {
+        error: (error: HttpErrorResponse) => {
           this.notifyLoginError(error)        
         }
     })
@@ -49,16 +50,19 @@ export class LoginComponent implements AfterViewInit {
     this.messageService.add({ severity: 'success', summary: registerResponse.message });
   }
 
-  notifyLoginError(error: Error) {
-    console.log(error)
-    this.messageService.add({ severity: 'warm', summary: error.message });
+  notifyLoginError(error: HttpErrorResponse) {
+
+    if (error.status === 0) {
+      this.messageService.add({ severity: 'error', summary: 'Error: ', detail: "Unable to connect the server" });
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error: ', detail: error.error.message });
+    }
   }
 
   handleLoginSuccess(response: LoginResponse) {
     this.tokenService.setToken(response.token);
     this.router.navigate(['/home']);
   }
-
 
   ngAfterViewInit() {
     this.dataSharingService.registrationSuccessObservable.subscribe(registerResponse => {

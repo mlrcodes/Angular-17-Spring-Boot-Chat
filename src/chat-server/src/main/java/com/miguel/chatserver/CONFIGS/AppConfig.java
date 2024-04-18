@@ -1,6 +1,5 @@
 package com.miguel.chatserver.CONFIGS;
 
-import com.miguel.chatserver.REPOSITORIES.IUserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

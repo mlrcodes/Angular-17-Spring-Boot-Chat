@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface IContactService {
 
-  public Contact createContactFromDTO(ContactDTO contactDTO);
-
-  public List<Contact> createContactListFromDTOList(List<ContactDTO> contactDTO);
+  public List<ContactDTO> getUserContacts(String token);
 }

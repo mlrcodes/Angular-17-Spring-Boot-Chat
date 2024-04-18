@@ -15,17 +15,17 @@ export class TabMenuComponent {
     {
       label: 'Chats',
       icon: PrimeIcons.HOME,
-      routerLink: '/chats'
+      routerLink: '/home/chats'
     },
     {
       label: 'Halls',
       icon: PrimeIcons.USER,
-      routerLink: '/halls'
+      routerLink: '/home/halls'
     },
     {
       label: 'Contacts',
       icon: PrimeIcons.USERS,
-      routerLink: '/contacts'
+      routerLink: '/home/contacts'
     }
   ]
 

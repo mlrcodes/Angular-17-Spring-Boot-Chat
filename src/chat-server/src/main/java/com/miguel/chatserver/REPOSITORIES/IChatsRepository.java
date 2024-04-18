@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface IChatRepository extends JpaRepository<Chat, Integer> {
+public interface IChatsRepository extends JpaRepository<Chat, Integer> {
 
   @Query("SELECT DISTINCT c FROM Chat c JOIN c.members u WHERE u.phoneNumber = :phoneNumber")
   public List<Chat> findUserChats(@Param("phoneNumber") String phoneNumber);
