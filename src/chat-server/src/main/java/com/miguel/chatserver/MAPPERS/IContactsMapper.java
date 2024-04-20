@@ -10,9 +10,9 @@ public interface IContactsMapper {
 
   public Contact createContactFromDTO(ContactDTO contactDTO);
 
-  public List<Contact> createContactListFromDTOList(List<ContactDTO> contactDTO);
+  public List<Contact> createContactListFromDTOList(List<ContactDTO> contactDTOList);
 
   public ContactDTO createContactDTOFromContact(Contact contact);
 
-  public List<ContactDTO> createContactDTOListFromContactList(List<Contact> contact);
+  public List<ContactDTO> createContactDTOListFromContactList(List<Contact> contactsList);
 }

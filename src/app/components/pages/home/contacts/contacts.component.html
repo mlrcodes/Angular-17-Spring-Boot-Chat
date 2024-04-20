@@ -1,6 +1,12 @@
-<div class="contacts-container">
+<div class="contacts-container d-flex flex-column">
 
     <p-messages [enableService]="true" [closable]="false"></p-messages>
+
+    <div class="contacts">
+        @for(contact of userContacts; track contact.contactId) {
+        <app-contacts-card [contact]="contact" (deleteContactEmitter)="deleteContact($event)"></app-contacts-card>
+        }
+    </div>
 
     <app-add-contact (errorEmitter)="notifyErrors($event)" (contactEmitter)="addContact($event)"></app-add-contact>
 

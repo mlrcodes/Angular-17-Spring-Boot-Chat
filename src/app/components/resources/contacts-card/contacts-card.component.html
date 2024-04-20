@@ -1,0 +1,22 @@
+<div class="contact d-flex justify-between align-center border border-radius p-05 mb-05">
+    <div class="contact-icon">
+        <i class="pi pi-user"></i>
+    </div>
+    <div class="contact-info text-right">
+        <p class="contact-name mb-05">{{contact.contactName}}</p>
+        <p class="contact-phone-number">{{contact.contactUser.phoneNumber}}</p>
+    </div>
+    <div class="action-btns">
+        <div class="delete">
+            <button pButton icon="pi pi-trash" severity="danger" (click)="confirmDelete($event)" #deleteButton></button>
+            <p-confirmPopup></p-confirmPopup>
+        </div>
+
+        <div class="update">
+            <button pButton icon="pi pi-edit" (click)="editContact()" #deleteButton></button>
+            <app-contact-dialog [(contactData)]="contact" [(visible)]="visible" [header]="header"></app-contact-dialog>
+        </div>
+
+
+    </div>
+</div>

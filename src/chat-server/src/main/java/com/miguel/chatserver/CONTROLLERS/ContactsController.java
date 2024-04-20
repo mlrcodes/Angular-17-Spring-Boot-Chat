@@ -1,6 +1,7 @@
 package com.miguel.chatserver.CONTROLLERS;
 
 import com.miguel.chatserver.DTO.ContactDTO;
+import com.miguel.chatserver.DTO.ResultMessageDTO;
 import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.SERVICES.IContactService;
 import com.miguel.chatserver.SERVICES.IJWTService;
@@ -45,6 +46,13 @@ public class ContactsController {
         jwtService.getTokenFromRequestHeaders(request)
       )
     );
+  }
+
+  @DeleteMapping
+  private ResponseEntity<ResultMessageDTO> deleteContact(
+    @RequestParam Integer contactId
+  ) {
+    return ResponseEntity.ok(this.contactService.deleteContact(contactId));
   }
 
 }

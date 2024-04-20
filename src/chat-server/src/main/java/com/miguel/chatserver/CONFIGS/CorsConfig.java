@@ -43,7 +43,6 @@ public class CorsConfig {
         "PATCH"
       )
     );
-    config.addExposedHeader(HttpHeaders.SET_COOKIE);
     source.registerCorsConfiguration("/**", config);
     return new CorsFilter(source);
   }

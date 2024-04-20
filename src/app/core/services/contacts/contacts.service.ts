@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Contact } from '../../models/contac';
+import { ResultResponse } from '../../models/resultResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -22,5 +23,15 @@ export class ContactsService {
   createNewContact<T>(body: Contact): Observable<Contact> {
     return this.httpClient.post<T>(this.baseURL, body) as Observable<Contact>;
   }
+
+  
+  deleteContact<T>(contactId: number | undefined): Observable<ResultResponse> {
+    return this.httpClient.delete<T>(this.baseURL, { 
+      params: { 
+        contactId: contactId ? contactId : 0
+      } 
+    }) as Observable<ResultResponse>;
+  }
+
 
 }

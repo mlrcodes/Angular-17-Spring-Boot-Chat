@@ -22,7 +22,7 @@ public class Contact {
   private String contactName;
 
   @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(name = "owner_user_id", nullable = false)
   private User owner;
 
   @ManyToOne

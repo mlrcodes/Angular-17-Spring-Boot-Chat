@@ -19,9 +19,6 @@ public interface IJWTService {
 
   public String getPhoneNumberFromToken(String token);
 
-
-  public Date getTokenExpiration(String token);
-
   public boolean isTokenValid(String token, UserDetails userDetails);
 
   public <T> T getClaim(String token, Function<Claims,T> claimsResolver);

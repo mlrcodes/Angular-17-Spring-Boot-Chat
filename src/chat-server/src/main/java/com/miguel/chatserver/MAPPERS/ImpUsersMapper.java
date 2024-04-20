@@ -20,7 +20,7 @@ public class ImpUsersMapper implements IUsersMapper {
       .firstname(userDTO.getFirstname())
       .surname(userDTO.getSurname())
       .phoneNumber(userDTO.getPhoneNumber())
-      .phoneNumber(userDTO.getEmail())
+      .email(userDTO.getEmail())
       .build();
   }
 

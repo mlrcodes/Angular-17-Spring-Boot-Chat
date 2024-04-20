@@ -52,7 +52,6 @@ public class UserPrincipal  implements UserDetails, Principal {
     return true;
   }
 
-
   @Override
   public String getName() {
     return user.getPhoneNumber();

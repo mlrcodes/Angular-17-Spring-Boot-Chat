@@ -71,11 +71,6 @@ public class ImpJWTService implements IJWTService {
   }
 
   @Override
-  public Date getTokenExpiration(String token) {
-    return getClaim(token, Claims::getExpiration);
-  }
-
-  @Override
   public <T> T getClaim(String token, Function<Claims,T> claimsResolver) {
     final Claims claims = getAllClaims(token);
     return claimsResolver.apply(claims);

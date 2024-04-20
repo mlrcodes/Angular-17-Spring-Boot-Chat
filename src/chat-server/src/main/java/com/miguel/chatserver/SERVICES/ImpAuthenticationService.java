@@ -15,11 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -74,20 +73,18 @@ public class ImpAuthenticationService implements IAuthenticationService{
 
   @Override
   public AuthLoginResponse login(AuthLoginRequest request) {
-
-    Authentication auth = authenticationManager.authenticate(
-      new UsernamePasswordAuthenticationToken(
-        request.getPhoneNumber(),
-        request.getPassword()
-      )
-    );
-    if (Objects.isNull(auth)) {
+    try {
+      Authentication auth = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(
+          request.getPhoneNumber(),
+          request.getPassword()
+        )
+      );
+      UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+      String jwt = jwtService.generateToken(user);
+      return new AuthLoginResponse(jwt);
+    } catch (AuthenticationException e) {
       throw new ExceptionObjectNotFound("Authentication failed. Bad credentials.");
     }
-
-    UserPrincipal user = ((UserPrincipal) auth.getPrincipal());
-    String jwt = jwtService.generateToken(user);
-
-    return new AuthLoginResponse(jwt);
   }
 }
