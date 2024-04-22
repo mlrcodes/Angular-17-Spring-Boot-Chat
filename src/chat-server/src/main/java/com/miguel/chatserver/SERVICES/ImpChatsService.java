@@ -10,6 +10,7 @@ import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IChatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,6 +33,9 @@ public class ImpChatsService implements IChatsService {
   @Autowired
   private IUsersService usersService;
 
+  @Autowired
+  private IContactService contactService;
+
   @Override
   public List<ChatDTO> getUserChats(String jwtToken) {
     String phoneNumber = jwtService.getPhoneNumberFromToken(jwtToken);
@@ -45,31 +49,69 @@ public class ImpChatsService implements IChatsService {
     return chatsMapper.createChatDTOListFromChatList(user.getChats());
   }
 
+
   @Override
-  public Chat createChat(Contact contact, String messageText) {
-    if (contact == null || contact.getOwner() == null) {
+  public Chat getChat(User owner, User contactUser) {
+    Contact contact = contactService.findByOwnerAndUserContact(owner, contactUser);
+    if (Objects.isNull(contact)) {
+      throw new ExceptionObjectNotFound("No contact was found");
+    }
+    Chat chat = chatRepository.findByUserAndContact(owner, contact).orElse(null);
+    if (Objects.isNull(chat)) {
+      throw new ExceptionObjectNotFound("Chat not found");
+    }
+    return chat;
+  }
+
+  @Override
+  public Chat createChatIfNotExists(Contact contact) {
+    Chat existingChat = this.getChat(contact.getOwner(), contact.getContactUser());
+    if (Objects.isNull(existingChat)) {
+      return createChatsPair(contact);
+    }
+    return existingChat;
+  }
+
+  @Override
+  public ChatDTO createChat(Contact contact) {
+    Chat chat = this.createChatIfNotExists(contact);
+    return chatsMapper.createChatDTOFromChat(chat);
+  }
+
+  @Override
+  public Chat saveChat(Chat chat) {
+    return chatRepository.save(chat);
+  }
+
+  private Chat createChatsPair(Contact contact) {
+    User owner = contact.getOwner();
+
+    if (Objects.isNull(contact) || Objects.isNull(owner)) {
       throw new IllegalStateException("Owner and/or contact should not be null");
     }
 
-    Chat newChat = Chat
+    Chat ownerChat = Chat
       .builder()
-      .messages(new ArrayList<>())
-      .user(contact.getOwner())
+      .user(owner)
       .contact(contact)
+      .messages(new ArrayList<>())
       .build();
-    Chat savedChat = chatRepository.save(newChat);
 
-    Message message = Message
+    Contact defaultContact = contactService.createDefaultContact(
+      contact.getContactUser(),
+      owner
+    );
+
+    Chat contactChat = Chat
       .builder()
-      .sender(contact.getOwner())
-      .dateTime(LocalDateTime.now())
-      .messageText(messageText)
-      .chat(savedChat)
+      .user(contact.getContactUser())
+      .contact(defaultContact)
+      .messages(new ArrayList<>())
       .build();
-    Message savedMessage = messageService.saveMessage(message);
 
-    savedChat.getMessages().add(savedMessage);
+    chatRepository.save(ownerChat);
+    chatRepository.save(contactChat);
 
-    return chatRepository.save(savedChat);
+    return ownerChat;
   }
 }

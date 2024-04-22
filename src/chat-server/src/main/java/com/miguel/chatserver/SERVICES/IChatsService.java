@@ -10,6 +10,14 @@ import java.util.List;
 public interface IChatsService {
   public List<ChatDTO> getUserChats(String token);
 
-  public Chat createChat(Contact contact, String messageText);
+  public Chat createChatIfNotExists(Contact contact);
+
+  public ChatDTO createChat(Contact contact);
+
+
+  public Chat saveChat(Chat chat);
+
+  public Chat getChat(User owner, User contact);
+
 
 }

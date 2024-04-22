@@ -1,0 +1,14 @@
+.message {
+    min-width: 90%;
+    max-width: 80%;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: var(--light-blue);
+}
+
+.contact-message {
+    align-self: flex-start;
+    background-color: lightcoral;
+}

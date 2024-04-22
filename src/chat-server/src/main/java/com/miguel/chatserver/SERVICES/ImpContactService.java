@@ -8,7 +8,9 @@ import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectAlreadyExists;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MAPPERS.IContactsMapper;
 import com.miguel.chatserver.MAPPERS.IUsersMapper;
+import com.miguel.chatserver.MODELS.Chat;
 import com.miguel.chatserver.MODELS.Contact;
+import com.miguel.chatserver.MODELS.Message;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IContactsRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -41,6 +44,9 @@ public class ImpContactService implements IContactService {
   @Autowired
   private IChatsService chatsService;
 
+  @Autowired
+  private IMessageService messageService;
+
   @Override
   public List<ContactResponseDTO> getUserContacts(String jwtToken) {
     String phoneNumber = jwtService.getPhoneNumberFromToken(jwtToken);
@@ -50,6 +56,11 @@ public class ImpContactService implements IContactService {
       throw new ExceptionObjectNotFound("User do not have any contact");
     }
     return contactsMapper.createContactResponseListFromContactList(userContacts);
+  }
+
+  @Override
+  public Contact findByOwnerAndUserContact(User owner, User userContact) {
+    return contactsRepository.findByOwnerAndContactUser(owner, userContact).orElse(null);
   }
 
   @Override
@@ -75,9 +86,15 @@ public class ImpContactService implements IContactService {
     }
     Contact savedContact = contactsRepository.save(newContact);
 
-    String message = contactRequest.getMessage();
-    if (StringUtils.hasText(contactRequest.getMessage())) {
-       chatsService.createChat(savedContact, message);
+    Chat savedChat;
+    String messageText = contactRequest.getMessage();
+    if (StringUtils.hasText(messageText)) {
+      savedChat = chatsService.createChatIfNotExists(savedContact);
+      if (Objects.nonNull(savedChat)) {
+        Message savedMessage = messageService.sendMessage(savedChat, messageText);
+        savedChat.getMessages().add(savedMessage);
+        chatsService.saveChat(savedChat);
+      }
     }
 
     ContactResponseDTO savedContactDTO = contactsMapper.createContactResponseFromContact(savedContact);
@@ -102,5 +119,21 @@ public class ImpContactService implements IContactService {
       throw new DataAccessException("Error deleting contact", ex){};
     }
     return new ResultMessageDTO("Contact deleted successfully");
+  }
+
+  @Override
+  public Contact createDefaultContact(User owner, User contactUser) {
+    return Contact
+      .builder()
+      .contactName("Unknown Contact")
+      .owner(owner)
+      .contactUser(contactUser)
+      .build();
+  }
+
+  @Override
+  public Contact getContactFromContactPhoneNumber(String phoneNumber) {
+    User contactUser = userService.findByPhoneNumber(phoneNumber);
+    return contactsRepository.findByContactUser(contactUser).orElse(null);
   }
 }

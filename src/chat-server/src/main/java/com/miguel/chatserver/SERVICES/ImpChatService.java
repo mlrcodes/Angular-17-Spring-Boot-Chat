@@ -1,19 +1,24 @@
 package com.miguel.chatserver.SERVICES;
 
-import com.miguel.chatserver.MODELS.Message;
-import com.miguel.chatserver.REPOSITORIES.IChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImpChatService implements IChatService {
+public class ImpChatService {
 
   @Autowired
   private IMessageService messageService;
 
+  @Autowired
+  private IChatRepository chatRepository;
 
-  @Override
-  public Message saveMessage(Message message) {
-    return this.messageService.saveMessage(message);
-  }
+  @Autowired
+  private IUsersService usersService;
+
+  @Autowired
+  private IContactService contactService;
+
+
+
+
 }

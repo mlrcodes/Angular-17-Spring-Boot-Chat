@@ -75,14 +75,19 @@ public class ImpAuthenticationService implements IAuthenticationService{
         )
       );
       UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+      User loggedUser = user.getUser();
+      this.userService.connectUser(loggedUser);
       String jwt = jwtService.generateToken(user);
       return AuthLoginResponse
         .builder()
-        .userPhoneNumber(user.getUser().getPhoneNumber())
+        .userPhoneNumber(loggedUser.getPhoneNumber())
         .token(jwt)
         .build();
     } catch (AuthenticationException e) {
       throw new ExceptionObjectNotFound("Authentication failed. Bad credentials.");
     }
   }
+
+
+
 }
