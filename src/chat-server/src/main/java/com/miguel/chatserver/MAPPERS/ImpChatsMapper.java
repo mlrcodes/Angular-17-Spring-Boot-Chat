@@ -1,11 +1,7 @@
 package com.miguel.chatserver.MAPPERS;
 
-import com.miguel.chatserver.DTO.ChatDTO;
-import com.miguel.chatserver.DTO.MessageDTO;
-import com.miguel.chatserver.DTO.UserDTO;
+import com.miguel.chatserver.DTO.*;
 import com.miguel.chatserver.MODELS.Chat;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +17,9 @@ public class ImpChatsMapper implements IChatsMapper {
   @Autowired
   private IMessagesMapper messagesMapper;
 
+  @Autowired
+  private IContactsMapper contactsMapper;
+
   @Override
   public Chat createChatFromDTO(ChatDTO chatDTO) {
     return null;
@@ -28,12 +27,12 @@ public class ImpChatsMapper implements IChatsMapper {
 
   @Override
   public ChatDTO createChatDTOFromChat(Chat chat) {
-    List<UserDTO> membersDTO = usersMapper.createUserDTOListFromUserList(chat.getMembers());
+    ContactResponseDTO contactResponse = contactsMapper.createContactResponseFromContact(chat.getContact());
     List<MessageDTO> messagesDTO = messagesMapper.createMessageDTOListFromMessageList(chat.getMessages());
     return ChatDTO
       .builder()
-      .members(membersDTO)
-      .messages(messagesDTO)
+      .chatId(chat.getChatId())
+      .contact(contactResponse)
       .build();
   }
 

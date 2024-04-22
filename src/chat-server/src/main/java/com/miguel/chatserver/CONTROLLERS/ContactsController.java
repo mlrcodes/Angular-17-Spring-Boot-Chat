@@ -1,8 +1,9 @@
 package com.miguel.chatserver.CONTROLLERS;
 
-import com.miguel.chatserver.DTO.ContactDTO;
+import com.miguel.chatserver.DTO.ContactCreateRequest;
+import com.miguel.chatserver.DTO.ContactEditRequest;
+import com.miguel.chatserver.DTO.ContactResponseDTO;
 import com.miguel.chatserver.DTO.ResultMessageDTO;
-import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.SERVICES.IContactService;
 import com.miguel.chatserver.SERVICES.IJWTService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public class ContactsController {
   private IJWTService jwtService;
 
   @GetMapping()
-  private ResponseEntity<List<ContactDTO>> getUserChats(
+  private ResponseEntity<List<ContactResponseDTO>> getUserChats(
     HttpServletRequest request
   ) {
     return ResponseEntity.ok(
@@ -36,16 +37,24 @@ public class ContactsController {
   }
 
   @PostMapping()
-  private ResponseEntity<ContactDTO> addContact(
-    @RequestBody ContactDTO contactDTO,
+  private ResponseEntity<ContactResponseDTO> addContact(
+    @RequestBody ContactCreateRequest contactRequest,
     HttpServletRequest request
   ) {
     return ResponseEntity.ok(
       contactService.createContact(
-        contactDTO,
+        contactRequest,
         jwtService.getTokenFromRequestHeaders(request)
       )
     );
+  }
+
+  @PutMapping
+  private ResponseEntity<ContactResponseDTO> updateContact(
+    @RequestBody ContactEditRequest newContactName,
+    @RequestParam Integer contactId
+  ) {
+    return ResponseEntity.ok(this.contactService.updateContact(contactId, newContactName));
   }
 
   @DeleteMapping

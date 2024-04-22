@@ -1,10 +1,7 @@
 package com.miguel.chatserver.MAPPERS;
 
 import com.miguel.chatserver.DTO.MessageDTO;
-import com.miguel.chatserver.DTO.UserDTO;
 import com.miguel.chatserver.MODELS.Message;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,11 +26,10 @@ public class ImpMessagesMapper implements IMessagesMapper {
 
   @Override
   public MessageDTO createMessageDTOFromMessage(Message message) {
-    UserDTO senderDTO = usersMapper.createUserDTOFromUser(message.getSender());
-
     return MessageDTO
       .builder()
-      .sender(senderDTO)
+      .senderPhoneNumber(message.getSender().getPhoneNumber())
+      .messageText(message.getMessageText())
       .dateTime(message.getDateTime())
       .build();
   }

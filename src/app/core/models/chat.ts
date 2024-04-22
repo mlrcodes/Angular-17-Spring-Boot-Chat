@@ -1,8 +1,9 @@
+import { Contact } from "./contac";
 import { Message } from "./message";
-import { User } from "./user";
 
 export interface Chat {
     chatId?: Number;
-    participants: User[];
-    messages: Message[];
+    contact: Contact
+    messages?: Message[];
 }
+    

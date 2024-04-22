@@ -4,14 +4,14 @@ import { MessagesModule } from 'primeng/messages';
 import { Contact } from '../../../../core/models/contac';
 import { ContactsService } from '../../../../core/services/contacts/contacts.service';
 import { MessageService } from 'primeng/api';
-import { AddContactComponent } from './add-contact/add-contact.component';
+import { ContactComponent } from './add-contact/contact.component';
 import { ContactsCardComponent } from '../../../resources/contacts-card/contacts-card.component';
 import { ResultResponse } from '../../../../core/models/resultResponse';
 
 @Component({
   selector: 'app-contacts',
   standalone: true,
-  imports: [MessagesModule, AddContactComponent, ContactsCardComponent],
+  imports: [MessagesModule, ContactComponent, ContactsCardComponent],
   providers: [MessageService],
   templateUrl: './contacts.component.html',
   styleUrl: './contacts.component.scss'
@@ -39,17 +39,12 @@ export class ContactsComponent implements OnInit {
   }
 
   addContact(contact: Contact) {
-    this.contactsService
-    .createNewContact(contact)
-    .subscribe({
-      next: (contact: Contact) => {
-        this.messageService.clear()
-        this.userContacts.push(contact);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.notifyErrors(error)
-      }
-    })
+    this.messageService.clear()
+    this.userContacts.push(contact);
+  }
+
+  editContact(contact: Contact) {
+    this.handleContactUpdate(contact)
   }
 
   deleteContact(contact: Contact) {
@@ -57,7 +52,7 @@ export class ContactsComponent implements OnInit {
     .deleteContact(contact.contactId)
     .subscribe({
       next: (response: ResultResponse) => {
-        this.handleContactDeletion(response);
+        this.handleContactDeletion(contact, response);
       },
       error: (error: HttpErrorResponse) => {
         this.notifyErrors(error);
@@ -65,17 +60,17 @@ export class ContactsComponent implements OnInit {
     })
   }
 
-  handleContactDeletion(response: ResultResponse) {
-    const deletedContact: Contact | undefined = this.userContacts.find(
-      contact => contact.contactId === contact.contactId
-     )
-     if (deletedContact) {
-       const deletedContactIndex = this.userContacts.indexOf(deletedContact)
-       this.userContacts.splice(deletedContactIndex, 1)
-     }
+  handleContactUpdate(contact: Contact) {
+    const updatedContactIndex = this.userContacts.findIndex(pointedContact => pointedContact === contact);
+    this.userContacts[updatedContactIndex] = contact;
+  }
 
+  handleContactDeletion(contact: Contact, response: ResultResponse) {
+    const deletedContactIndex = this.userContacts.findIndex(pointedContact => pointedContact === contact);
+    this.userContacts.splice(deletedContactIndex, 1)
      this.notifySuccess(response)
   }
+
 
   notifyErrors(error: HttpErrorResponse) {
     console.log(error)

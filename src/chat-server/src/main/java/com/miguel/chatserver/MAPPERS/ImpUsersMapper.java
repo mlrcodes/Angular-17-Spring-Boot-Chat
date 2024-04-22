@@ -20,7 +20,6 @@ public class ImpUsersMapper implements IUsersMapper {
       .firstname(userDTO.getFirstname())
       .surname(userDTO.getSurname())
       .phoneNumber(userDTO.getPhoneNumber())
-      .email(userDTO.getEmail())
       .build();
   }
 
@@ -42,7 +41,6 @@ public class ImpUsersMapper implements IUsersMapper {
       .firstname(user.getFirstname())
       .surname(user.getSurname())
       .phoneNumber(user.getPhoneNumber())
-      .email(user.getEmail())
       .build();
   }
 
@@ -63,7 +61,6 @@ public class ImpUsersMapper implements IUsersMapper {
       .firstname(request.getFirstname())
       .surname(request.getSurname())
       .phoneNumber(request.getPhoneNumber())
-      .email(request.getEmail())
       .acceptedTerms(request.getAcceptedTerms())
       .build();
   }

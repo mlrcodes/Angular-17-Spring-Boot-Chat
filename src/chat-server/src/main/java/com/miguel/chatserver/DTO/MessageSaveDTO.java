@@ -11,12 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDTO {
-
-  @NotNull(message = "Message's sender required")
-  private String senderPhoneNumber;
-
-  private LocalDateTime dateTime;
+public class MessageSaveDTO {
 
   @NotBlank(message = "Message text required")
   private String messageText;

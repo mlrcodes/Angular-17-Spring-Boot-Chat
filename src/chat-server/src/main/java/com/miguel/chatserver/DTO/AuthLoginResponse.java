@@ -8,4 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 public class AuthLoginResponse {
   private String token;
+  private String userPhoneNumber;
 }

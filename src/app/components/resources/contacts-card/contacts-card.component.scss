@@ -1,13 +1,19 @@
 .contact {
-    padding-left: 1rem;
+    cursor: pointer;
+}
+
+.contact-icon i {
+    color: var(--dark-blue);
+    font-weight: 500;
+    font-size: 2rem;
 }
 
 .contact-info {
-    width: 70%;
+    flex: 1;
 }
 
 .contact-info p {
-    margin: 0;
-    font-size: .9rem;
     color: var(--dark-blue);
+    font-weight: 600;
+    margin: 0;
 }

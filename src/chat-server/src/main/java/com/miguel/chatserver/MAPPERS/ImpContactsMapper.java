@@ -1,12 +1,9 @@
 package com.miguel.chatserver.MAPPERS;
 
-import com.miguel.chatserver.DTO.ContactDTO;
+import com.miguel.chatserver.DTO.ContactResponseDTO;
 import com.miguel.chatserver.DTO.UserDTO;
 import com.miguel.chatserver.MODELS.Contact;
-import com.miguel.chatserver.MODELS.User;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,21 +18,20 @@ public class ImpContactsMapper implements IContactsMapper {
   private IUsersMapper usersMapper;
 
   @Override
-  public Contact createContactFromDTO(ContactDTO contactDTO) {
+  public Contact createContactFromDTO(ContactResponseDTO contactDTO) {
     return null;
   }
 
   @Override
-  public List<Contact> createContactListFromDTOList(List<ContactDTO> contactDTOList) {
+  public List<Contact> createContactListFromDTOList(List<ContactResponseDTO> contactDTOList) {
     return null;
   }
 
   @Override
   @Transactional
-  public ContactDTO createContactDTOFromContact(Contact contact) {
+  public ContactResponseDTO createContactResponseFromContact(Contact contact) {
     UserDTO contactUserDTO = usersMapper.createUserDTOFromUser(contact.getContactUser());
-
-    return ContactDTO
+    return ContactResponseDTO
       .builder()
       .contactId(contact.getContactId())
       .contactName(contact.getContactName())
@@ -44,11 +40,11 @@ public class ImpContactsMapper implements IContactsMapper {
   }
 
   @Override
-  public List<ContactDTO> createContactDTOListFromContactList(List<Contact> contactsList) {
-    List<ContactDTO> contactDTOList = new ArrayList<>();
+  public List<ContactResponseDTO> createContactResponseListFromContactList(List<Contact> contactsList) {
+    List<ContactResponseDTO> contactDTOList = new ArrayList<>();
     for (Contact contact: contactsList) {
       contactDTOList.add(
-        this.createContactDTOFromContact(contact)
+        this.createContactResponseFromContact(contact)
       );
     }
     return contactDTOList;

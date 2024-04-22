@@ -7,13 +7,11 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class ChatDTO {
 
-  @NonNull
-  private List<UserDTO> members;
+  private Integer chatId;
 
-  @NonNull
-  private List<MessageDTO> messages;
+  private ContactResponseDTO contact;
+
 }

@@ -29,9 +29,6 @@ public class User {
   @Column(nullable = false, unique = true)
   private String phoneNumber;
 
-  @Column(nullable = false, unique = true)
-  private String email;
-
   @Column(nullable = false)
   private String password;
 
@@ -41,4 +38,6 @@ public class User {
   @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
   private List<Contact> contacts;
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  private List<Chat> chats;
 }

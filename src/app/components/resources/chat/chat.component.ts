@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { WebSocketsService } from '../../../core/services/websockets/web-sockets.service';
 import { Message } from '../../../core/models/message';
+import { Contact } from '../../../core/models/contac';
+import { ChatsService } from '../../../core/services/chats/chats.service';
 
 @Component({
   selector: 'app-chat',
@@ -11,9 +13,13 @@ import { Message } from '../../../core/models/message';
 })
 export class ChatComponent {
 
-  constructor() {}
+  constructor(
+    private chatService: ChatsService
+  ) {}
 
-  private messages: Message[] = [];
+
+  @Input() contact!: Contact;
+  @Input() messages: Message[] = [];
 
   // ngOnInit(): void {
   //   this.webSocketService.currentMessage.subscribe(msg => {

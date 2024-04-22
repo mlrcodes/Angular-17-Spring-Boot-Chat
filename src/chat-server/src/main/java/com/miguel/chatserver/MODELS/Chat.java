@@ -3,11 +3,13 @@ package com.miguel.chatserver.MODELS;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "chats")
@@ -18,14 +20,14 @@ public class Chat {
   @Column(name = "chat_id")
   private Integer chatId;
 
-  @ManyToMany
-  @JoinTable(
-    name = "chats_users",
-    joinColumns = @JoinColumn(name = "chat_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id")
-  )
-  private List<User> members;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-  @OneToMany
+  @OneToOne
+  @JoinColumn(name = "contact_id", referencedColumnName = "contact_id")
+  private Contact contact;
+
+  @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
   private List<Message> messages;
 }

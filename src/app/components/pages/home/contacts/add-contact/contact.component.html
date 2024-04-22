@@ -1,0 +1,6 @@
+<app-contact-dialog (createContactEmitter)="addContact($event)" [(visible)]="visible"
+    [header]="header"></app-contact-dialog>
+
+<div class="add-contact-btn text-right">
+    <button type="button" pButton icon="pi pi-search" (click)="openContactDialog()"></button>
+</div>

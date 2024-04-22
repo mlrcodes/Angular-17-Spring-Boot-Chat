@@ -11,6 +11,7 @@ import java.util.List;
 public interface IContactsRepository extends JpaRepository<Contact, Integer> {
 
   public List<Contact> findByOwner(User owner);
+
   public Boolean existsByOwnerAndContactUser(User owner, User contactUser);
 
 }

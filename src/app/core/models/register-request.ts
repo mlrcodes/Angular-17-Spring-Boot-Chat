@@ -3,7 +3,6 @@ export interface RegisterRequest {
     surname: string;
     phoneNumber: string;
     password: string;
-    email: string;
     confirmPassword: string;
     acceptedTerms: boolean;
 }

@@ -29,7 +29,7 @@ public class ImpAuthenticationService implements IAuthenticationService{
   private String activationUrl;
 
   @Autowired
-  private IUserService userService;
+  private IUsersService userService;
 
   @Autowired
   private AuthenticationManager authenticationManager;
@@ -48,12 +48,6 @@ public class ImpAuthenticationService implements IAuthenticationService{
     String phoneNumber = request.getPhoneNumber();
     User userByPhoneNumber = this.userService.findByPhoneNumber(phoneNumber);
     if (Objects.nonNull(userByPhoneNumber)) {
-      throw new ExceptionObjectAlreadyExists("Phone Number Already In Use");
-    }
-
-    String email = request.getEmail();
-    User userByEmail = this.userService.findByEmail(email);
-    if (Objects.nonNull(userByEmail)) {
       throw new ExceptionObjectAlreadyExists("Phone Number Already In Use");
     }
 
@@ -82,7 +76,11 @@ public class ImpAuthenticationService implements IAuthenticationService{
       );
       UserPrincipal user = (UserPrincipal) auth.getPrincipal();
       String jwt = jwtService.generateToken(user);
-      return new AuthLoginResponse(jwt);
+      return AuthLoginResponse
+        .builder()
+        .userPhoneNumber(user.getUser().getPhoneNumber())
+        .token(jwt)
+        .build();
     } catch (AuthenticationException e) {
       throw new ExceptionObjectNotFound("Authentication failed. Bad credentials.");
     }

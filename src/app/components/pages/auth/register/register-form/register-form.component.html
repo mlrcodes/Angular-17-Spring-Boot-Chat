@@ -43,21 +43,6 @@
         <input pInputText type="text" formControlName="phoneNumber" placeholder="Phone Number" class="w-100">
     </div>
 
-
-    <div class="input-group mb-1">
-        @if (submitted && rf['email'].errors) {
-        <div class="text-left mb-05">
-            @if (rf['email'].errors['required']) {
-            <small class="p-error">Email is required</small>
-            }
-            @if (rf['email'].errors['pattern']) {
-            <small class="p-error">Invalid Email Format</small>
-            }
-        </div>
-        }
-        <input pInputText type="text" formControlName="email" placeholder="Email" class="w-100">
-    </div>
-
     <div class="input-group mb-1">
         @if (submitted && rf['password'].errors) {
         <div class="text-left mb-05">

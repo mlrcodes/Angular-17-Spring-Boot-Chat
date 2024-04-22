@@ -13,7 +13,7 @@ export const HOME_ROUTES: Routes = [
                 path: '', redirectTo: 'chats', pathMatch: 'full'
             },
             {
-                path: 'chats', component: ChatsComponent
+                path: 'chats', loadChildren: () => import("./chats/chats.routes").then(c => c.CHATS_ROUTES)
             },            
             {
                 path: 'contacts', component: ContactsComponent

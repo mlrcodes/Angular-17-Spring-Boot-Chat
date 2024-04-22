@@ -1,0 +1,53 @@
+<p-dialog [header]="header" [(visible)]="visible" (visibleChange)="onDisplayChange()" [style]="{width: '50vw'}">
+    <form [formGroup]="addContactForm" (ngSubmit)="onSubmit($event)" class="mb-1">
+
+        <div class="input-group mb-1">
+
+            @if (submitted && cf['contactName'].errors) {
+            <div class="text-left mb-05">
+                @if (cf['contactName'].errors['required']) {
+                <small class="p-error">Contact Name is required</small>
+                }
+                @if (cf['contactName'].errors['pattern']) {
+                <small class="p-error">Invalid Contact Name</small>
+                }
+            </div>
+            }
+            <input pInputText type="text" formControlName="contactName" placeholder="Contact Name" class="w-100">
+        </div>
+
+        <div class="input-group mb-1">
+            @if (submitted && cf['phoneNumber'].errors) {
+            <div class="text-left mb-05">
+                @if (cf['phoneNumber'].errors['required']) {
+                <small class="p-error">Phone Number is required</small>
+                }
+                @if (cf['phoneNumber'].errors['pattern']) {
+                <small class="p-error">Invalid Phone Number</small>
+                }
+            </div>
+            }
+            <input pInputText type="text" formControlName="phoneNumber" [value]="cf['phoneNumber']"
+                [disabled]="isEditMode" placeholder="Phone Number" class="w-100">
+        </div>
+
+        <div class="input-group mb-1">
+            @if (submitted && cf['message'] && cf['message'].errors) {
+            <div class="text-left mb-05">
+                @if (cf['message'].errors['maxLength']) {
+                <small class="p-error">Message cannot exceed 150 characters</small>
+                }
+                @if (cf['message'].errors['sqlInjectionDetected']) {
+                <small class="p-error">Invalid message detected</small>
+                }
+            </div>
+            }
+            <textarea pInputTextarea pKeyFilter="blockChars" formControlName="message" [value]="cf['message']"
+                class="w-100" placeholder="{{messagePlaceHolder}}" [disabled]="isEditMode"></textarea>
+        </div>
+
+        <div class="mb-1">
+            <button pButton type="submit" label="Submit" class="w-100"></button>
+        </div>
+    </form>
+</p-dialog>

@@ -1,7 +1,7 @@
 package com.miguel.chatserver.CONTROLLERS;
 
 import com.miguel.chatserver.DTO.UserDTO;
-import com.miguel.chatserver.SERVICES.IUserService;
+import com.miguel.chatserver.SERVICES.IUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsersController {
 
   @Autowired
-  private IUserService userService;
+  private IUsersService userService;
 
 
   @GetMapping

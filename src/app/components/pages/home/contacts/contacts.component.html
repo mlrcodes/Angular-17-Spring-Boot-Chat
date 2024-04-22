@@ -1,13 +1,19 @@
-<div class="contacts-container d-flex flex-column">
+<div class="contacts-container d-flex flex-column justify-between">
 
-    <p-messages [enableService]="true" [closable]="false"></p-messages>
+    <div class="contacts-info">
+        <p-messages [enableService]="true" [closable]="false"></p-messages>
 
-    <div class="contacts">
-        @for(contact of userContacts; track contact.contactId) {
-        <app-contacts-card [contact]="contact" (deleteContactEmitter)="deleteContact($event)"></app-contacts-card>
-        }
+        <div class="contacts">
+            @for(contact of userContacts; track contact.contactId) {
+            <app-contacts-card [contact]="contact" (deleteContactEmitter)="deleteContact($event)"
+                (updatedContactEmitter)="editContact($event)" [showEditBtns]="true"></app-contacts-card>
+            }
+        </div>
     </div>
 
-    <app-add-contact (errorEmitter)="notifyErrors($event)" (contactEmitter)="addContact($event)"></app-add-contact>
+    <div class="add-contact">
+        <app-add-contact (errorEmitter)="notifyErrors($event)"
+            (createContactEmitter)="addContact($event)"></app-add-contact>
+    </div>
 
 </div>

@@ -26,9 +26,4 @@ public class UserDTO {
   @NotBlank(message = "Phone Number is required")
   @Pattern(regexp = "^\\+?\\d{1,3}\\d{1,14}$", message = "Must provide a valid phone number")
   private String phoneNumber;
-
-  @NotEmpty(message = "Email is required")
-  @NotBlank(message = "Email is required")
-  @Email(message = "Invalid email format")
-  private String email;
 }

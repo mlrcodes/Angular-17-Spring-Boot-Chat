@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class ImpUserService implements IUserService {
+public class ImpUserService implements IUsersService {
   @Autowired
   private IUsersRepository userRepository;
 
@@ -36,10 +36,4 @@ public class ImpUserService implements IUserService {
   public User findByPhoneNumber(String phoneNumber) {
     return this.userRepository.findByPhoneNumber(phoneNumber).orElse(null);
   }
-
-  @Override
-  public User findByEmail(String email) {
-    return this.userRepository.findByEmail(email).orElse(null);
-  }
-
 }
