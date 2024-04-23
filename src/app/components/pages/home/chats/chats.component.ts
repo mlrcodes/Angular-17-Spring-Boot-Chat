@@ -29,9 +29,7 @@ export class ChatsComponent {
     .getUserChats()
     .subscribe({
       next: (chats: Chat[]) => {
-        console.log(chats)
         this.userChats = chats;
-        console.log(this.userChats)
       },
       error: (error: HttpErrorResponse) => {
         console.log(error)

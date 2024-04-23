@@ -3,7 +3,7 @@
     <p-messages [enableService]="true" [closable]="false"></p-messages>
 
     @for(chat of userChats; track chat.chatId) {
-    <app-contacts-card [chat]="chat"></app-contacts-card>
+    <app-contacts-card [chat]="chat" ></app-contacts-card>
     }
 
     <router-outlet></router-outlet>

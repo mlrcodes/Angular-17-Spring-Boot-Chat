@@ -82,6 +82,11 @@ public class ImpChatsService implements IChatsService {
   }
 
   @Override
+  public Chat findById(Integer chatId) {
+    return chatRepository.findById(chatId).orElse(null);
+  }
+
+  @Override
   public Chat saveChat(Chat chat) {
     return chatRepository.save(chat);
   }

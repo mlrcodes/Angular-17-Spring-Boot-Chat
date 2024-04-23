@@ -1,1 +1,5 @@
-<div class="chat-container"></div>
+<div class="chat-container">
+    @for(message of messages; track message.messageId) {
+        <app-message [message]="message" [sentByOwner]="isSentByUser(message.senderPhoneNumber)"></app-message>
+    }
+</div>

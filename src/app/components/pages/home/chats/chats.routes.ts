@@ -1,12 +1,12 @@
 import { Routes } from "@angular/router";
 import { ChatComponent } from "../../../resources/chat/chat.component";
+import { ChatsComponent } from "./chats.component";
 
 export const CHATS_ROUTES: Routes = [
     {
-        path: '', component: ChatComponent, children: [
-            {
-                path: 'chat', component: ChatComponent
-            }
-        ]
+        path: '', component: ChatsComponent,
+    },
+    {
+        path: 'chat', component: ChatComponent
     }
 ]

@@ -37,7 +37,6 @@ export class LoginComponent implements AfterViewInit {
     .login(loginRequest)
     .subscribe({
         next: (response: LoginResponse) => {
-          console.log(response)
           this.handleLoginSuccess(response)
         },
         error: (error: HttpErrorResponse) => {
@@ -60,6 +59,7 @@ export class LoginComponent implements AfterViewInit {
   }
 
   handleLoginSuccess(response: LoginResponse) {
+    localStorage.setItem('userPhoneNumber', response.userPhoneNumber);
     this.tokenService.setToken(response.token);
     this.router.navigate(['/home']);
   }

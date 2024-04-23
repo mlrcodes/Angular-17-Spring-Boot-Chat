@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { Message } from 'primeng/api';
+import { Component, Input } from '@angular/core';
+import { Message } from '../../../../core/models/message';
 
 @Component({
   selector: 'app-message',
@@ -9,14 +9,10 @@ import { Message } from 'primeng/api';
   templateUrl: './message.component.html',
   styleUrl: './message.component.scss'
 })
-export class MessageComponent implements OnInit {
+export class MessageComponent {
 
 
   @Input() message!: Message;
   @Input() sentByOwner!: boolean;
-
-  ngOnInit() {
-    
-  }
 
 }

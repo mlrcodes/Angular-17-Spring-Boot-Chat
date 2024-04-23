@@ -18,11 +18,11 @@ export class DataSharingService {
     this.registrationSuccessSubject.next(registerResponse)
   } 
 
+  openContactChatSubject: Subject<Chat> = new Subject<Chat>();
+  openContactChatObservable: Observable<Chat> = this.openContactChatSubject.asObservable();  
 
-  openContactChatSubject: Subject<Chat | Contact | null> = new BehaviorSubject<Chat | Contact | null>(null);
-  openContactChatObservable: Observable<Chat | Contact | null> = this.openContactChatSubject.asObservable();  
-
-  emitChatInfo(chatInfo: Chat | Contact) {
-    this.openContactChatSubject.next(chatInfo);
+  emitChatInfo(chat: Chat) {
+    console.log(chat)
+    this.openContactChatSubject.next(chat);
   }
 }

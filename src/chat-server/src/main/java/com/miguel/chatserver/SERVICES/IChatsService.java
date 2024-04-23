@@ -23,4 +23,6 @@ public interface IChatsService {
 
   public void deleteContactChatIfExists(Contact contact);
 
+  public Chat findById(Integer chatId);
+
   }
