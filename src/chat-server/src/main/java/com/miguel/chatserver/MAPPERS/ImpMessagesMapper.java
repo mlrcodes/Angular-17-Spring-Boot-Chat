@@ -28,9 +28,10 @@ public class ImpMessagesMapper implements IMessagesMapper {
   public MessageDTO createMessageDTOFromMessage(Message message) {
     return MessageDTO
       .builder()
+      .messageId(message.getMessageId())
       .senderPhoneNumber(message.getSender().getPhoneNumber())
       .messageText(message.getMessageText())
-      .dateTime(message.getDateTime())
+      .timestamp(message.getTimeStamp())
       .build();
   }
 

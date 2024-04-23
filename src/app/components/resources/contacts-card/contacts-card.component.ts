@@ -10,7 +10,7 @@ import { Chat } from '../../../core/models/chat';
 import { ContactsService } from '../../../core/services/contacts/contacts.service';
 import { ContactUpdateRequest } from '../../../core/models/contactUpdateRequest';
 import { Router } from '@angular/router';
-import { DataSharingService } from '../../../core/services/data-sharing/data-sharing.service';
+import { DataSharingService } from '../../../core/services/data-sharing/chat-data/chat-data-sharing.service';
 
 
 @Component({
@@ -53,7 +53,6 @@ export class ContactsCardComponent {
 
   openContactChat() {
     this.router.navigate(['/home/chats/chat'])
-    console.log(this.chat)
     if (this.chat) this.dataSharingService.emitChatInfo(this.chat)
   }
 

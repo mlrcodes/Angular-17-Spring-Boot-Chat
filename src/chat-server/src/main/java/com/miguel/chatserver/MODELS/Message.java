@@ -3,7 +3,7 @@ package com.miguel.chatserver.MODELS;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -31,7 +31,7 @@ public class Message {
   private Chat chat;
 
   @Column(nullable = false)
-  private LocalDateTime dateTime;
+  private Date timeStamp;
 
 }
 

@@ -1,5 +1,7 @@
 package com.miguel.chatserver.SERVICES;
 
+import com.miguel.chatserver.DTO.MessageDTO;
+import com.miguel.chatserver.DTO.MessageSaveDTO;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MAPPERS.IMessagesMapper;
 import com.miguel.chatserver.MODELS.Chat;
@@ -9,8 +11,7 @@ import com.miguel.chatserver.REPOSITORIES.IMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,11 +28,20 @@ public class ImpMessageService implements IMessageService {
   private IChatsService chatsService;
 
   @Override
+  public MessageDTO saveMessage(MessageSaveDTO messageSaveDTO) {
+    Chat chat = chatsService.findById(messageSaveDTO.getChatId());
+    if (Objects.isNull(chat)) {
+      throw new ExceptionObjectNotFound("Chat not found");
+    }
+    Message newMessage = this.sendMessage(chat, messageSaveDTO.getMessageText());
+    return messagesMapper.createMessageDTOFromMessage(newMessage);
+  }
+  @Override
   public Message sendMessage(Chat chat, String messageText) {
     Message message = Message
       .builder()
       .sender(chat.getUser())
-      .dateTime(LocalDateTime.now())
+      .timeStamp(new Date())
       .messageText(messageText)
       .chat(chat)
       .build();
@@ -52,17 +62,17 @@ public class ImpMessageService implements IMessageService {
   }
 
   @Override
-  public List<Message> getChatMessages(Integer chatId) {
-    List<Message> chatMessages;
+  public List<MessageDTO> getChatMessages(Integer chatId) {
+    List<MessageDTO> chatMessagesDTO;
     Chat chat = chatsService.findById(chatId);
     if (Objects.nonNull(chat)) {
-      chatMessages = this.messageRepository.findByChat(chat);
+      List<Message> chatMessages = this.messageRepository.findByChat(chat);
       if (chatMessages.isEmpty()) {
         throw new ExceptionObjectNotFound("Void conversation");
       }
+      return this.messagesMapper.createMessageDTOListFromMessageList(chatMessages);
     } else {
       throw new ExceptionObjectNotFound("Void conversation");
     }
-    return chatMessages;
   }
 }

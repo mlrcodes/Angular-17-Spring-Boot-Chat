@@ -29,9 +29,4 @@ public class Contact {
   @JoinColumn(name = "contact_user_id", nullable = false)
   private User contactUser;
 
-  /*
-  @OneToOne(mappedBy = "contact", cascade = CascadeType.ALL)
-  private Chat chat;
-
-   */
 }

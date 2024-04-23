@@ -6,8 +6,8 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
 import { RegisterRequest } from '../../../../core/models/register-request';
 import { Router } from '@angular/router';
 import { RegisterResponse } from '../../../../core/models/register-response';
-import { DataSharingService } from '../../../../core/services/data-sharing/data-sharing.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DataSharingService } from '../../../../core/services/data-sharing/registration-data/registration-data-sharing';
 
 @Component({
   selector: 'app-register',

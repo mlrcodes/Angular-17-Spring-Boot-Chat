@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -13,10 +14,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MessageDTO {
 
+  private Integer messageId;
+
   @NotNull(message = "Message's sender required")
   private String senderPhoneNumber;
 
-  private LocalDateTime dateTime;
+  private Date timestamp;
 
   @NotBlank(message = "Message text required")
   private String messageText;

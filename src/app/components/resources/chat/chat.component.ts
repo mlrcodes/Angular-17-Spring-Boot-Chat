@@ -8,12 +8,13 @@ import { MessagesService } from '../../../core/services/messages/messages.servic
 import { Chat } from '../../../core/models/chat';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
-import { DataSharingService } from '../../../core/services/data-sharing/data-sharing.service';
+import { DataSharingService } from '../../../core/services/data-sharing/chat-data/chat-data-sharing.service';
+import { SendMessageComponent } from './send-message/send-message.component';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [MessageComponent],
+  imports: [MessageComponent, SendMessageComponent],
   providers: [MessageService],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
@@ -57,11 +58,12 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
-    this.dataSharingService.openContactChatObservable.subscribe({
+    this.dataSharingService
+    .openContactChatObservable
+    .subscribe({
       next: (chat: Chat) => {
         this.chat = chat;
         this.getChatMessages();
-        console.log(chat)
       }
     })
 

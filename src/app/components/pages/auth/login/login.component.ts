@@ -4,12 +4,12 @@ import { MessagesModule } from 'primeng/messages';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginRequest } from '../../../../core/models/login-request';
 import { AuthService } from '../../../../core/services/auth/auth.service';
-import { DataSharingService } from '../../../../core/services/data-sharing/data-sharing.service';
 import { RegisterResponse } from '../../../../core/models/register-response';
 import { Router } from '@angular/router';
 import { TokenService } from '../../../../core/services/token/token.service';
 import { LoginResponse } from '../../../../core/models/login-response';
 import { HttpErrorResponse } from '@angular/common/http';
+import { DataSharingService } from '../../../../core/services/data-sharing/registration-data/registration-data-sharing';
 
 
 @Component({

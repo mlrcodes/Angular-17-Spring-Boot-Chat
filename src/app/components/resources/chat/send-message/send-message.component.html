@@ -1,0 +1,6 @@
+<div class="form">
+    <p-inputGroup>
+        <input pInputText placeholder="Write your message" [(ngModel)]="messageText" (keypress)="handleKeyPress($event)"/>
+        <button type="button" pButton label="Search" icon="pi pi-search" (click)="sendMessage()"></button>
+    </p-inputGroup>
+</div>

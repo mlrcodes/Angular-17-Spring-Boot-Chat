@@ -20,7 +20,6 @@ public class UsersController {
   @Autowired
   private IUsersService userService;
 
-
   @GetMapping
   public ResponseEntity<UserDTO> getUserByPhoneNumber(@RequestParam String phoneNumber) {
     return ResponseEntity.ok(
