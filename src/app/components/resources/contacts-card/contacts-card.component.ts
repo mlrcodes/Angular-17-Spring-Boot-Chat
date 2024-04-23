@@ -3,7 +3,7 @@ import { Contact } from '../../../core/models/contac';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService } from 'primeng/api';
-import { ContactComponent } from '../../pages/home/contacts/add-contact/contact.component';
+import { AddContactComponent } from '../../pages/home/contacts/add-contact/add-contact.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ContactDialogComponent } from '../contact-dialog/contact-dialog.component';
 import { Chat } from '../../../core/models/chat';
@@ -16,7 +16,7 @@ import { DataSharingService } from '../../../core/services/data-sharing/data-sha
 @Component({
   selector: 'app-contacts-card',
   standalone: true,
-  imports: [ButtonModule, ConfirmPopupModule, ContactComponent, ContactDialogComponent],
+  imports: [ButtonModule, ConfirmPopupModule, AddContactComponent, ContactDialogComponent],
   providers: [ConfirmationService],
   templateUrl: './contacts-card.component.html',
   styleUrl: './contacts-card.component.scss'
@@ -40,7 +40,8 @@ export class ContactsCardComponent {
   visible: boolean = false;
   header: string = "Edit Contact"
 
-  confirmDelete() {
+  confirmDelete(event: Event) {
+    event.stopPropagation();
     this.confirmationService.confirm({
       target: this.deleteButton.nativeElement,
       message: 'Are you sure that you want to delete this contact?',
@@ -53,12 +54,12 @@ export class ContactsCardComponent {
   openContactChat() {
     this.router.navigate(['/home/chats/chat'])
     if (this.chat) this.dataSharingService.emitChatInfo(this.chat)
-    else if (this.contact) this.dataSharingService.emitChatInfo(this.contact)
-    
+    else if (this.contact) this.dataSharingService.emitChatInfo(this.contact) 
   }
 
-  openContactDialog() {
-    this.visible = true;
+  openContactDialog(event: Event) {
+    event.stopPropagation();
+    this.visible = true;  
   }
 
   editContact(updateContactRequest: ContactUpdateRequest) {

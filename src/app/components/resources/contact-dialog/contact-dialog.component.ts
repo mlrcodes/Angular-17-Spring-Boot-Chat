@@ -91,7 +91,7 @@ export class ContactDialogComponent implements OnInit {
 
   emitUpdateRequest() {
     const { contactName } = this.addContactForm.value
-    this.createContactRequest = {
+    this.updateContactRequest = {
       contactName: contactName || ''
     }
 
@@ -102,6 +102,10 @@ export class ContactDialogComponent implements OnInit {
     this.visibleChange.emit(this.visible);
     this.submitted = false;
     this.addContactForm.reset();
+  }
+
+  stopPropagation(event: Event) {
+    event.stopPropagation();
   }
 
   ngOnInit() {

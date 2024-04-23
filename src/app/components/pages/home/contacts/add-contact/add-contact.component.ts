@@ -10,10 +10,10 @@ import { ContactsService } from '../../../../../core/services/contacts/contacts.
   selector: 'app-add-contact',
   standalone: true,
   imports: [ ButtonModule, ContactDialogComponent],
-  templateUrl: './contact.component.html',
-  styleUrl: './contact.component.scss'
+  templateUrl: './add-contact.component.html',
+  styleUrl: './add-contact.component.scss'
 })
-export class ContactComponent {
+export class AddContactComponent {
 
   constructor(
     private contactsService: ContactsService

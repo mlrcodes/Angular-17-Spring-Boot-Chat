@@ -5,14 +5,10 @@ import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MAPPERS.IChatsMapper;
 import com.miguel.chatserver.MODELS.Chat;
 import com.miguel.chatserver.MODELS.Contact;
-import com.miguel.chatserver.MODELS.Message;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IChatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -20,9 +16,6 @@ public class ImpChatsService implements IChatsService {
 
   @Autowired
   private IChatsRepository chatRepository;
-
-  @Autowired
-  private IMessageService messageService;
 
   @Autowired
   private IJWTService jwtService;
@@ -34,7 +27,7 @@ public class ImpChatsService implements IChatsService {
   private IUsersService usersService;
 
   @Autowired
-  private IContactService contactService;
+  private IContactServiceExtended contactServiceExtended;
 
   @Override
   public List<ChatDTO> getUserChats(String jwtToken) {
@@ -52,7 +45,7 @@ public class ImpChatsService implements IChatsService {
 
   @Override
   public Chat getChat(User owner, User contactUser) {
-    Contact contact = contactService.findByOwnerAndUserContact(owner, contactUser);
+    Contact contact = contactServiceExtended.findContactByOwnerAndContactUser(owner, contactUser);
     if (Objects.isNull(contact)) {
       throw new ExceptionObjectNotFound("No contact was found");
     }
@@ -62,16 +55,6 @@ public class ImpChatsService implements IChatsService {
     }
     return chat;
   }
-
-  @Override
-  public Chat createChatIfNotExists(Contact contact) {
-    Chat existingChat = this.getChat(contact.getOwner(), contact.getContactUser());
-    if (Objects.isNull(existingChat)) {
-      return createChatsPair(contact);
-    }
-    return existingChat;
-  }
-
   @Override
   public ChatDTO createChat(Contact contact) {
     Chat chat = this.createChatIfNotExists(contact);
@@ -79,12 +62,34 @@ public class ImpChatsService implements IChatsService {
   }
 
   @Override
+  public Chat createChatIfNotExists(Contact contact) {
+    Chat existingChat;
+    try {
+      existingChat = this.getChat(contact.getOwner(), contact.getContactUser());
+    } catch (ExceptionObjectNotFound ex) {
+      return this.createChatsPair(contact);
+    }
+    return existingChat;
+  }
+
+  @Override
+  public void deleteContactChatIfExists(Contact contact) {
+    User owner = contact.getOwner();
+    Chat chat = chatRepository.findByUserAndContact(owner, contact).orElse(null);
+    if (Objects.nonNull(chat)) {
+      chatRepository.delete(chat);
+    }
+  }
+
+  @Override
   public Chat saveChat(Chat chat) {
     return chatRepository.save(chat);
   }
 
-  private Chat createChatsPair(Contact contact) {
+  @Override
+  public Chat createChatsPair(Contact contact) {
     User owner = contact.getOwner();
+    User contactUser = contact.getContactUser();
 
     if (Objects.isNull(contact) || Objects.isNull(owner)) {
       throw new IllegalStateException("Owner and/or contact should not be null");
@@ -97,14 +102,14 @@ public class ImpChatsService implements IChatsService {
       .messages(new ArrayList<>())
       .build();
 
-    Contact defaultContact = contactService.createDefaultContact(
-      contact.getContactUser(),
+    Contact defaultContact = contactServiceExtended.createDefaultContact(
+      contactUser,
       owner
     );
 
     Chat contactChat = Chat
       .builder()
-      .user(contact.getContactUser())
+      .user(contactUser)
       .contact(defaultContact)
       .messages(new ArrayList<>())
       .build();

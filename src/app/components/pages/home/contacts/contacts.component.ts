@@ -4,14 +4,14 @@ import { MessagesModule } from 'primeng/messages';
 import { Contact } from '../../../../core/models/contac';
 import { ContactsService } from '../../../../core/services/contacts/contacts.service';
 import { MessageService } from 'primeng/api';
-import { ContactComponent } from './add-contact/contact.component';
+import { AddContactComponent } from './add-contact/add-contact.component';
 import { ContactsCardComponent } from '../../../resources/contacts-card/contacts-card.component';
 import { ResultResponse } from '../../../../core/models/resultResponse';
 
 @Component({
   selector: 'app-contacts',
   standalone: true,
-  imports: [MessagesModule, ContactComponent, ContactsCardComponent],
+  imports: [MessagesModule, AddContactComponent, ContactsCardComponent],
   providers: [MessageService],
   templateUrl: './contacts.component.html',
   styleUrl: './contacts.component.scss'
@@ -73,7 +73,6 @@ export class ContactsComponent implements OnInit {
 
 
   notifyErrors(error: HttpErrorResponse) {
-    console.log(error)
     if (error.status === 0) {
       this.messageService.add({ severity: 'error', summary: 'Error: ', detail: "Unable to connect the server" });
     } else {
