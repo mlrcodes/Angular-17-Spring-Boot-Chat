@@ -14,17 +14,20 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient) { }
 
+  private baseUrl: string = 'http://localhost:8080/api/auth';
 
   register<T>(body: RegisterRequest): Observable<RegisterResponse> { 
     return this.httpClient
-      .post<T>('http://localhost:8080/api/auth/register', body) as Observable<RegisterResponse>;
+      .post<T>(this.baseUrl + '/register', body) as Observable<RegisterResponse>;
   }
 
-  login<T>(body: LoginRequest): Observable<LoginResponse>{
-    return this.httpClient.post<T>('http://localhost:8080/api/auth/login', body) as Observable<LoginResponse>;
+  login<T>(body: LoginRequest): Observable<LoginResponse> {
+    return this.httpClient.post<T>(this.baseUrl + '/login', body) as Observable<LoginResponse>;
   }
 
-  
+  isUserAuthenticated<T>(): Observable<boolean> {
+    return this.httpClient.get<T>(this.baseUrl) as Observable<boolean>;
+  }
 }
 
 

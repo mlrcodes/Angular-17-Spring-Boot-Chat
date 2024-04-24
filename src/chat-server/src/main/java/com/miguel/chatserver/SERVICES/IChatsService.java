@@ -11,7 +11,7 @@ import java.util.Objects;
 public interface IChatsService {
   public List<ChatDTO> getUserChats(String token);
 
-  public ChatDTO createChat(Contact contact);
+  public ChatDTO createChat(String phoneNumber);
 
   public Chat saveChat(Chat chat);
 

@@ -28,8 +28,8 @@ export class ChatComponent implements OnInit {
     private dataSharingService: DataSharingService
   ) {}
 
-
-  @Input() chat!: Chat;
+  contact!: Contact;
+  chat!: Chat;
   messages!: Message[];
   userPhoneNumber!: string ;
 
@@ -39,7 +39,6 @@ export class ChatComponent implements OnInit {
     .subscribe({
       next: (messages: Message[]) => {
         this.messages = messages;
-        console.log(this.messages)
       },
       error: (error: HttpErrorResponse) => {
         this.notifyErrors(error)
@@ -47,6 +46,9 @@ export class ChatComponent implements OnInit {
     })
   }
 
+  addMessage(message: Message) {
+    this.messages.push(message);
+  }
 
   notifyErrors(error: HttpErrorResponse) {
     if (error.status === 0) {
@@ -58,30 +60,32 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
+    this.suscribeToContactChatObservable();
+    this.suscribeToNoInfoChatObservable();
+    this.getChatMessages();
+  }
+
+  suscribeToContactChatObservable(): void {
     this.dataSharingService
     .openContactChatObservable
     .subscribe({
       next: (chat: Chat) => {
         this.chat = chat;
-        this.getChatMessages();
       }
     })
-
   }
 
-  isSentByUser(senderPhoneNumber: string) {
+  suscribeToNoInfoChatObservable(): void {
+    this.dataSharingService
+    .openNoInfoChatObservable
+    .subscribe({
+      next: (contact: Contact) => {
+        this.contact = contact;
+      }
+    })
+  }
+ 
+  isSentByUser(senderPhoneNumber: string): boolean {
     return this.userPhoneNumber === senderPhoneNumber;
   }
-
-  // ngOnInit(): void {
-  //   this.webSocketService.currentMessage.subscribe(msg => {
-  //     if (msg) this.messages.push(msg);
-  //   });
-  //   this.webSocketService.connect();
-  // }
-
-  // sendMessage(message: string): void {
-  //   this.webSocketService.sendMessage(message);
-  // }
-
 }

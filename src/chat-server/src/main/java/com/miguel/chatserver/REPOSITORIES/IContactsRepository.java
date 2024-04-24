@@ -15,7 +15,7 @@ public interface IContactsRepository extends JpaRepository<Contact, Integer> {
 
   public Optional<Contact> findByOwnerAndContactUser(User owner, User contactUser);
 
-  public Optional<Contact>  findByContactUser(User contactUser);
+  public Optional<Contact> findByContactUser(User contactUser);
 
   public Boolean existsByOwnerAndContactUser(User owner, User contactUser);
 

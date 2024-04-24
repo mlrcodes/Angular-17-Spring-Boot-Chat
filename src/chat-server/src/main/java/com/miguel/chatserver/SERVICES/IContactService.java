@@ -13,12 +13,10 @@ import java.util.List;
 public interface IContactService {
 
   public List<ContactResponseDTO> getUserContacts(String jwtToken);
+
   public ContactResponseDTO createContact(ContactCreateRequest contactRequest, String jwtToken);
 
   public ContactResponseDTO updateContact(Integer contactId, ContactEditRequest editRequest);
 
   public ResultMessageDTO deleteContact(Integer contactId);
-
-  public Contact getContactFromContactPhoneNumber(String phoneNumber);
-
   }

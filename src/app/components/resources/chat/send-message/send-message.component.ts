@@ -1,14 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { ButtonModule } from 'primeng/button';
-import { ChatsService } from '../../../../core/services/chats/chats.service';
-import { MessageService } from 'primeng/api';
 import { MessagesService } from '../../../../core/services/messages/messages.service';
 import { Message } from '../../../../core/models/message';
 import { WebSocketsService } from '../../../../core/services/websockets/web-sockets.service';
 import { Subscription } from 'rxjs';
+import { Chat } from '../../../../core/models/chat';
+import { Contact } from '../../../../core/models/contac';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-send-message',
@@ -24,32 +25,36 @@ export class SendMessageComponent implements OnInit {
     private webSocketService: WebSocketsService
   ) {}
 
-  @Input() chatId!: number;
-  messages!: Message[];
+  @Output() errorEmitter: EventEmitter<HttpErrorResponse> = new EventEmitter<HttpErrorResponse>();
+  @Output() messageEmitter: EventEmitter<Message> = new EventEmitter<Message>();
+  @Input() contact!: Contact;
+  @Input() chat!: Chat;
+  chatId!: number;
   messageText!: string;
-  private wsSubscription!: Subscription;
 
   sendMessage(): void {
-    this.webSocketService.sendMessage(this.chatId, this.messageText);
-    this.messageText = '';
+   if (this.chat) {
+    this.sendCommonMessage();
+   } else {
+    this.sendFirstChatMessage();
+   } 
   }
 
-  getMessages() {
+  sendFirstChatMessage(): void {
     this.messagesService
-    .getMessages(this.chatId)
+    .sendFirstChatMessage(this.contact, this.messageText)
     .subscribe({
-      next: (messages: Message[]) => {
-        this.messages = messages
+      next: (message: Message) => {
+        this.messageEmitter.emit(message);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorEmitter.emit(error);
       }
-    });
+    })
   }
 
-  ngOnInit(): void {
-    this.getMessages();
-    this.webSocketService.connect(this.chatId);
-    this.wsSubscription = this.webSocketService.messages$.subscribe((message: Message) => {
-      this.messages.push(message);
-    });
+  sendCommonMessage(): void {
+
   }
 
   handleKeyPress(event: KeyboardEvent): void {
@@ -58,8 +63,7 @@ export class SendMessageComponent implements OnInit {
     }
   }
 
-  ngOnDestroy(): void {
-    this.webSocketService.closeWebSocket();
-    this.wsSubscription.unsubscribe();
+  ngOnInit(): void {
+    this.chatId = this.chat.chatId;
   }
 }

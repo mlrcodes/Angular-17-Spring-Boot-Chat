@@ -7,6 +7,7 @@ import com.miguel.chatserver.DTO.ResultMessageDTO;
 import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IContactsRepository;
+import com.miguel.chatserver.REPOSITORIES.IUsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class ImpContactServiceExtended implements IContactServiceExtended {
 
   @Autowired
   private IContactsRepository contactsRepository;
+
+  @Autowired
+  private IUsersService usersService;
 
   @Override
   public List<ContactResponseDTO> getUserContacts(String jwtToken) {
@@ -42,7 +46,8 @@ public class ImpContactServiceExtended implements IContactServiceExtended {
 
   @Override
   public Contact getContactFromContactPhoneNumber(String phoneNumber) {
-    return null;
+    User contactUser = usersService.findByPhoneNumber(phoneNumber);
+    return contactsRepository.findByContactUser(contactUser).orElse(null);
   }
 
   @Override
@@ -58,7 +63,7 @@ public class ImpContactServiceExtended implements IContactServiceExtended {
       .owner(owner)
       .contactUser(contactUser)
       .build();
-    
+
     return contactsRepository.save(defaultContact);
   }
 }

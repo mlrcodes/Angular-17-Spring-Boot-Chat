@@ -56,7 +56,8 @@ public class ImpChatsService implements IChatsService {
     return chat;
   }
   @Override
-  public ChatDTO createChat(Contact contact) {
+  public ChatDTO createChat(String contactPhoneNumber) {
+    Contact contact = contactServiceExtended.getContactFromContactPhoneNumber(contactPhoneNumber);
     Chat chat = this.createChatIfNotExists(contact);
     return chatsMapper.createChatDTOFromChat(chat);
   }

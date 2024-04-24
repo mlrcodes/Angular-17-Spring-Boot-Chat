@@ -54,6 +54,7 @@ export class ContactsCardComponent {
   openContactChat() {
     this.router.navigate(['/home/chats/chat'])
     if (this.chat) this.dataSharingService.emitChatInfo(this.chat)
+    else if (this.contact) this.dataSharingService.emitNoInfoChat(this.contact)
   }
 
   openContactDialog(event: Event) {

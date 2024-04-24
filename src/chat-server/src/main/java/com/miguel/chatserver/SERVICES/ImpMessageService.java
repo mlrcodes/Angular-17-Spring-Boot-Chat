@@ -1,8 +1,10 @@
 package com.miguel.chatserver.SERVICES;
 
 import com.miguel.chatserver.DTO.MessageDTO;
+import com.miguel.chatserver.DTO.MessageFirstSaveDTO;
 import com.miguel.chatserver.DTO.MessageSaveDTO;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
+import com.miguel.chatserver.MAPPERS.IContactsMapper;
 import com.miguel.chatserver.MAPPERS.IMessagesMapper;
 import com.miguel.chatserver.MODELS.Chat;
 import com.miguel.chatserver.MODELS.Contact;
@@ -27,6 +29,10 @@ public class ImpMessageService implements IMessageService {
   @Autowired
   private IChatsService chatsService;
 
+
+  @Autowired
+  private IContactServiceExtended contactServiceExtended;
+
   @Override
   public MessageDTO saveMessage(MessageSaveDTO messageSaveDTO) {
     Chat chat = chatsService.findById(messageSaveDTO.getChatId());
@@ -47,6 +53,16 @@ public class ImpMessageService implements IMessageService {
       .build();
 
     return messageRepository.save(message);
+  }
+
+  @Override
+  public MessageDTO sendFirstChatMessage(MessageFirstSaveDTO messageInfo) {
+    return messagesMapper.createMessageDTOFromMessage(
+      sendFirstContactMessage(
+        contactServiceExtended.getContactFromContactPhoneNumber(messageInfo.getContactPhoneNumber()),
+        messageInfo.getMessageText()
+      )
+    );
   }
 
   @Override

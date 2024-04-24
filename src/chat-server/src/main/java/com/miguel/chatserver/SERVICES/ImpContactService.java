@@ -107,10 +107,4 @@ public class ImpContactService implements IContactService {
     contactsRepository.delete(contact);
     return new ResultMessageDTO("Contact deleted successfully");
   }
-
-  @Override
-  public Contact getContactFromContactPhoneNumber(String phoneNumber) {
-    User contactUser = userService.findByPhoneNumber(phoneNumber);
-    return contactsRepository.findByContactUser(contactUser).orElse(null);
-  }
 }

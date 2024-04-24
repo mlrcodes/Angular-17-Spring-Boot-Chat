@@ -42,11 +42,7 @@ public class ChatsController {
     @RequestParam String contactPhoneNumber
   ) {
     return ResponseEntity.ok(
-      chatsService.createChat(
-        contactsService.getContactFromContactPhoneNumber(
-          contactPhoneNumber
-        )
-      )
+      chatsService.createChat(contactPhoneNumber)
     );
   }
 
