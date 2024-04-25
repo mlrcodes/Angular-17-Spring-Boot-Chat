@@ -30,6 +30,7 @@ export class ChatsComponent {
     .subscribe({
       next: (chats: Chat[]) => {
         this.userChats = chats;
+        console.log(this.userChats)
       },
       error: (error: HttpErrorResponse) => {
         console.log(error)

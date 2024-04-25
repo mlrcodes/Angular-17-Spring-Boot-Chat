@@ -5,7 +5,7 @@
         }
     </div>
     <div class="write-box">
-        <app-send-message [chat]="chat" (errorEmitter)="notifyErrors($event)"
+        <app-send-message [connected]="connected" (errorEmitter)="notifyErrors($event)"
             (messageEmitter)="addMessage($event)"></app-send-message>
     </div>
 </div>

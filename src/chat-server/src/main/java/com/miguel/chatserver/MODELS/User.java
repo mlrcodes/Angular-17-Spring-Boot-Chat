@@ -35,8 +35,6 @@ public class User {
   @Column(nullable = false)
   private Boolean acceptedTerms;
 
-  private Status status;
-
   @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
   private List<Contact> contacts;
 

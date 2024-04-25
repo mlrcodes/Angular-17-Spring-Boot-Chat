@@ -81,6 +81,7 @@ export class ContactsCardComponent {
   }
 
   ngOnInit() {
+    console.log(this.chat)
     if (this.chat) this.contact = this.chat.contact
   }
 

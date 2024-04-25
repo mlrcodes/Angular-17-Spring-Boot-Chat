@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { WebSocketsService } from '../../../core/services/websockets/web-sockets.service';
+import { Component, OnInit } from '@angular/core';
+import { WebsocketsService } from '../../../core/services/websockets/web-sockets.service';
 import { Message } from '../../../core/models/message';
 import { Contact } from '../../../core/models/contac';
-import { ChatsService } from '../../../core/services/chats/chats.service';
 import { MessageComponent } from './message/message.component';
 import { MessagesService } from '../../../core/services/messages/messages.service';
 import { Chat } from '../../../core/models/chat';
@@ -22,18 +21,20 @@ import { SendMessageComponent } from './send-message/send-message.component';
 export class ChatComponent implements OnInit {
 
   constructor(
-    private chatService: ChatsService,
     private messagesService: MessagesService,
     private messageService: MessageService,
-    private dataSharingService: DataSharingService
+    private dataSharingService: DataSharingService,
+    private webSocketsService: WebsocketsService
   ) {}
 
   contact!: Contact;
   chat!: Chat;
   messages!: Message[];
   userPhoneNumber!: string ;
+  connected: boolean = false;
 
   getChatMessages() {
+    // Recuperar mensajes sólo por contacto para recibir notificación de error!!!!
     this.messagesService
     .getMessages(this.chat.chatId)
     .subscribe({
@@ -58,19 +59,15 @@ export class ChatComponent implements OnInit {
     }  
   }
 
-  ngOnInit(): void {
-    this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
-    this.suscribeToContactChatObservable();
-    this.suscribeToNoInfoChatObservable();
-    this.getChatMessages();
-  }
-
   suscribeToContactChatObservable(): void {
     this.dataSharingService
     .openContactChatObservable
     .subscribe({
       next: (chat: Chat) => {
         this.chat = chat;
+        this.getChatMessages();
+        this.webSocketsConnect()
+        console.log(this.chat)
       }
     })
   }
@@ -84,8 +81,32 @@ export class ChatComponent implements OnInit {
       }
     })
   }
- 
+
+  webSocketsConnect() {
+    if (this.chat) {
+      this.webSocketsService.initializeWebSocketConnection();
+      this.connected = true;
+      this.handleIncomingMassages();
+    }
+  }
+
+  handleIncomingMassages() {
+    this.webSocketsService
+    .currentMessage.subscribe({
+      next: (message: any) => {
+        this.addMessage(message);
+      }
+    })
+  }
+
   isSentByUser(senderPhoneNumber: string): boolean {
     return this.userPhoneNumber === senderPhoneNumber;
+  }
+
+  
+  ngOnInit(): void {
+    this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
+    this.suscribeToContactChatObservable();
+    this.suscribeToNoInfoChatObservable();
   }
 }

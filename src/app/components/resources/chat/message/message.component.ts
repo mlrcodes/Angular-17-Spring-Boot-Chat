@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Message } from '../../../../core/models/message';
 
 @Component({
@@ -9,10 +9,15 @@ import { Message } from '../../../../core/models/message';
   templateUrl: './message.component.html',
   styleUrl: './message.component.scss'
 })
-export class MessageComponent {
+export class MessageComponent implements OnInit {
 
 
   @Input() message!: Message;
   @Input() sentByOwner!: boolean;
 
+
+  ngOnInit() {
+    console.log(this.message)
+    console.log(this.sentByOwner)
+  }
 }

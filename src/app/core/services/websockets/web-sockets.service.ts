@@ -1,37 +1,47 @@
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { Injectable, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { Message } from '../../models/message';
-
+import { Injectable } from '@angular/core';
+import { CompatClient, IMessage, Stomp } from '@stomp/stompjs';
+import { Observable, Subject } from 'rxjs';
+import SockJS from 'sockjs-client';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class WebSocketsService {
+export class WebsocketsService {
+  private serverUrl = '//localhost:8080/ws';
+  private stompClient!: CompatClient;
+  private messageSubject: Subject<IMessage> = new Subject<IMessage>();
+  currentMessage: Observable<IMessage> = this.messageSubject.asObservable();
 
   constructor() { }
 
-  private webSocket!: WebSocket;
-  private messagesSubject = new Subject<Message>();
-  public messages$ = this.messagesSubject.asObservable();
 
-  public connect(chatId: number): void {
-    if (!this.webSocket || this.webSocket.readyState === WebSocket.CLOSED) {
-      this.webSocket = new WebSocket(`ws://localhost:8080/ws/chat/${chatId}`);
-      this.webSocket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
-        this.messagesSubject.next(message);
-      };
-    }
+
+  initializeWebSocketConnection() {
+    const ws = new SockJS(this.serverUrl);
+    this.stompClient = Stomp.over(ws);
+    this.joinChat();
   }
 
-  public sendMessage(chatId: number, messageText: string): void {
-    this.webSocket.send(JSON.stringify({chatId, messageText}));
+  joinChat() {
+    const userPhoneNumber = localStorage.getItem("userPhoneNumber");
+    this.stompClient.connect({}, (): void => {
+      this.stompClient.subscribe(`/user/${userPhoneNumber}/queue/messages`, (message: IMessage): void => {
+          this.messageSubject.next(message);
+      });
+    }, this.errorCallBack);
   }
 
-  public closeWebSocket(): void {
-    if (this.webSocket) {
-      this.webSocket.close();
+  sendMessage(message: {chatId: number, messageText: string}) {
+    this.stompClient.send('/app/chat', {}, JSON.stringify(message));
+  }
+
+  errorCallBack(error: any) {
+    console.log(error)
+  }
+
+  disconnect() {
+    if (this.stompClient !== null) {
+      this.stompClient.disconnect();
     }
   }
 }
