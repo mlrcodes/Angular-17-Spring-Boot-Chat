@@ -26,7 +26,7 @@ export class ContactDialogComponent implements OnInit {
 
 
   @Output() createContactEmitter: EventEmitter<ContactCreateRequest> = new EventEmitter<ContactCreateRequest>();
-  @Output() updateContactEmitter: EventEmitter<ContactCreateRequest> = new EventEmitter<ContactCreateRequest>();
+  @Output() updateContactEmitter: EventEmitter<ContactUpdateRequest> = new EventEmitter<ContactUpdateRequest>();
   @Output() visibleChange: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() visible!: boolean;
   @Input() header: string = "";
@@ -91,11 +91,12 @@ export class ContactDialogComponent implements OnInit {
 
   emitUpdateRequest() {
     const { contactName } = this.addContactForm.value
+   
     this.updateContactRequest = {
       contactName: contactName || ''
     }
 
-    this.updateContactEmitter.emit(this.createContactRequest);
+    this.updateContactEmitter.emit(this.updateContactRequest);
   }
 
   onDisplayChange() {

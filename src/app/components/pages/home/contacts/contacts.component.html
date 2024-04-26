@@ -6,7 +6,7 @@
         <div class="contacts">
             @for(contact of userContacts; track contact.contactId) {
             <app-contacts-card [contact]="contact" (deleteContactEmitter)="deleteContact($event)"
-                (updatedContactEmitter)="editContact($event)" [showEditBtns]="true"></app-contacts-card>
+                (updatedContactEmitter)="editContact($event)" [showEditBtn]="true"></app-contacts-card>
             }
         </div>
     </div>

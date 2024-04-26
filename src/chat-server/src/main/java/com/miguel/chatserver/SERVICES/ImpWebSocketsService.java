@@ -3,14 +3,18 @@ package com.miguel.chatserver.SERVICES;
 import com.miguel.chatserver.DTO.MessageDTO;
 import com.miguel.chatserver.DTO.MessageSaveDTO;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
+import com.miguel.chatserver.MAPPERS.IMessagesMapper;
 import com.miguel.chatserver.MODELS.Chat;
 import com.miguel.chatserver.MODELS.Message;
 import com.miguel.chatserver.MODELS.User;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -29,33 +33,28 @@ public class ImpWebSocketsService implements IWebSocketsService {
   private IMessageService messageService;
 
   @Autowired
-  private IJWTService jwtService;
+  private IMessagesMapper messagesMapper;
 
   @Override
+  @Transactional
   public MessageDTO sendMessage(
-    MessageSaveDTO messageSaveDTO,
-    SimpMessageHeaderAccessor headerAccessor
+    MessageSaveDTO messageSaveDTO
   ) {
     Chat senderChat = chatsService.findById(messageSaveDTO.getChatId());
     User sender = senderChat.getUser();
     User recipient = senderChat.getContact().getContactUser();
-    Chat recipientChat = chatsService.getContactChat(recipient, sender);
+    Chat recipientChat = chatsService.getContactChat(sender, recipient);
+
     if (Objects.isNull(senderChat) || Objects.isNull(recipientChat)) {
       throw new ExceptionObjectNotFound("Chat not found");
     }
-    String messageText = messageSaveDTO.getMessageText();
-    Message savedSenderMessage = messageService.sendMessage(senderChat, messageText);
-    Message savedRecipientMessage = messageService.sendMessage(recipientChat, messageText);
-    senderChat.getMessages().add(savedSenderMessage);
-    recipientChat.getMessages().add(savedRecipientMessage);
-    chatsService.saveChat(senderChat);
-    chatsService.saveChat(recipientChat);
-    return MessageDTO.builder()
-      .messageId(savedRecipientMessage.getMessageId())
-      .senderPhoneNumber(sender.getPhoneNumber())
-      .recipientPhoneNumber(recipient.getPhoneNumber())
-      .messageText(savedRecipientMessage.getMessageText())
-      .timestamp(savedRecipientMessage.getTimeStamp())
-      .build();
+
+    Message savedMessage = messageService.sendMessageAndUpdateChatsPair(
+      chatsService.getChatsPairMap(senderChat, recipientChat),
+      sender,
+      messageSaveDTO.getMessageText()
+    );
+
+    return messagesMapper.createMessageDTOFromMessage(savedMessage);
   }
 }

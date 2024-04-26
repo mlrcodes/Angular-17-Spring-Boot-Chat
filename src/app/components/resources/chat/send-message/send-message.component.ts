@@ -20,7 +20,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class SendMessageComponent {
 
   constructor(
-    private messagesService: MessagesService,
     private webSocketService: WebsocketsService
   ) {}
 
@@ -28,15 +27,15 @@ export class SendMessageComponent {
   @Output() messageEmitter: EventEmitter<Message> = new EventEmitter<Message>();
   @Input() contact!: Contact;
   @Input() chat!: Chat;
-  chatId!: number;
-  messageText!: string;
+  messageText: string = "";
 
   sendMessage(): void {
     if (this.messageText) {
       this.webSocketService.sendMessage({
-        chatId: this.chatId,
+        chatId: this.chat.chatId,
         messageText: this.messageText
       });
+      this.messageText = "";
     }
   }
 

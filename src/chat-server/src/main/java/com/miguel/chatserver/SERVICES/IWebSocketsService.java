@@ -6,5 +6,5 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 
 public interface IWebSocketsService {
 
-  public MessageDTO sendMessage(MessageSaveDTO messageDTO, SimpMessageHeaderAccessor headerAccessor);
+  public MessageDTO sendMessage(MessageSaveDTO messageDTO);
 }

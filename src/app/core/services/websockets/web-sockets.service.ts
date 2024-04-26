@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CompatClient, IMessage, Stomp } from '@stomp/stompjs';
+import { CompatClient, IMessage, Message, Stomp } from '@stomp/stompjs';
 import { Observable, Subject } from 'rxjs';
 import SockJS from 'sockjs-client';
 import { TokenService } from '../token/token.service';
@@ -10,8 +10,8 @@ import { TokenService } from '../token/token.service';
 export class WebsocketsService {
   private serverUrl = 'http://localhost:8080/ws';
   private stompClient!: CompatClient;
-  private messageSubject: Subject<IMessage> = new Subject<IMessage>();
-  currentMessage: Observable<IMessage> = this.messageSubject.asObservable();
+  private messageSubject: Subject<Message> = new Subject<Message>();
+  messageObservable: Observable<Message> = this.messageSubject.asObservable();
 
   constructor(
     private tokenService: TokenService
@@ -27,8 +27,11 @@ export class WebsocketsService {
     const userPhoneNumber = localStorage.getItem("userPhoneNumber");
     this.stompClient.connect({}, (): void => {
       this.stompClient.subscribe(`/user/${userPhoneNumber}/queue/messages`, (message: IMessage): void => {
-          this.messageSubject.next(message);
-      });
+        const binaryBody = Object.values(message.binaryBody),
+          jsonBody = String.fromCharCode.apply(null, binaryBody),
+          parsedMessage = JSON.parse(jsonBody);
+        this.messageSubject.next(parsedMessage);
+    });
     }, this.errorCallBack);
   }
 

@@ -68,7 +68,7 @@ public class ImpContactService implements IContactService {
     User contactUser = userService.findByPhoneNumber(contactRequest.getContactPhoneNumber());
 
     if (Objects.isNull(contactUser)) {
-      throw new ExceptionObjectNotFound("Contact user not found");
+      throw new ExceptionObjectNotFound("User not found");
     }
 
     Contact newContact = Contact.builder()
@@ -87,7 +87,7 @@ public class ImpContactService implements IContactService {
 
     String messageText = contactRequest.getMessage();
     if (StringUtils.hasText(messageText)) {
-      messageService.sendMessageAndUpdateChatsPair(savedChats, messageText);
+      messageService.sendMessageAndUpdateChatsPair(savedChats, owner, messageText);
     }
     ContactResponseDTO savedContactDTO = contactsMapper.createContactResponseFromContact(savedContact);
     return savedContactDTO;

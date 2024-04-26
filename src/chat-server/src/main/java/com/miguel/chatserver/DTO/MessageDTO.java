@@ -21,6 +21,8 @@ public class MessageDTO {
   @NotNull(message = "Message's recipient required")
   private String recipientPhoneNumber;
 
+  private Integer chatId;
+
   private Date timestamp;
 
   @NotBlank(message = "Message text required")

@@ -15,21 +15,13 @@ public class ImpMessagesMapper implements IMessagesMapper {
   private IUsersMapper usersMapper;
 
   @Override
-  public Message createMessageFromDTO(MessageDTO messageDTO) {
-    return null;
-  }
-
-  @Override
-  public List<Message> createMessageListFromDTOList(List<MessageDTO> messageDTOList) {
-    return null;
-  }
-
-  @Override
   public MessageDTO createMessageDTOFromMessage(Message message) {
     return MessageDTO
       .builder()
       .messageId(message.getMessageId())
       .senderPhoneNumber(message.getSender().getPhoneNumber())
+      .recipientPhoneNumber(message.getChat().getContact().getContactUser().getPhoneNumber())
+      .chatId(message.getChat().getChatId())
       .messageText(message.getMessageText())
       .timestamp(message.getTimeStamp())
       .build();

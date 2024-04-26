@@ -1,11 +1,11 @@
 <div class="chat-container d-flex flex-column">
     <div class="messages">
         @for(message of messages; track message.messageId) {
-        <app-message [message]="message" [sentByOwner]="isSentByUser(message.senderPhoneNumber)"></app-message>
+        <app-message [message]="message" [sentByOwner]="isSentByUser(message)"></app-message>
         }
     </div>
     <div class="write-box">
-        <app-send-message (errorEmitter)="notifyErrors($event)"
+        <app-send-message [chat]="chat" (errorEmitter)="notifyErrors($event)"
             (messageEmitter)="addMessage($event)"></app-send-message>
     </div>
 </div>

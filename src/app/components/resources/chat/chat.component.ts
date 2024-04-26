@@ -29,7 +29,7 @@ export class ChatComponent implements OnInit {
   contact!: Contact;
   chat!: Chat;
   messages!: Message[];
-  userPhoneNumber!: string ;
+  userPhoneNumber!: string;
 
   getChatMessages() {
     // Recuperar mensajes sólo por contacto para recibir notificación de error!!!!
@@ -38,10 +38,8 @@ export class ChatComponent implements OnInit {
     .subscribe({
       next: (messages: Message[]) => {
         this.messages = messages;
-        console.log(this.messages)
       },
       error: (error: HttpErrorResponse) => {
-        console.log(error)
         this.notifyErrors(error)
       }
     })
@@ -70,12 +68,17 @@ export class ChatComponent implements OnInit {
     })
   }
 
-  isSentByUser(senderPhoneNumber: string): boolean {
+  isSentByUser(message: Message): boolean {
+    const senderPhoneNumber = message.senderPhoneNumber;
+    console.log(message)
+    console.log(senderPhoneNumber)
+    console.log(this.userPhoneNumber === senderPhoneNumber)
     return this.userPhoneNumber === senderPhoneNumber;
   }
   
   ngOnInit(): void {
     this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
+    console.log(this.userPhoneNumber)
     this.suscribeToChatObservable();
   }
 }

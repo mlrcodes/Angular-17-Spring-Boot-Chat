@@ -27,4 +27,6 @@ public interface IChatsService {
 
   public Chat findById(Integer chatId);
 
-  }
+  public Map<String, Chat> getChatsPairMap(Chat ownerChat, Chat contactChat);
+
+}

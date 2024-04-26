@@ -7,6 +7,7 @@ import com.miguel.chatserver.MAPPERS.IMessagesMapper;
 import com.miguel.chatserver.MODELS.Chat;
 import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.Message;
+import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,10 +33,10 @@ public class ImpMessageService implements IMessageService {
   private IContactServiceExtended contactServiceExtended;
 
   @Override
-  public Message sendMessage(Chat chat, String messageText) {
+  public Message sendMessage(Chat chat, User sender, String messageText) {
     Message message = Message
       .builder()
-      .sender(chat.getUser())
+      .sender(sender)
       .timeStamp(new Date())
       .messageText(messageText)
       .chat(chat)
@@ -43,13 +44,13 @@ public class ImpMessageService implements IMessageService {
     return messageRepository.save(message);
   }
   @Override
-  public Message sendMessageAndUpdateChatsPair(Map<String, Chat> chatsPair, String messageText) {
-    this.sendMessageAndUpdateChat(chatsPair.get("contactChat"), messageText);
-    return this.sendMessageAndUpdateChat(chatsPair.get("contactChat"), messageText);
+  public Message sendMessageAndUpdateChatsPair(Map<String, Chat> chatsPair, User sender, String messageText) {
+    this.sendMessageAndUpdateChat(chatsPair.get("contactChat"), sender, messageText);
+    return this.sendMessageAndUpdateChat(chatsPair.get("ownerChat"), sender, messageText);
   }
 
-  private Message sendMessageAndUpdateChat(Chat chat, String messageText) {
-    Message message = this.sendMessage(chat, messageText);
+  private Message sendMessageAndUpdateChat(Chat chat, User sender, String messageText) {
+    Message message = this.sendMessage(chat, sender, messageText);
     chat.getMessages().add(message);
     chatsService.saveChat(chat);
     return message;
@@ -65,7 +66,7 @@ public class ImpMessageService implements IMessageService {
       }
       return this.messagesMapper.createMessageDTOListFromMessageList(chatMessages);
     } else {
-      throw new ExceptionObjectNotFound("Void conversation");
+      throw new ExceptionObjectNotFound("Chat does not exist");
     }
   }
 }

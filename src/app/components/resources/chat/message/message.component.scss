@@ -4,13 +4,11 @@
 }
 
 .user-message {
-    align-self: flex-end;
     background-color: var(--light-blue);
-    text-align: left;
+    margin-left: auto;
 }
 
 .contact-message {
-    align-self: flex-start;
     background-color: #cfcfcf;
-    text-align: right;
+    margin-right: auto;
 }

@@ -133,8 +133,8 @@ public class ImpChatsService implements IChatsService {
     Chat savedContactChat = chatRepository.save(contactChat);
     return getChatsPairMap(savedOwnerChat, savedContactChat);
   }
-
-  private Map<String, Chat> getChatsPairMap(Chat ownerChat, Chat contactChat) {
+  @Override
+  public Map<String, Chat> getChatsPairMap(Chat ownerChat, Chat contactChat) {
     Map<String, Chat> chatsMap = new HashMap<>();
     chatsMap.put("ownerChat", ownerChat);
     chatsMap.put("contactChat", contactChat);

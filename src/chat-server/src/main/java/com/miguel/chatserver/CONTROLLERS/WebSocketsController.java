@@ -22,10 +22,9 @@ public class WebSocketsController {
 
   @MessageMapping("/chat")
   public MessageDTO sendMessage(
-    @Payload MessageSaveDTO messageDTO,
-    SimpMessageHeaderAccessor headerAccessor
+    @Payload MessageSaveDTO messageDTO
   ) {
-    MessageDTO message = this.webSocketsService.sendMessage(messageDTO, headerAccessor);
+    MessageDTO message = this.webSocketsService.sendMessage(messageDTO);
 
     messagingTemplate.convertAndSendToUser(
       message.getRecipientPhoneNumber(),
