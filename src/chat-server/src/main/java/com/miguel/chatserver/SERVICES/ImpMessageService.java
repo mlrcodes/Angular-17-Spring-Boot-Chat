@@ -28,9 +28,9 @@ public class ImpMessageService implements IMessageService {
   @Autowired
   private IChatsService chatsService;
 
-
   @Autowired
   private IContactServiceExtended contactServiceExtended;
+
   @Override
   public Message sendMessage(Chat chat, String messageText) {
     Message message = Message
@@ -42,33 +42,17 @@ public class ImpMessageService implements IMessageService {
       .build();
     return messageRepository.save(message);
   }
-
   @Override
-  public MessageDTO sendFirstChatMessage(MessageFirstSaveDTO messageInfo) {
-    return messagesMapper.createMessageDTOFromMessage(
-      sendFirstContactMessage(
-        contactServiceExtended.getContactFromContactPhoneNumber(messageInfo.getContactPhoneNumber()),
-        messageInfo.getMessageText()
-      )
-    );
+  public Message sendMessageAndUpdateChatsPair(Map<String, Chat> chatsPair, String messageText) {
+    this.sendMessageAndUpdateChat(chatsPair.get("contactChat"), messageText);
+    return this.sendMessageAndUpdateChat(chatsPair.get("contactChat"), messageText);
   }
 
-  @Override
-  public Message sendFirstContactMessage(Contact contact, String messageText) {
-    Message savedSenderMessage = null;
-    Message savedContactMessage;
-    Map<String, Chat> savedChats = chatsService.createChatsIfNotExist(contact);
-    if (Objects.nonNull(savedChats)) {
-      Chat senderChat = savedChats.get("ownerChat");
-      Chat contactChat = savedChats.get("contactChat");
-      savedSenderMessage = this.sendMessage(senderChat, messageText);
-      savedContactMessage = this.sendMessage(contactChat, messageText);
-      senderChat.getMessages().add(savedSenderMessage);
-      contactChat.getMessages().add(savedContactMessage);
-      chatsService.saveChat(senderChat);
-      chatsService.saveChat(contactChat);
-    }
-    return savedSenderMessage;
+  private Message sendMessageAndUpdateChat(Chat chat, String messageText) {
+    Message message = this.sendMessage(chat, messageText);
+    chat.getMessages().add(message);
+    chatsService.saveChat(chat);
+    return message;
   }
 
   @Override

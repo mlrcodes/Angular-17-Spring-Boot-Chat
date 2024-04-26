@@ -8,14 +8,13 @@ import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.Message;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IMessageService {
 
   public Message sendMessage(Chat chat, String messageText);
 
-  public MessageDTO sendFirstChatMessage(MessageFirstSaveDTO messageInfo);
-
-  public Message sendFirstContactMessage(Contact contact, String messageText);
+  public Message sendMessageAndUpdateChatsPair(Map<String, Chat> chatsPair, String messageText);
 
   public List<MessageDTO> getChatMessages(Integer chatId);
 

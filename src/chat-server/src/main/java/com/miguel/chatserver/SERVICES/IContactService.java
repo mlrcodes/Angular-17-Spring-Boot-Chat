@@ -19,4 +19,5 @@ public interface IContactService {
   public ContactResponseDTO updateContact(Integer contactId, ContactEditRequest editRequest);
 
   public ResultMessageDTO deleteContact(Integer contactId);
+
   }

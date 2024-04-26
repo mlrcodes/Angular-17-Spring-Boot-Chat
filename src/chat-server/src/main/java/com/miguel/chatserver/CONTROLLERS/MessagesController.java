@@ -1,7 +1,6 @@
 package com.miguel.chatserver.CONTROLLERS;
 
 import com.miguel.chatserver.DTO.MessageDTO;
-import com.miguel.chatserver.DTO.MessageFirstSaveDTO;
 import com.miguel.chatserver.SERVICES.IContactService;
 import com.miguel.chatserver.SERVICES.IMessageService;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +27,6 @@ public class MessagesController {
   ) {
     return ResponseEntity.ok(
       this.messageService.getChatMessages(chatId)
-    );
-  }
-
-  @PostMapping
-  public ResponseEntity<MessageDTO> sendMessage(
-    @RequestBody MessageFirstSaveDTO messageInfo
-  ) {
-    return ResponseEntity.ok(
-      this.messageService.sendFirstChatMessage(messageInfo)
     );
   }
 }

@@ -23,8 +23,4 @@ export class MessagesService {
     }) as Observable<Message[]>;
   }
 
-  sendFirstChatMessage<T>(contact: Contact, messageText: string): Observable<Message> {
-    return this.httpClient.post<T>(this.baseURL, {contact, messageText}) as Observable<Message>;
-  }
-
 }

@@ -17,13 +17,4 @@ export class DataSharingService {
   emitChatInfo(chat: Chat) {
     this.openContactChatSubject.next(chat);
   }
-
-
-  contact!: Contact;
-  openNoInfoChatSubject: BehaviorSubject<Contact> = new BehaviorSubject<Contact>(this.contact);
-  openNoInfoChatObservable: Observable<Contact> = this.openNoInfoChatSubject.asObservable();  
-
-  emitNoInfoChat(contact: Contact) {
-    this.openNoInfoChatSubject.next(contact);   
-  }
 }

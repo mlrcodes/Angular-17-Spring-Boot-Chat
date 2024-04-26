@@ -29,33 +29,31 @@ public class ImpChatsService implements IChatsService {
   @Autowired
   private IContactServiceExtended contactServiceExtended;
 
+
   @Override
   public List<ChatDTO> getUserChats(String jwtToken) {
-    String phoneNumber = jwtService.getPhoneNumberFromToken(jwtToken);
-    User user = usersService.findByPhoneNumber(phoneNumber);
-    if (Objects.isNull(user)) {
-      throw new ExceptionObjectNotFound("No user was found");
-    }
-    if (Objects.isNull(user.getChats()) || user.getChats().isEmpty()) {
+    User user = usersService.findByPhoneNumber(
+      jwtService.getPhoneNumberFromToken(jwtToken)
+    );
+    if (user.getChats().isEmpty()) {
       throw new ExceptionObjectNotFound("User do not have any active chat");
     }
     return chatsMapper.createChatDTOListFromChatList(user.getChats());
   }
 
-
   @Override
   public Map<String, Chat> getChatsPair(User owner, User contactUser) {
     Contact contact = contactServiceExtended.findContactByOwnerAndContactUser(owner, contactUser);
-    Contact contactUserContact = null;
-    if (Objects.isNull(contact)) {
+    Contact userContact = contactServiceExtended.findContactByOwnerAndContactUser(contactUser, owner);
+    if (Objects.isNull(contact) || Objects.isNull(userContact)) {
       throw new ExceptionObjectNotFound("Contact not found");
     }
     Chat ownerChat = chatRepository.findByUserAndContact(owner, contact).orElse(null);
-    Chat contactUserChat = chatRepository.findByUserAndContact(contactUser, contactUserContact).orElse(null);
-    if (Objects.isNull(ownerChat) || Objects.isNull(contactUserChat)) {
+    Chat contactChat = chatRepository.findByUserAndContact(contactUser, userContact).orElse(null);
+    if (Objects.isNull(ownerChat) || Objects.isNull(contactChat)) {
       throw new ExceptionObjectNotFound("Chat not found");
     }
-    return getChatsPairMap(ownerChat, contactUserChat);
+    return getChatsPairMap(ownerChat, contactChat);
   }
 
   @Override
@@ -119,7 +117,7 @@ public class ImpChatsService implements IChatsService {
       .messages(new ArrayList<>())
       .build();
 
-    Contact defaultContact = contactServiceExtended.createDefaultContact(
+    Contact userContact = contactServiceExtended.findContactOrCreateDefaultOne(
       contactUser,
       owner
     );
@@ -127,7 +125,7 @@ public class ImpChatsService implements IChatsService {
     Chat contactChat = Chat
       .builder()
       .user(contactUser)
-      .contact(defaultContact)
+      .contact(userContact)
       .messages(new ArrayList<>())
       .build();
 

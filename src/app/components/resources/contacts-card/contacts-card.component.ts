@@ -30,13 +30,13 @@ export class ContactsCardComponent {
     private dataSharingService: DataSharingService
   ) {}
 
-  @Input() contact!: Contact;
   @Input() chat!: Chat;
   @Input() showEditBtns: boolean = false;
   @Output() deleteContactEmitter: EventEmitter<Contact> = new EventEmitter<Contact>;
   @Output() updatedContactEmitter: EventEmitter<Contact> = new EventEmitter<Contact>;
   @Output() errorEmitter: EventEmitter<HttpErrorResponse> = new EventEmitter<HttpErrorResponse>;
   @ViewChild('deleteButton') deleteButton: any;
+  contact!: Contact
   visible: boolean = false;
   header: string = "Edit Contact"
 
@@ -53,8 +53,7 @@ export class ContactsCardComponent {
 
   openContactChat() {
     this.router.navigate(['/home/chats/chat'])
-    if (this.chat) this.dataSharingService.emitChatInfo(this.chat)
-    else if (this.contact) this.dataSharingService.emitNoInfoChat(this.contact)
+    this.dataSharingService.emitChatInfo(this.chat)
   }
 
   openContactDialog(event: Event) {
@@ -81,8 +80,7 @@ export class ContactsCardComponent {
   }
 
   ngOnInit() {
-    console.log(this.chat)
-    if (this.chat) this.contact = this.chat.contact
+    this.contact = this.chat.contact
   }
 
 }

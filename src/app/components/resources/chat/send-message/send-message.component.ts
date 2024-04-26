@@ -28,34 +28,10 @@ export class SendMessageComponent {
   @Output() messageEmitter: EventEmitter<Message> = new EventEmitter<Message>();
   @Input() contact!: Contact;
   @Input() chat!: Chat;
-  @Input() connected: boolean = false;
   chatId!: number;
   messageText!: string;
 
   sendMessage(): void {
-   if (this.connected) {
-    this.sendCommonMessage();
-   } else {
-    this.sendFirstChatMessage();
-   } 
-  }
-
-  sendFirstChatMessage(): void {
-    if (this.messageText) {
-      this.messagesService
-      .sendFirstChatMessage(this.contact, this.messageText)
-      .subscribe({
-        next: (message: Message) => {
-          this.messageEmitter.emit(message);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.errorEmitter.emit(error);
-        }
-      })
-    }
-  }
-
-  sendCommonMessage(): void {
     if (this.messageText) {
       this.webSocketService.sendMessage({
         chatId: this.chatId,
@@ -63,6 +39,7 @@ export class SendMessageComponent {
       });
     }
   }
+
 
   handleKeyPress(event: KeyboardEvent): void {
     if (event.key === 'Enter' && !event.shiftKey) {

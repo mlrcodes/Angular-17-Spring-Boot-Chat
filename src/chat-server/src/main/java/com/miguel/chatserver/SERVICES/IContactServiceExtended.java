@@ -8,5 +8,6 @@ public interface IContactServiceExtended extends IContactService {
 
   public Contact getContactFromContactPhoneNumber(String phoneNumber);
 
-    public Contact createDefaultContact(User owner, User contactUser);
+  public Contact findContactOrCreateDefaultOne(User owner, User contactUser);
+
 }

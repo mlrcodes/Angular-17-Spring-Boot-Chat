@@ -6,6 +6,7 @@ import { ChatsService } from '../../../../core/services/chats/chats.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ContactsCardComponent } from '../../../resources/contacts-card/contacts-card.component';
 import { RouterOutlet } from '@angular/router';
+import { WebsocketsService } from '../../../../core/services/websockets/web-sockets.service';
 
 @Component({
   selector: 'app-chats',
@@ -20,6 +21,7 @@ export class ChatsComponent {
   constructor(
     private chatsService: ChatsService,
     private messageService: MessageService,
+    private webSocketsService: WebsocketsService
   ) {}
 
   userChats!: Chat[];
@@ -38,6 +40,21 @@ export class ChatsComponent {
       }
     })
   }
+
+  webSocketsConnect() {
+    this.webSocketsService.initializeWebSocketConnection();
+    this.handleIncomingMassages();
+  }
+
+  handleIncomingMassages() {
+    this.webSocketsService
+    .currentMessage.subscribe({
+      next: (message: any) => {
+        console.log(message)
+      }
+    })
+  }
+
 
   notifyErrors(error: HttpErrorResponse) {
     if (error.status === 0) {

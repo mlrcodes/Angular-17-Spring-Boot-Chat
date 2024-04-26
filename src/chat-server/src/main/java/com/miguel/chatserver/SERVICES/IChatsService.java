@@ -7,7 +7,6 @@ import com.miguel.chatserver.MODELS.User;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public interface IChatsService {
   public List<ChatDTO> getUserChats(String token);
@@ -19,7 +18,6 @@ public interface IChatsService {
   public Map<String, Chat> getChatsPair(User owner, User contact);
 
   public Chat getContactChat(User owner, User contactChat);
-
 
   public Map<String, Chat> createChatsPair(Contact contact);
 

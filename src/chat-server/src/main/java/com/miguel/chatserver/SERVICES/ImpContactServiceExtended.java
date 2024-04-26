@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ImpContactServiceExtended implements IContactServiceExtended {
@@ -51,12 +52,20 @@ public class ImpContactServiceExtended implements IContactServiceExtended {
   }
 
   @Override
+  public Contact findContactOrCreateDefaultOne(User owner, User contactUser) {
+    Contact contact = this.findContactByOwnerAndContactUser(owner, contactUser);
+    if (Objects.isNull(contact)) {
+      return this.createDefaultContact(owner, contactUser);
+    }
+    return contact;
+  }
+
+  @Override
   public Contact findContactByOwnerAndContactUser(User owner, User contactUser) {
     return contactsRepository.findByOwnerAndContactUser(owner, contactUser).orElse(null);
   }
 
-  @Override
-  public Contact createDefaultContact(User owner, User contactUser) {
+  private Contact createDefaultContact(User owner, User contactUser) {
     Contact defaultContact = Contact
       .builder()
       .contactName("Unknown Contact")

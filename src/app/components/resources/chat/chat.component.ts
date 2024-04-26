@@ -23,15 +23,13 @@ export class ChatComponent implements OnInit {
   constructor(
     private messagesService: MessagesService,
     private messageService: MessageService,
-    private dataSharingService: DataSharingService,
-    private webSocketsService: WebsocketsService
+    private dataSharingService: DataSharingService
   ) {}
 
   contact!: Contact;
   chat!: Chat;
   messages!: Message[];
   userPhoneNumber!: string ;
-  connected: boolean = false;
 
   getChatMessages() {
     // Recuperar mensajes sólo por contacto para recibir notificación de error!!!!
@@ -61,41 +59,13 @@ export class ChatComponent implements OnInit {
     }  
   }
 
-  suscribeToContactChatObservable(): void {
+  suscribeToChatObservable(): void {
     this.dataSharingService
     .openContactChatObservable
     .subscribe({
       next: (chat: Chat) => {
         this.chat = chat;
         this.getChatMessages();
-        this.webSocketsConnect()
-      }
-    })
-  }
-
-  suscribeToNoInfoChatObservable(): void {
-    this.dataSharingService
-    .openNoInfoChatObservable
-    .subscribe({
-      next: (contact: Contact) => {
-        this.contact = contact;
-      }
-    })
-  }
-
-  webSocketsConnect() {
-    if (this.chat) {
-      this.webSocketsService.initializeWebSocketConnection();
-      this.connected = true;
-      this.handleIncomingMassages();
-    }
-  }
-
-  handleIncomingMassages() {
-    this.webSocketsService
-    .currentMessage.subscribe({
-      next: (message: any) => {
-        this.addMessage(message);
       }
     })
   }
@@ -103,11 +73,9 @@ export class ChatComponent implements OnInit {
   isSentByUser(senderPhoneNumber: string): boolean {
     return this.userPhoneNumber === senderPhoneNumber;
   }
-
   
   ngOnInit(): void {
     this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
-    this.suscribeToContactChatObservable();
-    this.suscribeToNoInfoChatObservable();
+    this.suscribeToChatObservable();
   }
 }

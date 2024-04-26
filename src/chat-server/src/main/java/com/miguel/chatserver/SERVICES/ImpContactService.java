@@ -8,7 +8,9 @@ import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectAlreadyExists;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MAPPERS.IContactsMapper;
 import com.miguel.chatserver.MAPPERS.IUsersMapper;
+import com.miguel.chatserver.MODELS.Chat;
 import com.miguel.chatserver.MODELS.Contact;
+import com.miguel.chatserver.MODELS.Message;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IContactsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,21 +62,17 @@ public class ImpContactService implements IContactService {
     ContactCreateRequest contactRequest,
     String jwtToken
   ) {
-    String ownerPhoneNumber = jwtService.getPhoneNumberFromToken(jwtToken);
-    User owner = userService.findByPhoneNumber(ownerPhoneNumber);
+    User owner = userService.findByPhoneNumber(
+      jwtService.getPhoneNumberFromToken(jwtToken)
+    );
     User contactUser = userService.findByPhoneNumber(contactRequest.getContactPhoneNumber());
-
-    if (Objects.isNull(owner)) {
-      throw new ExceptionObjectNotFound("User not found");
-    }
 
     if (Objects.isNull(contactUser)) {
       throw new ExceptionObjectNotFound("Contact user not found");
     }
 
-    String contactName = contactRequest.getContactName();
     Contact newContact = Contact.builder()
-      .contactName(contactName)
+      .contactName(contactRequest.getContactName())
       .owner(owner)
       .contactUser(contactUser)
       .build();
@@ -85,11 +83,12 @@ public class ImpContactService implements IContactService {
     }
     Contact savedContact = contactsRepository.save(newContact);
 
+    Map<String, Chat> savedChats = chatsService.createChatsIfNotExist(savedContact);
+
     String messageText = contactRequest.getMessage();
     if (StringUtils.hasText(messageText)) {
-      messageService.sendFirstContactMessage(savedContact, messageText);
+      messageService.sendMessageAndUpdateChatsPair(savedChats, messageText);
     }
-
     ContactResponseDTO savedContactDTO = contactsMapper.createContactResponseFromContact(savedContact);
     return savedContactDTO;
   }
