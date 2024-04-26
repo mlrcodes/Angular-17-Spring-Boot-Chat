@@ -6,6 +6,7 @@ import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.User;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public interface IChatsService {
@@ -15,11 +16,14 @@ public interface IChatsService {
 
   public Chat saveChat(Chat chat);
 
-  public Chat getChat(User owner, User contact);
+  public Map<String, Chat> getChatsPair(User owner, User contact);
 
-  public Chat createChatsPair(Contact contact);
+  public Chat getContactChat(User owner, User contactChat);
 
-  public Chat createChatIfNotExists(Contact contact);
+
+  public Map<String, Chat> createChatsPair(Contact contact);
+
+  public Map<String, Chat> createChatsIfNotExist(Contact contact);
 
   public void deleteContactChatIfExists(Contact contact);
 

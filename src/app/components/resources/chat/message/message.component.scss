@@ -3,16 +3,18 @@
 }
 
 .message {
-    min-width: 40%;
-    max-width: 80%;
+    min-width: 25%;
+    max-width: 75%;
 }
 
 .user-message {
     align-self: flex-end;
     background-color: var(--light-blue);
+    text-align: left;
 }
 
 .contact-message {
     align-self: flex-start;
     background-color: #cfcfcf;
+    text-align: right;
 }

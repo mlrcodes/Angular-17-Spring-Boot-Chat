@@ -44,33 +44,44 @@ public class ImpChatsService implements IChatsService {
 
 
   @Override
-  public Chat getChat(User owner, User contactUser) {
+  public Map<String, Chat> getChatsPair(User owner, User contactUser) {
     Contact contact = contactServiceExtended.findContactByOwnerAndContactUser(owner, contactUser);
+    Contact contactUserContact = null;
     if (Objects.isNull(contact)) {
-      throw new ExceptionObjectNotFound("No contact was found");
+      throw new ExceptionObjectNotFound("Contact not found");
     }
-    Chat chat = chatRepository.findByUserAndContact(owner, contact).orElse(null);
-    if (Objects.isNull(chat)) {
+    Chat ownerChat = chatRepository.findByUserAndContact(owner, contact).orElse(null);
+    Chat contactUserChat = chatRepository.findByUserAndContact(contactUser, contactUserContact).orElse(null);
+    if (Objects.isNull(ownerChat) || Objects.isNull(contactUserChat)) {
       throw new ExceptionObjectNotFound("Chat not found");
     }
-    return chat;
-  }
-  @Override
-  public ChatDTO createChat(String contactPhoneNumber) {
-    Contact contact = contactServiceExtended.getContactFromContactPhoneNumber(contactPhoneNumber);
-    Chat chat = this.createChatIfNotExists(contact);
-    return chatsMapper.createChatDTOFromChat(chat);
+    return getChatsPairMap(ownerChat, contactUserChat);
   }
 
   @Override
-  public Chat createChatIfNotExists(Contact contact) {
-    Chat existingChat;
+  public Chat getContactChat(User owner, User contactUser) {
+    return this.getChatsPair(owner, contactUser).get("contactChat");
+  }
+
+  @Override
+  public ChatDTO createChat(String contactPhoneNumber) {
+    Contact contact = contactServiceExtended.getContactFromContactPhoneNumber(contactPhoneNumber);
+    Map<String, Chat> chatsPair = this.createChatsIfNotExist(contact);
+    return chatsMapper.createChatDTOFromChat(chatsPair.get("ownerChat"));
+  }
+
+  @Override
+  public Map<String, Chat> createChatsIfNotExist(Contact contact) {
+    Map<String, Chat> existingChats;
     try {
-      existingChat = this.getChat(contact.getOwner(), contact.getContactUser());
+      existingChats = this.getChatsPair(
+        contact.getOwner(),
+        contact.getContactUser()
+      );
     } catch (ExceptionObjectNotFound ex) {
       return this.createChatsPair(contact);
     }
-    return existingChat;
+    return existingChats;
   }
 
   @Override
@@ -93,7 +104,7 @@ public class ImpChatsService implements IChatsService {
   }
 
   @Override
-  public Chat createChatsPair(Contact contact) {
+  public Map<String, Chat> createChatsPair(Contact contact) {
     User owner = contact.getOwner();
     User contactUser = contact.getContactUser();
 
@@ -120,9 +131,15 @@ public class ImpChatsService implements IChatsService {
       .messages(new ArrayList<>())
       .build();
 
-    chatRepository.save(ownerChat);
-    chatRepository.save(contactChat);
+    Chat savedOwnerChat = chatRepository.save(ownerChat);
+    Chat savedContactChat = chatRepository.save(contactChat);
+    return getChatsPairMap(savedOwnerChat, savedContactChat);
+  }
 
-    return ownerChat;
+  private Map<String, Chat> getChatsPairMap(Chat ownerChat, Chat contactChat) {
+    Map<String, Chat> chatsMap = new HashMap<>();
+    chatsMap.put("ownerChat", ownerChat);
+    chatsMap.put("contactChat", contactChat);
+    return chatsMap;
   }
 }

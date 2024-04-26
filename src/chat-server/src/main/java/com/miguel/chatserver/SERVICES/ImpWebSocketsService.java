@@ -31,21 +31,15 @@ public class ImpWebSocketsService implements IWebSocketsService {
   @Autowired
   private IJWTService jwtService;
 
-
   @Override
   public MessageDTO sendMessage(
     MessageSaveDTO messageSaveDTO,
     SimpMessageHeaderAccessor headerAccessor
   ) {
-    User sender = usersService.findByPhoneNumber(
-      jwtService.getPhoneNumberFromToken(
-        headerAccessor.getFirstNativeHeader("Authorization")
-      )
-    );
     Chat senderChat = chatsService.findById(messageSaveDTO.getChatId());
+    User sender = senderChat.getUser();
     User recipient = senderChat.getContact().getContactUser();
-    Chat recipientChat = chatsService.getChat(recipient, sender);
-
+    Chat recipientChat = chatsService.getContactChat(recipient, sender);
     if (Objects.isNull(senderChat) || Objects.isNull(recipientChat)) {
       throw new ExceptionObjectNotFound("Chat not found");
     }

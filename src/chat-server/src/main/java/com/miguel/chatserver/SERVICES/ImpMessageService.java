@@ -2,9 +2,7 @@ package com.miguel.chatserver.SERVICES;
 
 import com.miguel.chatserver.DTO.MessageDTO;
 import com.miguel.chatserver.DTO.MessageFirstSaveDTO;
-import com.miguel.chatserver.DTO.MessageSaveDTO;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
-import com.miguel.chatserver.MAPPERS.IContactsMapper;
 import com.miguel.chatserver.MAPPERS.IMessagesMapper;
 import com.miguel.chatserver.MODELS.Chat;
 import com.miguel.chatserver.MODELS.Contact;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -32,16 +31,6 @@ public class ImpMessageService implements IMessageService {
 
   @Autowired
   private IContactServiceExtended contactServiceExtended;
-
-  @Override
-  public MessageDTO saveMessage(MessageSaveDTO messageSaveDTO) {
-    Chat chat = chatsService.findById(messageSaveDTO.getChatId());
-    if (Objects.isNull(chat)) {
-      throw new ExceptionObjectNotFound("Chat not found");
-    }
-    Message newMessage = this.sendMessage(chat, messageSaveDTO.getMessageText());
-    return messagesMapper.createMessageDTOFromMessage(newMessage);
-  }
   @Override
   public Message sendMessage(Chat chat, String messageText) {
     Message message = Message
@@ -51,7 +40,6 @@ public class ImpMessageService implements IMessageService {
       .messageText(messageText)
       .chat(chat)
       .build();
-
     return messageRepository.save(message);
   }
 
@@ -67,19 +55,24 @@ public class ImpMessageService implements IMessageService {
 
   @Override
   public Message sendFirstContactMessage(Contact contact, String messageText) {
-    Message savedMessage = null;
-    Chat savedChat = chatsService.createChatIfNotExists(contact);
-    if (Objects.nonNull(savedChat)) {
-      savedMessage = this.sendMessage(savedChat, messageText);
-      savedChat.getMessages().add(savedMessage);
-      chatsService.saveChat(savedChat);
+    Message savedSenderMessage = null;
+    Message savedContactMessage;
+    Map<String, Chat> savedChats = chatsService.createChatsIfNotExist(contact);
+    if (Objects.nonNull(savedChats)) {
+      Chat senderChat = savedChats.get("ownerChat");
+      Chat contactChat = savedChats.get("contactChat");
+      savedSenderMessage = this.sendMessage(senderChat, messageText);
+      savedContactMessage = this.sendMessage(contactChat, messageText);
+      senderChat.getMessages().add(savedSenderMessage);
+      contactChat.getMessages().add(savedContactMessage);
+      chatsService.saveChat(senderChat);
+      chatsService.saveChat(contactChat);
     }
-    return savedMessage;
+    return savedSenderMessage;
   }
 
   @Override
   public List<MessageDTO> getChatMessages(Integer chatId) {
-    List<MessageDTO> chatMessagesDTO;
     Chat chat = chatsService.findById(chatId);
     if (Objects.nonNull(chat)) {
       List<Message> chatMessages = this.messageRepository.findByChat(chat);

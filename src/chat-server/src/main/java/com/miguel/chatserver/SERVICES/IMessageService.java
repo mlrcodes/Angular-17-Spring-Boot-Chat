@@ -11,10 +11,7 @@ import java.util.List;
 
 public interface IMessageService {
 
-  public MessageDTO saveMessage(MessageSaveDTO messageSaveDTO);
-
   public Message sendMessage(Chat chat, String messageText);
-
 
   public MessageDTO sendFirstChatMessage(MessageFirstSaveDTO messageInfo);
 

@@ -40,8 +40,10 @@ export class ChatComponent implements OnInit {
     .subscribe({
       next: (messages: Message[]) => {
         this.messages = messages;
+        console.log(this.messages)
       },
       error: (error: HttpErrorResponse) => {
+        console.log(error)
         this.notifyErrors(error)
       }
     })
@@ -67,7 +69,6 @@ export class ChatComponent implements OnInit {
         this.chat = chat;
         this.getChatMessages();
         this.webSocketsConnect()
-        console.log(this.chat)
       }
     })
   }

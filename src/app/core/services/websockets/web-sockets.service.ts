@@ -2,19 +2,20 @@ import { Injectable } from '@angular/core';
 import { CompatClient, IMessage, Stomp } from '@stomp/stompjs';
 import { Observable, Subject } from 'rxjs';
 import SockJS from 'sockjs-client';
+import { TokenService } from '../token/token.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebsocketsService {
-  private serverUrl = '//localhost:8080/ws';
+  private serverUrl = 'http://localhost:8080/ws';
   private stompClient!: CompatClient;
   private messageSubject: Subject<IMessage> = new Subject<IMessage>();
   currentMessage: Observable<IMessage> = this.messageSubject.asObservable();
 
-  constructor() { }
-
-
+  constructor(
+    private tokenService: TokenService
+  ) { }
 
   initializeWebSocketConnection() {
     const ws = new SockJS(this.serverUrl);
@@ -32,7 +33,9 @@ export class WebsocketsService {
   }
 
   sendMessage(message: {chatId: number, messageText: string}) {
-    this.stompClient.send('/app/chat', {}, JSON.stringify(message));
+    this.stompClient.send(
+      '/app/chat', {}, JSON.stringify(message)
+    );
   }
 
   errorCallBack(error: any) {

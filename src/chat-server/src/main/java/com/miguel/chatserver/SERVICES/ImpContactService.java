@@ -56,13 +56,20 @@ public class ImpContactService implements IContactService {
   }
 
   @Override
-  public ContactResponseDTO createContact(ContactCreateRequest contactRequest, String jwtToken) {
+  public ContactResponseDTO createContact(
+    ContactCreateRequest contactRequest,
+    String jwtToken
+  ) {
     String ownerPhoneNumber = jwtService.getPhoneNumberFromToken(jwtToken);
     User owner = userService.findByPhoneNumber(ownerPhoneNumber);
     User contactUser = userService.findByPhoneNumber(contactRequest.getContactPhoneNumber());
 
-    if (Objects.isNull(owner) || Objects.isNull(contactUser)) {
-      throw new IllegalArgumentException("Contact user not found");
+    if (Objects.isNull(owner)) {
+      throw new ExceptionObjectNotFound("User not found");
+    }
+
+    if (Objects.isNull(contactUser)) {
+      throw new ExceptionObjectNotFound("Contact user not found");
     }
 
     String contactName = contactRequest.getContactName();

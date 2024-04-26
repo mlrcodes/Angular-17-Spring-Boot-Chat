@@ -1,5 +1,6 @@
 <div class="message-container d-flex mb-1">
-    <div class="message d-inline-block" [ngClass]="{'user-message': sentByOwner, 'contact-message': !sentByOwner}" class="border-radius px-1 py-05">
+    <div [ngClass]="{'user-message': sentByOwner, 'contact-message': !sentByOwner}"
+        class="message border-radius px-1 py-05">
         <p class="message-text">{{message.messageText}}</p>
     </div>
 </div>
