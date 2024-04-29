@@ -17,11 +17,11 @@ export class ChatDataSharingService {
     this.userChatsSubject.next(userChats);
   }
 
-  private chat!: Chat;
-  private openContactChatSubject: BehaviorSubject<Chat> = new BehaviorSubject<Chat>(this.chat);
+  private openContactChatSubject: Subject<Chat> = new Subject<Chat>();
   public openContactChatObservable: Observable<Chat> = this.openContactChatSubject.asObservable();  
 
   emitChatInfo(chat: Chat) {
+    console.log("EMITING CHAT =>>>", chat)
     this.openContactChatSubject.next(chat);
   }
 
@@ -36,6 +36,7 @@ export class ChatDataSharingService {
   public askForUserChatsObservable: Observable<void> = this.askForUserChatsSubject.asObservable();
 
   askForUserChats() {
+    console.log("ASKING")
     this.askForUserChatsSubject.next();
   }
 }

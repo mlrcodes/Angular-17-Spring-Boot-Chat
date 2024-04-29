@@ -13,10 +13,10 @@ export const routes: Routes = [
     {
         path: 'home', 
         loadChildren: () => import('./components/pages/home/home.routes').then(c => c.HOME_ROUTES),
+        canActivate: [AuthGuard],
         resolve: {
             userChats: UserChatsResolver
-        }, 
-        canActivate: [AuthGuard]
+        }
     },
     {
         

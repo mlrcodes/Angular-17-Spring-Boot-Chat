@@ -7,4 +7,6 @@ import { ChatsService } from "../services/chats/chats.service";
 export const UserChatsResolver: ResolveFn<Chat[]> = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-): Observable<Chat[]> => inject(ChatsService).getUserChats()
+): Observable<Chat[]> => {
+    return inject(ChatsService).getUserChats()
+}

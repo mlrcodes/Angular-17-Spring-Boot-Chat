@@ -12,9 +12,9 @@ import java.util.Map;
 public interface IChatsService {
   public List<ChatDTO> getUserChats(String token);
 
-  public Chat saveChat(Chat chat);
-
   public Map<String, Chat> getChatsPair(User owner, User contact);
+
+  public Chat getOwnerChat(User owner, User contactUser);
 
   public Chat getContactChat(User owner, User contactChat);
 

@@ -10,6 +10,7 @@ import { MessagesModule } from 'primeng/messages';
 import { ResultResponse } from '../../../core/models/resultResponse';
 import { ContactsService } from '../../../core/services/contacts/contacts.service';
 import { ChatsService } from '../../../core/services/chats/chats.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -29,7 +30,6 @@ export class HomeComponent {
 
   userChats!: Chat[];
   messages!: Message[];
-
 
   getRouteData() {
     this.route.data.subscribe({
@@ -66,6 +66,7 @@ export class HomeComponent {
       next: (chatId: number) => {
         let chat: Chat | undefined = this.userChats.find((chat: Chat) => chat.chatId === Number(chatId));
         if (chat) {
+          console.log("ASKED")
           this.chatDataSharingService.emitChatInfo(chat)
         }
       }

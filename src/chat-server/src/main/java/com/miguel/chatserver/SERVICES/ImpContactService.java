@@ -10,6 +10,7 @@ import com.miguel.chatserver.MODELS.Chat;
 import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IContactsRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -110,7 +111,7 @@ public class ImpContactService implements IContactService {
   @Override
   public ChatDTO getChatAfterContactUpdate(User owner, Integer contactId, ContactEditRequest editRequest) {
     return chatsMapper.createChatDTOFromChat(
-      chatsService.getContactChat(
+      chatsService.getOwnerChat(
         owner,
         this.updateContact(contactId, editRequest).getContactUser()
       )
@@ -118,6 +119,7 @@ public class ImpContactService implements IContactService {
   }
 
   @Override
+  @Transactional
   public ResultMessageDTO deleteContact(Integer contactId) {
     Contact contact = contactsRepository.findById(contactId).orElse(null);
     if (Objects.isNull(contact)) {

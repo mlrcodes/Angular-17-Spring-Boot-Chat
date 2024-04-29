@@ -4,7 +4,6 @@ import com.miguel.chatserver.DTO.*;
 import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IContactsRepository;
-import com.miguel.chatserver.REPOSITORIES.IUsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

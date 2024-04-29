@@ -9,6 +9,7 @@ import { MessagesDataSharingService } from '../../../core/services/data-sharing/
 import { ActivatedRoute, Params } from '@angular/router';
 import { MessagesModule } from 'primeng/messages';
 import { Message as AlertMessage} from 'primeng/api';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -32,17 +33,20 @@ export class ChatComponent implements OnInit {
   messages: Message[] = [];
   alertMessages!: AlertMessage[];
   userPhoneNumber!: string;
+  contactChatSubscription!: Subscription;
 
   notifyMessageError(error: unknown) {
     this.alertMessages = [{ severity: 'error', summary: 'Error: ', detail: 'Message could not be sent', life: 3000 }];
   }
 
   subscribeToChatObservable(): void {
-    this.chatDataSharingService
+    console.log("SUBSCRIBING")
+    this.contactChatSubscription = this.chatDataSharingService
     .openContactChatObservable
     .subscribe({
-      next: (chat: Chat) => {
+      next: (chat: Chat | null) => {
         if (chat) {
+          console.log("RECEIVED CHAT =>>", chat)
           this.chat = chat;
           this.messages = chat.messages
           if (this.messages && !(this.messages.length > 0)) {
@@ -59,6 +63,7 @@ export class ChatComponent implements OnInit {
     .handleIncomingMessageObservable
     .subscribe({
       next: (message: Message) => {
+        console.log(message)
         this.messages.push(message);
       }
     })
@@ -76,17 +81,25 @@ export class ChatComponent implements OnInit {
     let chatId!: number; 
     this.route.params.subscribe({
       next: (params: Params) => {
+        console.log("ASKNG FOR CHAT")
         chatId = params['chatId'];
+        if (chatId) {
+          this.chatDataSharingService.askForContactChat(chatId)
+        }
       }
     })
-    if (chatId) {
-      this.chatDataSharingService.askForContactChat(chatId)
-    }
   }
   
   ngOnInit(): void {
     this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
     this.subscribeToChatObservable();
     this.askForChat();
+  }
+
+  ngOnDestroy() {
+    if (this.contactChatSubscription) {
+      this.contactChatSubscription.unsubscribe();
+    }
+    // Repite para otras suscripciones si es necesario
   }
 }

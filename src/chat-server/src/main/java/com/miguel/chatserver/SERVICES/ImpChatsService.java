@@ -1,7 +1,6 @@
 package com.miguel.chatserver.SERVICES;
 
 import com.miguel.chatserver.DTO.ChatDTO;
-import com.miguel.chatserver.DTO.ResultMessageDTO;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MAPPERS.IChatsMapper;
 import com.miguel.chatserver.MODELS.Chat;
@@ -9,10 +8,12 @@ import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.User;
 import com.miguel.chatserver.REPOSITORIES.IChatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@Primary
 public class ImpChatsService implements IChatsService {
 
   @Autowired
@@ -58,6 +59,12 @@ public class ImpChatsService implements IChatsService {
     Chat ownerChat = chatRepository.findByUserAndContact(owner, contact).orElse(null);
     Chat contactChat = chatRepository.findByUserAndContact(contactUser, userContact).orElse(null);
     return getChatsPairMap(ownerChat, contactChat);
+  }
+
+
+  @Override
+  public Chat getOwnerChat(User owner, User contactUser) {
+    return this.getChatsPair(owner, contactUser).get("ownerChat");
   }
 
   @Override
@@ -117,11 +124,6 @@ public class ImpChatsService implements IChatsService {
   @Override
   public Chat findById(Integer chatId) {
     return chatRepository.findById(chatId).orElse(null);
-  }
-
-  @Override
-  public Chat saveChat(Chat chat) {
-    return chatRepository.save(chat);
   }
 
   private Chat createOwnerChat(Contact contact) {

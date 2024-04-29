@@ -45,7 +45,7 @@ export class ActionBtnsComponent {
     });
   }
 
-    updateContact(updateContactRequest: ContactUpdateRequest) {
+  updateContact(updateContactRequest: ContactUpdateRequest) {
     this.contactsService
     .editContact(
       updateContactRequest, 
@@ -53,6 +53,7 @@ export class ActionBtnsComponent {
     )
     .subscribe({
       next: (updatedContactChat: Chat) => { 
+        console.log(updatedContactChat)
         this.contact = updatedContactChat.contact;
         this.updatedContactChatEmitter.emit(updatedContactChat);
       },

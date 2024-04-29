@@ -24,7 +24,7 @@ public class ImpMessageService implements IMessageService {
   private IMessagesMapper messagesMapper;
 
   @Autowired
-  private IChatsService chatsService;
+  private IChatsServiceExtended chatsServiceExtended;
 
   @Autowired
   private IContactServiceExtended contactServiceExtended;
@@ -58,7 +58,7 @@ public class ImpMessageService implements IMessageService {
   ) {
     Message message = this.sendMessage(chat, sender, messageText);
     chat.getMessages().add(message);
-    chatsService.saveChat(chat);
+    chatsServiceExtended.saveChat(chat);
     return message;
   }
 

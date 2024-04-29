@@ -18,17 +18,6 @@ public class ImpContactsMapper implements IContactsMapper {
   private IUsersMapper usersMapper;
 
   @Override
-  public Contact createContactFromDTO(ContactResponseDTO contactDTO) {
-    return null;
-  }
-
-  @Override
-  public List<Contact> createContactListFromDTOList(List<ContactResponseDTO> contactDTOList) {
-    return null;
-  }
-
-  @Override
-  @Transactional
   public ContactResponseDTO createContactResponseFromContact(Contact contact) {
     UserDTO contactUserDTO = usersMapper.createUserDTOFromUser(contact.getContactUser());
     return ContactResponseDTO

@@ -38,7 +38,6 @@ export class WebsocketsService {
           const jsonBody = decoder.decode(new Uint8Array(message.binaryBody));
           const parsedMessage = JSON.parse(jsonBody);
           console.log(parsedMessage);
-            console.log(parsedMessage)
           this.messagesDataSharingService.emitIncomingMessage(parsedMessage);
         }
       );
@@ -46,6 +45,7 @@ export class WebsocketsService {
   }
 
   sendMessage(message: {chatId: number, messageText: string}) {
+    console.log("SENDING")
     try {
       this.stompClient.send(
         '/app/chat', {}, JSON.stringify(message)
