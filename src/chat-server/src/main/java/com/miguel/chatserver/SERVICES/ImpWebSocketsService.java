@@ -9,11 +9,9 @@ import com.miguel.chatserver.MODELS.Message;
 import com.miguel.chatserver.MODELS.User;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,7 +35,7 @@ public class ImpWebSocketsService implements IWebSocketsService {
 
   @Override
   @Transactional
-  public MessageDTO sendMessage(
+  public void  sendMessage(
     MessageSaveDTO messageSaveDTO
   ) {
     Chat senderChat = chatsService.findById(messageSaveDTO.getChatId());
@@ -49,12 +47,26 @@ public class ImpWebSocketsService implements IWebSocketsService {
       throw new ExceptionObjectNotFound("Chat not found");
     }
 
-    Message savedMessage = messageService.sendMessageAndUpdateChatsPair(
+    Map<String, Message> messagesMap = messageService.sendMessageAndUpdateChatsPair(
       chatsService.getChatsPairMap(senderChat, recipientChat),
       sender,
       messageSaveDTO.getMessageText()
     );
 
-    return messagesMapper.createMessageDTOFromMessage(savedMessage);
+    Message contactMessage = messagesMap.get("contactMessage");
+    MessageDTO contactMessageDTO = messagesMapper.createMessageDTOFromMessage(contactMessage);
+    messagingTemplate.convertAndSendToUser(
+      recipient.getPhoneNumber(),
+      "/queue/messages",
+      contactMessageDTO
+    );
+
+    Message senderMessage = messagesMap.get("senderMessage");
+    MessageDTO senderMessageDTO = messagesMapper.createMessageDTOFromMessage(senderMessage);
+    messagingTemplate.convertAndSendToUser(
+      sender.getPhoneNumber(),
+      "/queue/messages",
+      senderMessageDTO
+    );
   }
 }

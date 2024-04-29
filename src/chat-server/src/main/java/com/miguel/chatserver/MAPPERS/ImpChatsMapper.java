@@ -28,11 +28,12 @@ public class ImpChatsMapper implements IChatsMapper {
   @Override
   public ChatDTO createChatDTOFromChat(Chat chat) {
     ContactResponseDTO contactResponse = contactsMapper.createContactResponseFromContact(chat.getContact());
-    List<MessageDTO> messagesDTO = messagesMapper.createMessageDTOListFromMessageList(chat.getMessages());
+    List<MessageDTO> messagesDTOList = messagesMapper.createMessageDTOListFromMessageList(chat.getMessages());
     return ChatDTO
       .builder()
       .chatId(chat.getChatId())
       .contact(contactResponse)
+      .messages(messagesDTOList)
       .build();
   }
 

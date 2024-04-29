@@ -12,8 +12,10 @@ public interface IMessageService {
 
   public Message sendMessage(Chat chat, User sender, String messageText);
 
-  public Message sendMessageAndUpdateChatsPair(Map<String, Chat> chatsPair, User sender, String messageText);
+  public  Map<String, Message>  sendMessageAndUpdateChatsPair(Map<String, Chat> chatsPair, User sender, String messageText);
 
-  public List<MessageDTO> getChatMessages(Integer chatId);
+  public List<MessageDTO> getChatMessagesDTO(Chat chat);
+
+  public void deleteChatMessagesIfExist(Chat chat);
 
 }

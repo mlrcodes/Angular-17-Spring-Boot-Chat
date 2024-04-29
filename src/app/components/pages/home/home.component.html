@@ -2,8 +2,13 @@
 
     <app-tab-menu></app-tab-menu>
 
-    <div class="window">
+    <div class="window p-1 bg-white mb-1">
+
+        <p-messages [(value)]="messages" [enableService]="false" [closable]="false"></p-messages>
+
         <router-outlet></router-outlet>
     </div>
+
+    <app-logout></app-logout>
 
 </div>

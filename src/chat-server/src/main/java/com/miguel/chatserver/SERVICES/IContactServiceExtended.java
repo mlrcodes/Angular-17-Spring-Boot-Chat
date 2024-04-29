@@ -4,9 +4,7 @@ import com.miguel.chatserver.MODELS.Contact;
 import com.miguel.chatserver.MODELS.User;
 
 public interface IContactServiceExtended extends IContactService {
-  public Contact findContactByOwnerAndContactUser(User owner, User contactUser);
-
-  public Contact getContactFromContactPhoneNumber(String phoneNumber);
+  public Contact findContactByPhoneNumber(String phoneNumber);
 
   public Contact findContactOrCreateDefaultOne(User owner, User contactUser);
 

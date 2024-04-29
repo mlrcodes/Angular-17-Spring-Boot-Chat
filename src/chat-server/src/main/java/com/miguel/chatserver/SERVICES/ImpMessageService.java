@@ -12,10 +12,7 @@ import com.miguel.chatserver.REPOSITORIES.IMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class ImpMessageService implements IMessageService {
@@ -44,29 +41,54 @@ public class ImpMessageService implements IMessageService {
     return messageRepository.save(message);
   }
   @Override
-  public Message sendMessageAndUpdateChatsPair(Map<String, Chat> chatsPair, User sender, String messageText) {
-    this.sendMessageAndUpdateChat(chatsPair.get("contactChat"), sender, messageText);
-    return this.sendMessageAndUpdateChat(chatsPair.get("ownerChat"), sender, messageText);
+  public Map<String, Message> sendMessageAndUpdateChatsPair(
+    Map<String, Chat> chatsPair,
+    User sender, String messageText
+  ) {
+    return this.getMessagesPairMap(
+      this.sendMessageAndUpdateChat(chatsPair.get("ownerChat"), sender, messageText),
+      this.sendMessageAndUpdateChat(chatsPair.get("contactChat"), sender, messageText)
+    );
   }
 
-  private Message sendMessageAndUpdateChat(Chat chat, User sender, String messageText) {
+  private Message sendMessageAndUpdateChat(
+    Chat chat,
+    User sender,
+    String messageText
+  ) {
     Message message = this.sendMessage(chat, sender, messageText);
     chat.getMessages().add(message);
     chatsService.saveChat(chat);
     return message;
   }
 
+  private Map<String, Message> getMessagesPairMap(
+    Message senderMessage,
+    Message contactMessage
+  ) {
+    Map<String, Message> messagesMap = new HashMap<>();
+    messagesMap.put("senderMessage", senderMessage);
+    messagesMap.put("contactMessage", contactMessage);
+    return messagesMap;
+  }
+
   @Override
-  public List<MessageDTO> getChatMessages(Integer chatId) {
-    Chat chat = chatsService.findById(chatId);
-    if (Objects.nonNull(chat)) {
-      List<Message> chatMessages = this.messageRepository.findByChat(chat);
-      if (chatMessages.isEmpty()) {
-        throw new ExceptionObjectNotFound("Void conversation");
-      }
-      return this.messagesMapper.createMessageDTOListFromMessageList(chatMessages);
-    } else {
-      throw new ExceptionObjectNotFound("Chat does not exist");
+  public List<MessageDTO> getChatMessagesDTO(Chat chat) {
+    try {
+      return this.messagesMapper
+        .createMessageDTOListFromMessageList(
+          chat.getMessages()
+        );
+    } catch (ExceptionObjectNotFound ex) {
+      throw ex;
+    }
+  }
+
+  @Override
+  public void deleteChatMessagesIfExist(Chat chat) {
+    List<Message> chatMessages = chat.getMessages();
+    if (Objects.nonNull(chatMessages) && !chatMessages.isEmpty()) {
+      messageRepository.deleteByChat(chat);
     }
   }
 }

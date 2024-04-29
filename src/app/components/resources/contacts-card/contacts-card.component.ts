@@ -10,72 +10,43 @@ import { Chat } from '../../../core/models/chat';
 import { ContactsService } from '../../../core/services/contacts/contacts.service';
 import { ContactUpdateRequest } from '../../../core/models/contactUpdateRequest';
 import { Router } from '@angular/router';
-import { DataSharingService } from '../../../core/services/data-sharing/chat-data/chat-data-sharing.service';
+import { ChatDataSharingService } from '../../../core/services/data-sharing/chat-data/chat-data-sharing.service';
+import { ActionBtnsComponent } from './action-btns/action-btns.component';
 
 
 @Component({
   selector: 'app-contacts-card',
   standalone: true,
-  imports: [ButtonModule, ConfirmPopupModule, AddContactComponent, ContactDialogComponent],
-  providers: [ConfirmationService],
+  imports: [ButtonModule, ConfirmPopupModule, AddContactComponent, ContactDialogComponent, ActionBtnsComponent],
   templateUrl: './contacts-card.component.html',
   styleUrl: './contacts-card.component.scss'
 })
 export class ContactsCardComponent {
 
   constructor(
-    private confirmationService: ConfirmationService,
-    private contactsService: ContactsService,
     private router: Router,
-    private dataSharingService: DataSharingService
+    private chatDataSharingService: ChatDataSharingService
   ) {}
 
-  @Input() contact!: Contact;
   @Input() chat!: Chat;
   @Input() showEditBtn: boolean = false;
-  @Output() deleteContactEmitter: EventEmitter<Contact> = new EventEmitter<Contact>;
-  @Output() updatedContactEmitter: EventEmitter<Contact> = new EventEmitter<Contact>;
+  @Output() deletedContactChatEmitter: EventEmitter<Chat> = new EventEmitter<Chat>;
+  @Output() updatedContactChatEmitter: EventEmitter<Chat> = new EventEmitter<Chat>;
   @Output() errorEmitter: EventEmitter<HttpErrorResponse> = new EventEmitter<HttpErrorResponse>;
-  @ViewChild('deleteButton') deleteButton: any;
-  visible: boolean = false;
-  header: string = "Edit Contact"
-
-  confirmDelete(event: Event) {
-    event.stopPropagation();
-    this.confirmationService.confirm({
-      target: this.deleteButton.nativeElement,
-      message: 'Are you sure that you want to delete this contact?',
-      accept: () => {
-        this.deleteContactEmitter.emit(this.contact);
-      }
-    });
-  }
+  contact!: Contact;
 
   openContactChat() {
-    this.router.navigate(['/home/chats/chat'])
-    this.dataSharingService.emitChatInfo(this.chat)
+    this.router.navigate(['/home/chats/chat', this.chat.chatId])
+    this.chatDataSharingService.emitChatInfo(this.chat)
   }
 
-  openContactDialog(event: Event) {
-    event.stopPropagation();
-    this.visible = true;  
+  updateContact(updatedContactChat: Chat) {
+    this.contact = updatedContactChat.contact;
+    this.updatedContactChatEmitter.emit(updatedContactChat);
   }
 
-  editContact(updateContactRequest: ContactUpdateRequest) {
-    this.contactsService
-    .editContact(
-      updateContactRequest, 
-      this.contact.contactId
-    )
-    .subscribe({
-      next: (updatedContact: Contact) => { 
-        this.contact = updatedContact;
-        this.updatedContactEmitter.emit(updatedContact);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.errorEmitter.emit(error);
-      }
-    })
+  emitDeletedContactChat() {
+    this.deletedContactChatEmitter.emit(this.chat);
   }
 
   notifyErrors(error: HttpErrorResponse) {
@@ -83,7 +54,7 @@ export class ContactsCardComponent {
   }
 
   ngOnInit() {
-    if (this.chat) this.contact = this.chat.contact
+    this.contact = this.chat.contact
   }
 
 }

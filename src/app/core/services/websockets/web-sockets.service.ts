@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CompatClient, IMessage, Message, Stomp } from '@stomp/stompjs';
+import { CompatClient, IMessage, Stomp } from '@stomp/stompjs';
 import { Observable, Subject } from 'rxjs';
 import SockJS from 'sockjs-client';
 import { TokenService } from '../token/token.service';
+import { Message } from '../../models/message';
+import { MessagesDataSharingService } from '../data-sharing/messages-data/messages-data-sharing.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,35 +13,46 @@ import { TokenService } from '../token/token.service';
 export class WebsocketsService {
   private serverUrl = 'http://localhost:8080/ws';
   private stompClient!: CompatClient;
-  private messageSubject: Subject<Message> = new Subject<Message>();
-  messageObservable: Observable<Message> = this.messageSubject.asObservable();
 
   constructor(
-    private tokenService: TokenService
+    private messagesDataSharingService: MessagesDataSharingService
   ) { }
 
   initializeWebSocketConnection() {
-    const ws = new SockJS(this.serverUrl);
-    this.stompClient = Stomp.over(ws);
-    this.joinChat();
+    try {
+      const ws = new SockJS(this.serverUrl);
+      this.stompClient = Stomp.over(ws);
+      this.joinChat(); 
+    } catch (error: unknown) {
+      throw error;
+    }
   }
 
   joinChat() {
     const userPhoneNumber = localStorage.getItem("userPhoneNumber");
-    this.stompClient.connect({}, (): void => {
-      this.stompClient.subscribe(`/user/${userPhoneNumber}/queue/messages`, (message: IMessage): void => {
-        const binaryBody = Object.values(message.binaryBody),
-          jsonBody = String.fromCharCode.apply(null, binaryBody),
-          parsedMessage = JSON.parse(jsonBody);
-        this.messageSubject.next(parsedMessage);
-    });
+    this.stompClient.connect({}, () => {
+      this.stompClient.subscribe(
+        `/user/${userPhoneNumber}/queue/messages`, 
+        (message: IMessage): void => {
+          const decoder = new TextDecoder('utf-8');
+          const jsonBody = decoder.decode(new Uint8Array(message.binaryBody));
+          const parsedMessage = JSON.parse(jsonBody);
+          console.log(parsedMessage);
+            console.log(parsedMessage)
+          this.messagesDataSharingService.emitIncomingMessage(parsedMessage);
+        }
+      );
     }, this.errorCallBack);
   }
 
   sendMessage(message: {chatId: number, messageText: string}) {
-    this.stompClient.send(
-      '/app/chat', {}, JSON.stringify(message)
-    );
+    try {
+      this.stompClient.send(
+        '/app/chat', {}, JSON.stringify(message)
+      );
+    } catch (error: unknown) {
+      throw error;
+    }
   }
 
   errorCallBack(error: any) {

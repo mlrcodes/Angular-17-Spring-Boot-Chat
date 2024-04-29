@@ -1,0 +1,12 @@
+<div class="action-btns d-flex flex-column gap-05">
+    <div class="delete">
+        <button pButton icon="pi pi-trash" severity="danger" (click)="confirmDelete($event)" #deleteButton></button>
+        <p-confirmPopup></p-confirmPopup>
+    </div>
+
+    <div class="update">
+        <app-contact-dialog (updateContactEmitter)="updateContact($event)" [(visible)]="visible" [header]="header"
+            [contact]="contact" [isEditMode]="true"></app-contact-dialog>
+        <button pButton icon="pi pi-user-edit" (click)="openContactDialog($event)" #deleteButton></button>
+    </div>
+</div>

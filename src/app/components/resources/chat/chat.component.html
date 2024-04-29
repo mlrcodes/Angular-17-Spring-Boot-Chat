@@ -1,11 +1,13 @@
 <div class="chat-container d-flex flex-column">
-    <div class="messages">
+
+    <p-messages [(value)]="alertMessages" [enableService]="false" [closable]="false"></p-messages>
+
+    <div class="messages mb-1" #messagesBox>
         @for(message of messages; track message.messageId) {
         <app-message [message]="message" [sentByOwner]="isSentByUser(message)"></app-message>
         }
     </div>
     <div class="write-box">
-        <app-send-message [chat]="chat" (errorEmitter)="notifyErrors($event)"
-            (messageEmitter)="addMessage($event)"></app-send-message>
+        <app-send-message [chat]="chat" (errorEmitter)="notifyMessageError($event)"></app-send-message>
     </div>
 </div>

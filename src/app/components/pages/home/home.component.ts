@@ -1,39 +1,96 @@
 import { Component } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { Message } from 'primeng/api';
 import { TabMenuComponent } from './../../resources/tab-menu/tab-menu.component';
-import { AuthService } from '../../../core/services/auth/auth.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { WebsocketsService } from '../../../core/services/websockets/web-sockets.service';
+import { LogoutComponent } from '../../resources/logout/logout.component';
+import { Chat } from '../../../core/models/chat';
+import { ChatDataSharingService } from '../../../core/services/data-sharing/chat-data/chat-data-sharing.service';
+import { MessagesModule } from 'primeng/messages';
+import { ResultResponse } from '../../../core/models/resultResponse';
+import { ContactsService } from '../../../core/services/contacts/contacts.service';
+import { ChatsService } from '../../../core/services/chats/chats.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterOutlet, TabMenuComponent],
+  imports: [RouterOutlet, TabMenuComponent, LogoutComponent, MessagesModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
 
   constructor(
-    private router: Router,
-    private authService: AuthService
+    private webSocketsService: WebsocketsService,
+    private chatsService: ChatsService,
+    private chatDataSharingService: ChatDataSharingService,
+    private route: ActivatedRoute
   ) {}
 
-  isUserAuthenticated() {
-    this.authService
-    .isUserAuthenticated()
+  userChats!: Chat[];
+  messages!: Message[];
+
+
+  getRouteData() {
+    this.route.data.subscribe({
+      next: (data: any) => {
+        this.userChats = data.userChats
+        this.chatDataSharingService.emitUserChats(this.userChats);
+      }
+    });
+  }
+
+  getUserChats() {
+    this.chatsService
+    .getUserChats()
     .subscribe({
-      next: (isAuthenticated: boolean) => {
-
-      },
-      error: (error: HttpErrorResponse) => {
-
+      next: (chats: Chat[]) => {
+        this.userChats = chats;
+        this.chatDataSharingService.emitUserChats(this.userChats);
       }
     })
   }
 
+  webSocketsConnect() {
+    try {
+      this.webSocketsService.initializeWebSocketConnection();
+    } catch (error: unknown) {
+      this.messages = [{ severity: 'error', summary: 'Error: ', detail: 'Connection failed' }];
+    }
+  }
 
-  redirect(): void {
-    this.router.navigate(['/auth/login'])
+  observeChildrenDataAsk() {
+    this.chatDataSharingService
+    .askForChatObservable
+    .subscribe({
+      next: (chatId: number) => {
+        let chat: Chat | undefined = this.userChats.find((chat: Chat) => chat.chatId === Number(chatId));
+        if (chat) {
+          this.chatDataSharingService.emitChatInfo(chat)
+        }
+      }
+    })
+  }
+
+  observeChildChatsAsk() {
+    this.chatDataSharingService
+    .askForUserChatsObservable
+    .subscribe({
+      next: () => {
+        this.getUserChats();
+      }
+    });
+  }
+
+  ngOnChanges() {
+    console.log(this.userChats)
+  }
+
+  ngOnInit() {
+    this.getRouteData();
+    this.webSocketsConnect();
+    this.observeChildrenDataAsk();
+    this.observeChildChatsAsk();
   }
 
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError } from 'rxjs';
+import { of } from 'rxjs';
 import { RegisterRequest } from '../../models/register-request';
 import { LoginRequest } from '../../models/login-request';
 import { RegisterResponse } from '../../models/register-response';
@@ -23,10 +24,6 @@ export class AuthService {
 
   login<T>(body: LoginRequest): Observable<LoginResponse> {
     return this.httpClient.post<T>(this.baseUrl + '/login', body) as Observable<LoginResponse>;
-  }
-
-  isUserAuthenticated<T>(): Observable<boolean> {
-    return this.httpClient.get<T>(this.baseUrl) as Observable<boolean>;
   }
 }
 

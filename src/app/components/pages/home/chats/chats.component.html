@@ -1,9 +1,11 @@
 <div class="chats-container">
 
-    <p-messages [enableService]="true" [closable]="false"></p-messages>
+    <p-messages [(value)]="messages" [enableService]="false" [closable]="false"></p-messages>
 
     @for(chat of userChats; track chat.chatId) {
-    <app-contacts-card [chat]="chat" ></app-contacts-card>
+    @if (chat.messages && chat.messages.length > 0) {
+    <app-contacts-card [chat]="chat"></app-contacts-card>
+    }
     }
 
     <router-outlet></router-outlet>

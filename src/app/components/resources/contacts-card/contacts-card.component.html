@@ -1,26 +1,18 @@
 <div class="contact d-flex justify-between align-center border border-radius p-05 ps-1 mb-05 gap-1"
     (click)="openContactChat()">
+
     <div class="contact-icon">
         <i class="pi pi-user"></i>
     </div>
+
     <div class="contact-info text-right d-flex flex-column gap-05">
         <p class="contact-name">{{contact.contactName}}</p>
         <p class="contact-full-name">{{contact.contactUser.firstname}} {{contact.contactUser.surname}}</p>
         <p class="contact-phone-number">{{contact.contactUser.phoneNumber}}</p>
     </div>
 
-    <div class="action-btns d-flex flex-column gap-05">
-        <div class="delete">
-            <button pButton icon="pi pi-trash" severity="danger" (click)="confirmDelete($event)" #deleteButton></button>
-            <p-confirmPopup></p-confirmPopup>
-        </div>
-    
     @if (showEditBtn) {
-        <div class="update">
-            <app-contact-dialog (updateContactEmitter)="editContact($event)" [(visible)]="visible" [header]="header"
-                [contact]="contact" [isEditMode]="true"></app-contact-dialog>
-            <button pButton icon="pi pi-user-edit" (click)="openContactDialog($event)" #deleteButton></button>
-        </div>
+    <app-action-btns [contact]="contact" (deleteContactEmitter)="emitDeletedContactChat()"
+        (updatedContactChatEmitter)="updateContact($event)" (errorEmitter)="notifyErrors($event)"></app-action-btns>
     }
-    </div>
 </div>

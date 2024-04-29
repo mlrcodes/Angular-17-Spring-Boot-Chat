@@ -1,12 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MessagesModule } from 'primeng/messages';
-import { Contact } from '../../../../core/models/contac';
-import { ContactsService } from '../../../../core/services/contacts/contacts.service';
-import { MessageService } from 'primeng/api';
+import { Message, MessageService } from 'primeng/api';
 import { AddContactComponent } from './add-contact/add-contact.component';
 import { ContactsCardComponent } from '../../../resources/contacts-card/contacts-card.component';
+import { Chat } from '../../../../core/models/chat';
+import { ChatDataSharingService } from '../../../../core/services/data-sharing/chat-data/chat-data-sharing.service';
 import { ResultResponse } from '../../../../core/models/resultResponse';
+import { ContactsService } from '../../../../core/services/contacts/contacts.service';
 
 @Component({
   selector: 'app-contacts',
@@ -19,72 +20,71 @@ import { ResultResponse } from '../../../../core/models/resultResponse';
 export class ContactsComponent implements OnInit {
 
   constructor(
-    private contactsService: ContactsService,
-    private messageService: MessageService
+    private chatDataSharingService: ChatDataSharingService,
+    private contactsService: ContactsService
   ) {}
 
-  userContacts: Contact[] = [];
+  userChats: Chat[] = [];
+  messages!: Message[];
 
-  getUserContacts() {
-    this.contactsService
-    .getUserContacts()
+  subscribeToUsersChatsObserver() {
+    this.chatDataSharingService
+    .userChatsObservable
     .subscribe({
-      next: (contacts: Contact[]) => {
-        this.userContacts = contacts;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.notifyErrors(error);
+      next: (userChats: Chat[]) => {
+        this.userChats = userChats;
+        this.messages = [];
+
+        if (userChats && !(userChats.length > 0)) {
+          this.messages = [{ severity: "info", detail: "No contacts were found" }];
+        }
       }
     })
   }
 
-  addContact(contact: Contact) {
-    this.messageService.clear()
-    this.userContacts.push(contact);
+  addContactChat(chat: Chat) {
+    this.messages = [];
+    this.userChats.push(chat);
+    this.chatDataSharingService.emitChatInfo(chat);
   }
 
-  editContact(contact: Contact) {
-    this.handleContactUpdate(contact)
+  updateContactChat(chat: Chat) {
+    const updatedChatIndex = this.userChats.findIndex(pointedChat => pointedChat.chatId === chat.chatId);
+    this.userChats[updatedChatIndex] = chat;  
   }
 
-  deleteContact(contact: Contact) {
+
+  deleteContact(chat: Chat) {
     this.contactsService
-    .deleteContact(contact.contactId)
+    .deleteContact(chat.contact.contactId)
     .subscribe({
       next: (response: ResultResponse) => {
-        this.handleContactDeletion(contact, response);
+        this.chatDataSharingService.askForUserChats();
       },
-      error: (error: HttpErrorResponse) => {
-        this.notifyErrors(error);
+      error: (error: unknown) => {
+        this.messages = [{ severity: 'error', summary: 'Error: ', detail: 'Unable to delete contact' }];
       } 
     })
   }
 
-  handleContactUpdate(contact: Contact) {
-    const updatedContactIndex = this.userContacts.findIndex(pointedContact => pointedContact === contact);
-    this.userContacts[updatedContactIndex] = contact;
-  }
-
-  handleContactDeletion(contact: Contact, response: ResultResponse) {
-    const deletedContactIndex = this.userContacts.findIndex(pointedContact => pointedContact === contact);
-    this.userContacts.splice(deletedContactIndex, 1)
-     this.notifySuccess(response)
-  }
-
-
   notifyErrors(error: HttpErrorResponse) {
     if (error.status === 0) {
-      this.messageService.add({ severity: 'error', summary: 'Error: ', detail: "Unable to connect the server" });
+      this.messages = [{severity: 'error', summary: 'Error: ', detail: "Unable to connect the server", life: 3000}];
     } else {
-      this.messageService.add({ severity: 'info', summary: 'Info: ', detail: error.error.message });
+      this.messages = [{ severity: 'error', summary: 'Error: ', detail: error.error.message, life: 3000 }];
     }  
+    this.userHaveContacts()
   }
 
-  notifySuccess(response: ResultResponse) {
-    this.messageService.add({ severity: 'success', detail: response.message, life: 3000 })
+  userHaveContacts() {
+    if (this.userChats && !(this.userChats.length > 0)) {
+      setTimeout(() => {
+        this.messages = [{ severity: "info", detail: "No contacts were found" }];
+      }, 3000)
+    }
   }
 
   ngOnInit() {
-    this.getUserContacts()
+    this.subscribeToUsersChatsObserver()
   }
 }

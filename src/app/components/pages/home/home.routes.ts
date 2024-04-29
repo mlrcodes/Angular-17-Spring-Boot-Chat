@@ -1,14 +1,13 @@
 import { Routes } from "@angular/router";
 import { HomeComponent } from "./home.component";
 import { ContactsComponent } from "./contacts/contacts.component";
-import { ChatsComponent } from "./chats/chats.component";
-import { HallsComponent } from "./halls/halls.component";
-
-
+import { UserChatsResolver } from "../../../core/resolvers/userChats.resolver";
 
 export const HOME_ROUTES: Routes = [
     {
-        path: '', component: HomeComponent, children: [
+        path: '', 
+        component: HomeComponent, 
+        children: [
             {
                 path: '', redirectTo: 'chats', pathMatch: 'full'
             },
@@ -17,9 +16,6 @@ export const HOME_ROUTES: Routes = [
             },            
             {
                 path: 'contacts', component: ContactsComponent
-            },
-            {
-                path: 'halls', component: HallsComponent
             }
         ]
     }

@@ -1,6 +1,7 @@
 package com.miguel.chatserver.CONTROLLERS;
 
 import com.miguel.chatserver.DTO.MessageDTO;
+import com.miguel.chatserver.SERVICES.IChatsService;
 import com.miguel.chatserver.SERVICES.IContactService;
 import com.miguel.chatserver.SERVICES.IMessageService;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +20,16 @@ public class MessagesController {
   private IMessageService messageService;
 
   @Autowired
-  private IContactService contactService;
+  private IChatsService chatsService;
 
   @GetMapping
   public ResponseEntity<List<MessageDTO>> getChatMessages (
     @RequestParam Integer chatId
   ) {
     return ResponseEntity.ok(
-      this.messageService.getChatMessages(chatId)
+      this.messageService.getChatMessagesDTO(
+        chatsService.findById(chatId)
+      )
     );
   }
 }

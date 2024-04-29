@@ -1,6 +1,7 @@
 package com.miguel.chatserver.SERVICES;
 
 import com.miguel.chatserver.DTO.ChatDTO;
+import com.miguel.chatserver.DTO.ResultMessageDTO;
 import com.miguel.chatserver.EXCEPTIONS.ExceptionObjectNotFound;
 import com.miguel.chatserver.MAPPERS.IChatsMapper;
 import com.miguel.chatserver.MODELS.Chat;
@@ -29,30 +30,33 @@ public class ImpChatsService implements IChatsService {
   @Autowired
   private IContactServiceExtended contactServiceExtended;
 
+  @Autowired
+  private IMessageService messageService;
+
 
   @Override
   public List<ChatDTO> getUserChats(String jwtToken) {
     User user = usersService.findByPhoneNumber(
       jwtService.getPhoneNumberFromToken(jwtToken)
     );
-    if (user.getChats().isEmpty()) {
-      throw new ExceptionObjectNotFound("User do not have any active chat");
-    }
     return chatsMapper.createChatDTOListFromChatList(user.getChats());
   }
 
   @Override
   public Map<String, Chat> getChatsPair(User owner, User contactUser) {
-    Contact contact = contactServiceExtended.findContactByOwnerAndContactUser(owner, contactUser);
-    Contact userContact = contactServiceExtended.findContactByOwnerAndContactUser(contactUser, owner);
-    if (Objects.isNull(contact) || Objects.isNull(userContact)) {
+    Contact contact = contactServiceExtended.findContactByPhoneNumber(contactUser.getPhoneNumber());
+    Contact userContact = contactServiceExtended.findContactOrCreateDefaultOne(contactUser, owner);
+
+    if (Objects.isNull(contact)) {
       throw new ExceptionObjectNotFound("Contact not found");
     }
+
+    if (Objects.isNull(userContact)) {
+      throw new ExceptionObjectNotFound("User not found");
+    }
+
     Chat ownerChat = chatRepository.findByUserAndContact(owner, contact).orElse(null);
     Chat contactChat = chatRepository.findByUserAndContact(contactUser, userContact).orElse(null);
-    if (Objects.isNull(ownerChat) || Objects.isNull(contactChat)) {
-      throw new ExceptionObjectNotFound("Chat not found");
-    }
     return getChatsPairMap(ownerChat, contactChat);
   }
 
@@ -62,22 +66,40 @@ public class ImpChatsService implements IChatsService {
   }
 
   @Override
-  public ChatDTO createChat(String contactPhoneNumber) {
-    Contact contact = contactServiceExtended.getContactFromContactPhoneNumber(contactPhoneNumber);
-    Map<String, Chat> chatsPair = this.createChatsIfNotExist(contact);
-    return chatsMapper.createChatDTOFromChat(chatsPair.get("ownerChat"));
-  }
-
-  @Override
   public Map<String, Chat> createChatsIfNotExist(Contact contact) {
     Map<String, Chat> existingChats;
+
     try {
       existingChats = this.getChatsPair(
         contact.getOwner(),
         contact.getContactUser()
       );
+      Chat ownerChat = existingChats.get("ownerChat");
+      Chat contactChat = existingChats.get("contactChat");
+
+      if (Objects.isNull(ownerChat) && Objects.isNull(contactChat)) {
+        return getChatsPairMap(
+          this.createOwnerChat(contact),
+          this.createContactChat(contact)
+        );
+      }
+
+      if (Objects.isNull(ownerChat) && Objects.nonNull(contactChat)) {
+        return getChatsPairMap(
+          this.createOwnerChat(contact),
+          contactChat
+        );
+      }
+
+      if (Objects.nonNull(ownerChat) && Objects.isNull(contactChat)) {
+        return getChatsPairMap(
+          ownerChat,
+          this.createContactChat(contact)
+        );
+      }
+
     } catch (ExceptionObjectNotFound ex) {
-      return this.createChatsPair(contact);
+      throw ex;
     }
     return existingChats;
   }
@@ -87,6 +109,7 @@ public class ImpChatsService implements IChatsService {
     User owner = contact.getOwner();
     Chat chat = chatRepository.findByUserAndContact(owner, contact).orElse(null);
     if (Objects.nonNull(chat)) {
+      messageService.deleteChatMessagesIfExist(chat);
       chatRepository.delete(chat);
     }
   }
@@ -101,26 +124,20 @@ public class ImpChatsService implements IChatsService {
     return chatRepository.save(chat);
   }
 
-  @Override
-  public Map<String, Chat> createChatsPair(Contact contact) {
-    User owner = contact.getOwner();
-    User contactUser = contact.getContactUser();
-
-    if (Objects.isNull(contact) || Objects.isNull(owner)) {
-      throw new IllegalStateException("Owner and/or contact should not be null");
-    }
-
+  private Chat createOwnerChat(Contact contact) {
     Chat ownerChat = Chat
       .builder()
-      .user(owner)
+      .user(contact.getOwner())
       .contact(contact)
       .messages(new ArrayList<>())
       .build();
 
-    Contact userContact = contactServiceExtended.findContactOrCreateDefaultOne(
-      contactUser,
-      owner
-    );
+    return chatRepository.save(ownerChat);
+  }
+
+  private Chat createContactChat(Contact contact) {
+    User contactUser = contact.getContactUser();
+    Contact userContact = contactServiceExtended.findContactByPhoneNumber(contact.getOwner().getPhoneNumber());
 
     Chat contactChat = Chat
       .builder()
@@ -129,10 +146,9 @@ public class ImpChatsService implements IChatsService {
       .messages(new ArrayList<>())
       .build();
 
-    Chat savedOwnerChat = chatRepository.save(ownerChat);
-    Chat savedContactChat = chatRepository.save(contactChat);
-    return getChatsPairMap(savedOwnerChat, savedContactChat);
+    return chatRepository.save(contactChat);
   }
+
   @Override
   public Map<String, Chat> getChatsPairMap(Chat ownerChat, Chat contactChat) {
     Map<String, Chat> chatsMap = new HashMap<>();

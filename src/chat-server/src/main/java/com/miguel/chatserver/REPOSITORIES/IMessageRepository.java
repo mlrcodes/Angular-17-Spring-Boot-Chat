@@ -11,4 +11,6 @@ import java.util.List;
 public interface IMessageRepository extends JpaRepository<Message, Integer> {
 
   public List<Message> findByChat(Chat chat);
+
+  public void deleteByChat(Chat chat);
 }

@@ -1,84 +1,92 @@
-import { Component, OnInit } from '@angular/core';
-import { WebsocketsService } from '../../../core/services/websockets/web-sockets.service';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Message } from '../../../core/models/message';
 import { Contact } from '../../../core/models/contac';
 import { MessageComponent } from './message/message.component';
-import { MessagesService } from '../../../core/services/messages/messages.service';
 import { Chat } from '../../../core/models/chat';
-import { MessageService } from 'primeng/api';
-import { HttpErrorResponse } from '@angular/common/http';
-import { DataSharingService } from '../../../core/services/data-sharing/chat-data/chat-data-sharing.service';
+import { ChatDataSharingService } from '../../../core/services/data-sharing/chat-data/chat-data-sharing.service';
 import { SendMessageComponent } from './send-message/send-message.component';
+import { MessagesDataSharingService } from '../../../core/services/data-sharing/messages-data/messages-data-sharing.service';
+import { ActivatedRoute, Params } from '@angular/router';
+import { MessagesModule } from 'primeng/messages';
+import { Message as AlertMessage} from 'primeng/api';
+
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [MessageComponent, SendMessageComponent],
-  providers: [MessageService],
+  imports: [MessageComponent, SendMessageComponent,MessagesModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit {
 
   constructor(
-    private messagesService: MessagesService,
-    private messageService: MessageService,
-    private dataSharingService: DataSharingService
+    private chatDataSharingService: ChatDataSharingService,
+    private messagesDataSharingService: MessagesDataSharingService,
+    private route: ActivatedRoute
   ) {}
 
+  @ViewChild('messagesBox') messagesBox!: ElementRef;
   contact!: Contact;
   chat!: Chat;
-  messages!: Message[];
+  messages: Message[] = [];
+  alertMessages!: AlertMessage[];
   userPhoneNumber!: string;
 
-  getChatMessages() {
-    // Recuperar mensajes sólo por contacto para recibir notificación de error!!!!
-    this.messagesService
-    .getMessages(this.chat.chatId)
-    .subscribe({
-      next: (messages: Message[]) => {
-        this.messages = messages;
-      },
-      error: (error: HttpErrorResponse) => {
-        this.notifyErrors(error)
-      }
-    })
+  notifyMessageError(error: unknown) {
+    this.alertMessages = [{ severity: 'error', summary: 'Error: ', detail: 'Message could not be sent', life: 3000 }];
   }
 
-  addMessage(message: Message) {
-    this.messages.push(message);
-  }
-
-  notifyErrors(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      this.messageService.add({ severity: 'info', summary: 'Error: ', detail: "Unable to connect the server" });
-    } else {
-      this.messageService.add({ severity: 'info', summary: 'Info: ', detail: error.error.message });
-    }  
-  }
-
-  suscribeToChatObservable(): void {
-    this.dataSharingService
+  subscribeToChatObservable(): void {
+    this.chatDataSharingService
     .openContactChatObservable
     .subscribe({
       next: (chat: Chat) => {
-        this.chat = chat;
-        this.getChatMessages();
+        if (chat) {
+          this.chat = chat;
+          this.messages = chat.messages
+          if (this.messages && !(this.messages.length > 0)) {
+            this.alertMessages = [{ severity: 'info', detail: 'Void conversation' }];
+          }
+          this.subscribeToMessagesObservable();
+        }
       }
     })
   }
 
+  subscribeToMessagesObservable(): void {
+    this.messagesDataSharingService
+    .handleIncomingMessageObservable
+    .subscribe({
+      next: (message: Message) => {
+        this.messages.push(message);
+      }
+    })
+  }
+ 
   isSentByUser(message: Message): boolean {
-    const senderPhoneNumber = message.senderPhoneNumber;
-    console.log(message)
-    console.log(senderPhoneNumber)
-    console.log(this.userPhoneNumber === senderPhoneNumber)
-    return this.userPhoneNumber === senderPhoneNumber;
+    return this.userPhoneNumber === message.senderPhoneNumber;
+  }
+
+  ngAfterViewChecked() {
+    this.messagesBox.nativeElement.scrollTop = this.messagesBox.nativeElement.scrollHeight;  
+  }
+
+  askForChat() {
+    let chatId!: number; 
+    this.route.params.subscribe({
+      next: (params: Params) => {
+        chatId = params['chatId'];
+      }
+    })
+    if (chatId) {
+      this.chatDataSharingService.askForContactChat(chatId)
+    }
   }
   
   ngOnInit(): void {
     this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
-    console.log(this.userPhoneNumber)
-    this.suscribeToChatObservable();
+    this.subscribeToChatObservable();
+    this.askForChat();
   }
 }

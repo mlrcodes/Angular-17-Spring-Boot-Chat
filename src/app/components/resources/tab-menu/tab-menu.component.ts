@@ -18,11 +18,6 @@ export class TabMenuComponent {
       routerLink: '/home/chats'
     },
     {
-      label: 'Halls',
-      icon: PrimeIcons.USERS,
-      routerLink: '/home/halls'
-    },
-    {
       label: 'Contacts',
       icon: PrimeIcons.USER,
       routerLink: '/home/contacts'

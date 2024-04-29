@@ -10,4 +10,6 @@ public interface IUsersService {
 
   public User findByPhoneNumber(String phoneNumber);
 
+  public User saveUser(User user);
+
 }

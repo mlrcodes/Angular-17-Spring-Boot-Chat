@@ -5,6 +5,7 @@ import { Contact } from '../../../../../core/models/contac';
 import { ContactDialogComponent } from '../../../../resources/contact-dialog/contact-dialog.component';
 import { ContactCreateRequest } from '../../../../../core/models/contactCreateRequest';
 import { ContactsService } from '../../../../../core/services/contacts/contacts.service';
+import { Chat } from '../../../../../core/models/chat';
 
 @Component({
   selector: 'app-add-contact',
@@ -20,7 +21,7 @@ export class AddContactComponent {
   ) {}
 
   @Output() errorEmitter: EventEmitter<HttpErrorResponse> = new EventEmitter<HttpErrorResponse>();
-  @Output() createContactEmitter: EventEmitter<Contact> = new EventEmitter<Contact>();
+  @Output() createContactEmitter: EventEmitter<Chat> = new EventEmitter<Chat>();
   phoneNumber: string = "";
   visible: boolean = false;
   header: string = "Add New Contact"
@@ -30,11 +31,10 @@ export class AddContactComponent {
     this.contactsService
     .createNewContact(contactCreateRequest)
     .subscribe({
-      next: (contact: Contact) => {
-        this.createContactEmitter.emit(contact);
+      next: (chat: Chat) => {
+        this.createContactEmitter.emit(chat);
       },
       error: (error: HttpErrorResponse) => {
-        console.log(error)
         this.errorEmitter.emit(error)
       }
     })

@@ -36,4 +36,9 @@ public class ImpUserService implements IUsersService {
   public User findByPhoneNumber(String phoneNumber) {
     return this.userRepository.findByPhoneNumber(phoneNumber).orElse(null);
   }
+
+  @Override
+  public User saveUser(User user) {
+    return userRepository.save(user);
+  }
 }

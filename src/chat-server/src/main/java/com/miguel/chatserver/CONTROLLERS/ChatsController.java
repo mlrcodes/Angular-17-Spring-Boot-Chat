@@ -1,6 +1,7 @@
 package com.miguel.chatserver.CONTROLLERS;
 
 import com.miguel.chatserver.DTO.ChatDTO;
+import com.miguel.chatserver.DTO.ResultMessageDTO;
 import com.miguel.chatserver.SERVICES.IChatsService;
 import com.miguel.chatserver.SERVICES.IContactService;
 import com.miguel.chatserver.SERVICES.IJWTService;
@@ -34,15 +35,6 @@ public class ChatsController {
       chatsService.getUserChats(
         jwtService.getTokenFromRequestHeaders(request)
       )
-    );
-  }
-
-  @PostMapping
-  private ResponseEntity<ChatDTO> createChat(
-    @RequestParam String contactPhoneNumber
-  ) {
-    return ResponseEntity.ok(
-      chatsService.createChat(contactPhoneNumber)
     );
   }
 
