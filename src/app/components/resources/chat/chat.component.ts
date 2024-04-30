@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Message } from '../../../core/models/message';
 import { Contact } from '../../../core/models/contac';
 import { MessageComponent } from './message/message.component';
@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
 
   constructor(
     private chatDataSharingService: ChatDataSharingService,
@@ -33,37 +33,19 @@ export class ChatComponent implements OnInit {
   messages: Message[] = [];
   alertMessages!: AlertMessage[];
   userPhoneNumber!: string;
-  contactChatSubscription!: Subscription;
+  chatSubscription!: Subscription;
+  messageSubscription!: Subscription;
+  incomingMessagesSubscription!: Subscription;
 
   notifyMessageError(error: unknown) {
     this.alertMessages = [{ severity: 'error', summary: 'Error: ', detail: 'Message could not be sent', life: 3000 }];
   }
 
-  subscribeToChatObservable(): void {
-    console.log("SUBSCRIBING")
-    this.contactChatSubscription = this.chatDataSharingService
-    .openContactChatObservable
-    .subscribe({
-      next: (chat: Chat | null) => {
-        if (chat) {
-          console.log("RECEIVED CHAT =>>", chat)
-          this.chat = chat;
-          this.messages = chat.messages
-          if (this.messages && !(this.messages.length > 0)) {
-            this.alertMessages = [{ severity: 'info', detail: 'Void conversation' }];
-          }
-          this.subscribeToMessagesObservable();
-        }
-      }
-    })
-  }
-
-  subscribeToMessagesObservable(): void {
-    this.messagesDataSharingService
+  getMessages(): void {
+    this.incomingMessagesSubscription = this.messagesDataSharingService
     .handleIncomingMessageObservable
     .subscribe({
       next: (message: Message) => {
-        console.log(message)
         this.messages.push(message);
       }
     })
@@ -77,29 +59,50 @@ export class ChatComponent implements OnInit {
     this.messagesBox.nativeElement.scrollTop = this.messagesBox.nativeElement.scrollHeight;  
   }
 
-  askForChat() {
+  getChatId(): number {
     let chatId!: number; 
     this.route.params.subscribe({
       next: (params: Params) => {
-        console.log("ASKNG FOR CHAT")
         chatId = params['chatId'];
-        if (chatId) {
-          this.chatDataSharingService.askForContactChat(chatId)
-        }
       }
     })
-  }
-  
-  ngOnInit(): void {
-    this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
-    this.subscribeToChatObservable();
-    this.askForChat();
+    return chatId;
   }
 
-  ngOnDestroy() {
-    if (this.contactChatSubscription) {
-      this.contactChatSubscription.unsubscribe();
+  getChat() {
+    const chatId = this.getChatId();
+    if (chatId) {
+      this.chatDataSharingService.notifyChatComponentLoaded(chatId);
+      this.chatSubscription = this.chatDataSharingService
+      .currentChat
+      .subscribe({
+        next: (chat: Chat) => {
+          if (chat && chat.chatId === Number(chatId)) {
+            this.chat = chat;
+            this.messages = chat.messages;
+            this.getMessages();
+          }        
+        }
+      })
     }
-    // Repite para otras suscripciones si es necesario
   }
+ 
+  ngOnInit(): void {
+    this.userPhoneNumber = localStorage.getItem("userPhoneNumber") || "";
+    this.getChat();
+  }
+
+  ngOnDestroy(): void {
+    this.chatDataSharingService.emitChatCRUD({chat: this.chat, action: "update"});
+    if (this.messageSubscription) {
+      this.messageSubscription.unsubscribe();
+    }
+    if (this.chatSubscription) {
+      this.chatSubscription.unsubscribe();
+    }
+    if (this.incomingMessagesSubscription) {
+      this.incomingMessagesSubscription.unsubscribe();
+    }
+  }
+
 }

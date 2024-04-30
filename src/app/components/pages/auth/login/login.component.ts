@@ -46,10 +46,12 @@ export class LoginComponent implements AfterViewInit {
   }
 
   notifyRegisterSuccess(registerResponse: RegisterResponse) {
+    this.messageService.clear();
     this.messageService.add({ severity: 'success', summary: registerResponse.message });
   }
 
   notifyLoginError(error: HttpErrorResponse) {
+    this.messageService.clear();
     if (error.status === 0) {
       this.messageService.add({ severity: 'error', summary: 'Error: ', detail: "Unable to connect the server" });
     } else {

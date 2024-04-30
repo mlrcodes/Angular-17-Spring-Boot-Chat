@@ -37,7 +37,6 @@ export class ContactsCardComponent {
 
   openContactChat() {
     this.router.navigate(['/home/chats/chat', this.chat.chatId])
-    this.chatDataSharingService.emitChatInfo(this.chat)
   }
 
   updateContact(updatedContactChat: Chat) {

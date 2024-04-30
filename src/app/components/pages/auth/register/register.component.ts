@@ -41,7 +41,7 @@ export class RegisterComponent {
   }
 
   notifyRegistrationError(error: HttpErrorResponse) {
-    console.log(error.status)
+    this.messageService.clear();
     if (error.status === 0) {
       this.messageService.add({ severity: 'error', summary: 'Error: ', detail: "Unable to connect the server" });
     } else {

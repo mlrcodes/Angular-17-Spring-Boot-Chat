@@ -59,39 +59,72 @@ export class HomeComponent {
     }
   }
 
-  observeChildrenDataAsk() {
+  sendChatsWhenAsked() {
     this.chatDataSharingService
-    .askForChatObservable
+    .chatsRequest
+    .subscribe({
+      next: () => {
+        this.chatDataSharingService.emitUserChats(this.userChats);
+      }
+    })
+  }
+
+  sendChatWhenAsked() {
+    this.chatDataSharingService
+    .chatLoaded
     .subscribe({
       next: (chatId: number) => {
-        let chat: Chat | undefined = this.userChats.find((chat: Chat) => chat.chatId === Number(chatId));
-        if (chat) {
-          console.log("ASKED")
-          this.chatDataSharingService.emitChatInfo(chat)
+        if (chatId !== 0) {
+          let chat: Chat | undefined = this.userChats.find((chat: Chat) => chat.chatId === Number(chatId));
+          if (chat) {
+            this.chatDataSharingService.changeChat(chat)
+          }
         }
       }
     })
   }
 
-  observeChildChatsAsk() {
+  updateChatsArray() {
     this.chatDataSharingService
-    .askForUserChatsObservable
+    .chatCRUD
     .subscribe({
-      next: () => {
-        this.getUserChats();
+      next: (crudAction: {chat: Chat, action: string}) => {
+        this.updateUserChatsArray(crudAction);
       }
-    });
+    })
   }
 
-  ngOnChanges() {
-    console.log(this.userChats)
+  updateUserChatsArray(crudAction: {chat: Chat, action: string}) {
+    let action = crudAction.action,
+    crudChat = crudAction.chat
+    switch (action) {
+      case "create":
+        this.userChats.push(crudChat);
+        break;
+      case "update":
+      case "delete":
+        let foundChat: Chat | undefined = this.userChats.find((userChat: Chat) => userChat.chatId === crudChat.chatId);
+        if (foundChat) {
+          let foundChatIndex: number = this.userChats.indexOf(foundChat);
+          switch (action) {
+            case "delete":
+              this.userChats.splice(foundChatIndex, 1);
+              break;
+            case "update":
+              this.userChats.splice(foundChatIndex, 1, crudChat);
+              break;
+          }
+        }
+        break;
+    }
   }
 
   ngOnInit() {
     this.getRouteData();
     this.webSocketsConnect();
-    this.observeChildrenDataAsk();
-    this.observeChildChatsAsk();
+    this.sendChatWhenAsked();
+    this.sendChatsWhenAsked();
+    this.updateChatsArray();
   }
 
 }

@@ -9,34 +9,40 @@ export class ChatDataSharingService {
 
   constructor() { }
 
-  private userChats!: Chat[];
-  private userChatsSubject: BehaviorSubject<Chat[]> = new BehaviorSubject<Chat[]>(this.userChats);
-  public userChatsObservable: Observable<Chat[]> = this.userChatsSubject.asObservable();  
+  private chats!: Chat[];
+  private userChatsSource: BehaviorSubject<Chat[]> = new BehaviorSubject<Chat[]>(this.chats);
+  private chatsRequestSource: Subject<void> = new Subject<void>();
+  public userChats: Observable<Chat[]> = this.userChatsSource.asObservable();  
+  public chatsRequest: Observable<void> = this.chatsRequestSource.asObservable();
 
   emitUserChats(userChats: Chat[]) {
-    this.userChatsSubject.next(userChats);
+    this.userChatsSource.next(userChats);
   }
-
-  private openContactChatSubject: Subject<Chat> = new Subject<Chat>();
-  public openContactChatObservable: Observable<Chat> = this.openContactChatSubject.asObservable();  
-
-  emitChatInfo(chat: Chat) {
-    console.log("EMITING CHAT =>>>", chat)
-    this.openContactChatSubject.next(chat);
-  }
-
-  private askForChatSubject: Subject<number> = new Subject<number>();
-  public askForChatObservable: Observable<number> = this.askForChatSubject.asObservable();
-
-  askForContactChat(chatId: number) {
-    this.askForChatSubject.next(chatId);
-  }
-
-  private askForUserChatsSubject: Subject<void> = new Subject<void>();
-  public askForUserChatsObservable: Observable<void> = this.askForUserChatsSubject.asObservable();
 
   askForUserChats() {
-    console.log("ASKING")
-    this.askForUserChatsSubject.next();
+    this.chatsRequestSource.next();
+  }
+
+  private chat!: Chat;
+  private chatSource: BehaviorSubject<Chat> = new BehaviorSubject<Chat>(this.chat);
+  private chatLoadedSource: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  public currentChat: Observable<Chat> = this.chatSource.asObservable();
+  public chatLoaded: Observable<number> = this.chatLoadedSource.asObservable();
+
+  changeChat(chat: Chat) {
+    this.chatSource.next(chat);
+  }
+
+  notifyChatComponentLoaded(chatId: number) {
+    this.chatLoadedSource.next(chatId);
+  }
+
+  private crudObject = {chat: this.chat, action: ""}
+  private chatCRUDSource: BehaviorSubject<{chat: Chat, action: string}> 
+    = new BehaviorSubject<{chat: Chat, action: string}>(this.crudObject);
+  public chatCRUD: Observable<{chat: Chat, action: string}> = this.chatCRUDSource.asObservable();
+
+  emitChatCRUD(crudAction :{chat: Chat, action: string}) {
+    this.chatCRUDSource.next(crudAction);
   }
 }

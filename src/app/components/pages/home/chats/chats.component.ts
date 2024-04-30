@@ -22,14 +22,13 @@ export class ChatsComponent {
   userChats: Chat[] = [];
   messages!: Message[];
 
-  subscribeToUsersChatsObserver() {
+  getUserChats() {
+    this.chatDataSharingService.askForUserChats();
     this.chatDataSharingService
-    .userChatsObservable
+    .userChats
     .subscribe({
       next: (userChats: Chat[]) => {
-        console.log(userChats)
-        this.userChats = userChats
-      
+        this.userChats = userChats      
         if (userChats && (!(userChats.length > 0) || !this.anyChatHaveMessages()))  {
           this.messages = [{ severity: 'info', detail: 'You do not have any active chat' }];
         }
@@ -38,12 +37,11 @@ export class ChatsComponent {
   }
 
   anyChatHaveMessages(): boolean {
-    console.log(this.userChats.find((chat: Chat) => chat.messages && chat.messages.length > 0))
     if (this.userChats.find((chat: Chat) => chat.messages && chat.messages.length > 0)) return true
     else return false
   }
 
   ngOnInit() {
-    this.subscribeToUsersChatsObserver();
+    this.getUserChats();
   }
 }

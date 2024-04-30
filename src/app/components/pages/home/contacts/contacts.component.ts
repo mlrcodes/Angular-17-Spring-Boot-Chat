@@ -27,14 +27,14 @@ export class ContactsComponent implements OnInit {
   userChats: Chat[] = [];
   messages!: Message[];
 
-  subscribeToUsersChatsObserver() {
+  getUserChats() {
+    this.chatDataSharingService.askForUserChats();
     this.chatDataSharingService
-    .userChatsObservable
+    .userChats
     .subscribe({
       next: (userChats: Chat[]) => {
         this.userChats = userChats;
         this.messages = [];
-
         if (userChats && !(userChats.length > 0)) {
           this.messages = [{ severity: "info", detail: "No contacts were found" }];
         }
@@ -43,14 +43,12 @@ export class ContactsComponent implements OnInit {
   }
 
   addContactChat(chat: Chat) {
+    this.chatDataSharingService.emitChatCRUD({chat, action: "create"});
     this.messages = [];
-    this.userChats.push(chat);
-    this.chatDataSharingService.emitChatInfo(chat);
   }
 
   updateContactChat(chat: Chat) {
-    const updatedChatIndex = this.userChats.findIndex(pointedChat => pointedChat.chatId === chat.chatId);
-    this.userChats[updatedChatIndex] = chat;  
+    this.chatDataSharingService.emitChatCRUD({chat, action: "update"});
   }
 
 
@@ -58,11 +56,12 @@ export class ContactsComponent implements OnInit {
     this.contactsService
     .deleteContact(chat.contact.contactId)
     .subscribe({
-      next: (response: ResultResponse) => {
-        this.chatDataSharingService.askForUserChats();
+      next: () => {
+        this.chatDataSharingService.emitChatCRUD({chat, action: "delete"});
+        this.userHaveContacts();
       },
       error: (error: unknown) => {
-        this.messages = [{ severity: 'error', summary: 'Error: ', detail: 'Unable to delete contact' }];
+        this.messages = [{ severity: 'error', summary: 'Error: ', detail: 'Unable to delete contact', life: 3000 }];
       } 
     })
   }
@@ -85,6 +84,6 @@ export class ContactsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.subscribeToUsersChatsObserver()
+    this.getUserChats()
   }
 }
