@@ -24,7 +24,7 @@ export class ContactsComponent implements OnInit {
     private contactsService: ContactsService
   ) {}
 
-  userChats: Chat[] = [];
+  userChats!: Chat[];
   messages!: Message[];
 
   getUserChats() {
@@ -35,6 +35,7 @@ export class ContactsComponent implements OnInit {
       next: (userChats: Chat[]) => {
         this.userChats = userChats;
         this.messages = [];
+        console.log(userChats);
         if (userChats && !(userChats.length > 0)) {
           this.messages = [{ severity: "info", detail: "No contacts were found" }];
         }
@@ -45,6 +46,7 @@ export class ContactsComponent implements OnInit {
   addContactChat(chat: Chat) {
     this.chatDataSharingService.emitChatCRUD({chat, action: "create"});
     this.messages = [];
+    console.log(this.userChats)
   }
 
   updateContactChat(chat: Chat) {
@@ -56,14 +58,14 @@ export class ContactsComponent implements OnInit {
     this.contactsService
     .deleteContact(chat.contact.contactId)
     .subscribe({
-      next: () => {
+      next: () => {  
         this.chatDataSharingService.emitChatCRUD({chat, action: "delete"});
-        this.userHaveContacts();
       },
       error: (error: unknown) => {
         this.messages = [{ severity: 'error', summary: 'Error: ', detail: 'Unable to delete contact', life: 3000 }];
       } 
     })
+    this.userHaveContacts();
   }
 
   notifyErrors(error: HttpErrorResponse) {
@@ -76,6 +78,9 @@ export class ContactsComponent implements OnInit {
   }
 
   userHaveContacts() {
+    console.log(this.userChats && !(this.userChats.length > 0))
+    console.log(this.userChats)
+    console.log(this.userChats.length)
     if (this.userChats && !(this.userChats.length > 0)) {
       setTimeout(() => {
         this.messages = [{ severity: "info", detail: "No contacts were found" }];

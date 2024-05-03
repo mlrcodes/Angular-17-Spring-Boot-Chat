@@ -47,6 +47,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     .subscribe({
       next: (message: Message) => {
         this.messages.push(message);
+        console.log(message)
+        if (this.alertMessages && this.alertMessages.length > 0) {
+          this.alertMessages = [];
+        }
       }
     })
   }
@@ -80,6 +84,9 @@ export class ChatComponent implements OnInit, OnDestroy {
           if (chat && chat.chatId === Number(chatId)) {
             this.chat = chat;
             this.messages = chat.messages;
+            if (this.messages && !(this.messages.length > 0)) {
+              this.alertMessages = [{ severity: 'info', summary: 'Info: ', detail: 'Void Conversation' }];
+            }
             this.getMessages();
           }        
         }

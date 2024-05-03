@@ -96,7 +96,7 @@ export class HomeComponent {
 
   updateUserChatsArray(crudAction: {chat: Chat, action: string}) {
     let action = crudAction.action,
-    crudChat = crudAction.chat
+      crudChat = crudAction.chat;
     switch (action) {
       case "create":
         this.userChats.push(crudChat);
@@ -117,6 +117,7 @@ export class HomeComponent {
         }
         break;
     }
+    this.chatDataSharingService.emitUserChats(this.userChats);
   }
 
   ngOnInit() {
